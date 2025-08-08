@@ -8,6 +8,9 @@
     "files.hotExit": "off",
     "workbench.editor.restoreViewState": false,
     "workbench.startupEditor": "none",
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.enablePreviewFromQuickOpen": false,
+    "timeline.excludeSources": ["git-history"],
     
     // 🗂️ Excluir archivos del explorador
     "files.exclude": {
