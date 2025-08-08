@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 IMPULSE",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/simple-start.js",
+      "console": "integratedTerminal",
+      "outputCapture": "console"
+    }
+  ]
+}

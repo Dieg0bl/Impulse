@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+backend/target/
+
+# Build outputs
+frontend/build/
+frontend/dist/
+
+# IDE
+.vscode/settings.json.bak
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Database
+*.db
+*.sqlite
+
+# Temporary files
+*.tmp
+*.temp
+
+# Test files (keeping test.js and test-exec.js for now)
+# test.js
+# test-exec.js

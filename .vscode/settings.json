@@ -1,0 +1,6 @@
+{
+    "java.configuration.workspaceFolders": [
+        "backend"
+    ],
+    "java.compile.nullAnalysis.mode": "automatic"
+}

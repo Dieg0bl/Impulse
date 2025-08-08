@@ -1,0 +1,103 @@
+﻿[
+  {
+    "id": 1,
+    "idReto": 1,
+    "idUsuario": 1,
+    "fechaReporte": "2025-08-01T18:30:00Z",
+    "tipoEvidencia": "FOTO_Y_TEXTO",
+    "descripcion": "Primer día completado! Corrí 5.2km en el parque central. Me siento muy motivado para continuar con el reto. El tiempo fue de 28 minutos.",
+    "archivoUrl": "/uploads/evidencias/2025/08/01/corrida_dia1_user1.jpg",
+    "coordenadasGPS": "40.4168,-3.7038",
+    "tiempoRegistrado": "00:28:15",
+    "distanciaRegistrada": "5.2",
+    "estadoValidacion": "PENDIENTE",
+    "fechaCreacion": "2025-08-01T18:30:00Z",
+    "metadatos": {
+      "dispositivo": "iPhone 14",
+      "app": "Strava",
+      "clima": "soleado",
+      "temperatura": "25C"
+    }
+  },
+  {
+    "id": 2,
+    "idReto": 1,
+    "idUsuario": 1,
+    "fechaReporte": "2025-08-02T07:15:00Z",
+    "tipoEvidencia": "FOTO_Y_TEXTO",
+    "descripcion": "Segundo día: 5.1km completados por la mañana temprano. El cuerpo aún se está adaptando pero me siento bien. Ritmo más constante hoy.",
+    "archivoUrl": "/uploads/evidencias/2025/08/02/corrida_dia2_user1.jpg",
+    "coordenadasGPS": "40.4200,-3.7100",
+    "tiempoRegistrado": "00:27:45",
+    "distanciaRegistrada": "5.1",
+    "estadoValidacion": "APROBADA",
+    "fechaCreacion": "2025-08-02T07:15:00Z",
+    "fechaValidacion": "2025-08-02T10:30:00Z",
+    "idValidador": 2,
+    "comentarioValidador": "Excelente constancia! Se nota la mejora en el tiempo. ¡Sigue así!",
+    "metadatos": {
+      "dispositivo": "iPhone 14",
+      "app": "Nike Run Club",
+      "clima": "nublado",
+      "temperatura": "22C"
+    }
+  },
+  {
+    "id": 3,
+    "idReto": 2,
+    "idUsuario": 4,
+    "fechaReporte": "2025-08-05T20:00:00Z",
+    "tipoEvidencia": "TEXTO_Y_AUDIO",
+    "descripcion": "Primera semana de francés completada! Aprendí 52 palabras nuevas relacionadas con la familia y la casa. Adjunto audio con pronunciación de 10 frases.",
+    "archivoUrl": "/uploads/evidencias/2025/08/05/frances_semana1_user4.mp3",
+    "estadoValidacion": "APROBADA",
+    "fechaCreacion": "2025-08-05T20:00:00Z",
+    "fechaValidacion": "2025-08-06T14:20:00Z",
+    "idValidador": 2,
+    "comentarioValidador": "Pronunciación muy clara y vocabulario bien aplicado. ¡Progreso excelente!",
+    "metadatos": {
+      "palabrasAprendidas": 52,
+      "tiempoEstudio": "6 horas",
+      "fuentesUsadas": ["Duolingo", "LibroTexto", "PodcastFrances"]
+    }
+  },
+  {
+    "id": 4,
+    "idReto": 4,
+    "idUsuario": 1,
+    "fechaReporte": "2025-08-15T22:30:00Z",
+    "tipoEvidencia": "TEXTO",
+    "descripcion": "Terminé de leer 'Atomic Habits' de James Clear. Libro increíble sobre formación de hábitos. Principales aprendizajes: 1% mejor cada día, diseño del ambiente, seguimiento de hábitos. Empezaré 'Deep Work' de Cal Newport la próxima semana.",
+    "estadoValidacion": "APROBADA",
+    "fechaCreacion": "2025-08-15T22:30:00Z",
+    "fechaValidacion": "2025-08-16T09:15:00Z",
+    "idValidador": 2,
+    "comentarioValidador": "Resumen muy completo y reflexivo. Se nota que has asimilado bien los conceptos clave.",
+    "metadatos": {
+      "libroTitulo": "Atomic Habits",
+      "autor": "James Clear",
+      "paginas": 320,
+      "tiempoLectura": "8 días",
+      "rating": "5/5"
+    }
+  },
+  {
+    "id": 5,
+    "idReto": 3,
+    "idUsuario": 5,
+    "fechaReporte": "2025-08-10T07:15:00Z",
+    "tipoEvidencia": "TEXTO",
+    "descripcion": "Primera sesión de meditación completada. 15 minutos enfocándome en la respiración. Estado inicial: ansioso (7/10), estado final: calmado (3/10). Nivel de concentración: 6/10. Noté pensamientos sobre trabajo pero logré redirigir atención.",
+    "estadoValidacion": "AUTOMATICA_APROBADA",
+    "fechaCreacion": "2025-08-10T07:15:00Z",
+    "fechaValidacion": "2025-08-10T07:15:00Z",
+    "metadatos": {
+      "duracionReal": "00:15:30",
+      "tecnicaUsada": "mindfulness_respiracion",
+      "estadoInicialAnsiedad": 7,
+      "estadoFinalAnsiedad": 3,
+      "nivelConcentracion": 6,
+      "app": "Headspace"
+    }
+  }
+]
