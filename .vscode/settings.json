@@ -1,0 +1,29 @@
+{
+    "java.configuration.workspaceFolders": [
+        "backend"
+    ],
+    "java.compile.nullAnalysis.mode": "automatic",
+    
+    // 🚫 Prevenir auto-restauración de archivos problemáticos
+    "files.hotExit": "off",
+    "workbench.editor.restoreViewState": false,
+    "workbench.startupEditor": "none",
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.enablePreviewFromQuickOpen": false,
+    "timeline.excludeSources": ["git-history"],
+    
+    // 🗂️ Excluir archivos del explorador
+    "files.exclude": {
+        "**/.vscode/tasks.json": true,
+        "**/*.tmp": true,
+        "**/*.temp": true,
+        "**/node_modules": true,
+        "**/target": true
+    },
+    
+    // ☕ Control de Java para evitar archivos extra
+    "java.autobuild.enabled": false,
+    "java.import.generatesMetadataFilesAtProjectRoot": false,
+    "java.clean.workspace": true,
+    "java.configuration.updateBuildConfiguration": "automatic"
+}

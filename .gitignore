@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+backend/target/
+
+# Build outputs
+frontend/build/
+frontend/dist/
+
+# IDE
+.vscode/settings.json.bak
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Database
+*.db
+*.sqlite
+
+# Temporary files
+*.tmp
+*.temp
+
+# Archivos vacíos/duplicados
+**/index_new.html
+backend/src/main/resources/static/
+
+# Documentación (mantener solo README.md)
+*.md
+!README.md
+
+# Scripts redundantes (mantener solo los esenciales)
+start-app.bat
+start.js
+backend/start-server.bat
+backend/start-server.ps1
+
+# Test files redundantes
+test.js
+test-exec.js
+
+# Logs temporales
+backend/.github/
+.github/workflows/ci-cd.yml
+
+# Scripts de limpieza temporal
+limpiar-vscode-historial.bat
