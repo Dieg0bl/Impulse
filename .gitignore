@@ -27,6 +27,10 @@ Thumbs.db
 *.tmp
 *.temp
 
+# Documentación (mantener solo README.md)
+*.md
+!README.md
+
 # Scripts redundantes (mantener solo los esenciales)
 start-app.bat
 start.js
@@ -40,3 +44,6 @@ test-exec.js
 # Logs temporales
 backend/.github/
 .github/workflows/ci-cd.yml
+
+# Scripts de limpieza temporal
+limpiar-vscode-historial.bat
