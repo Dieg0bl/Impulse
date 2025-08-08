@@ -2,5 +2,24 @@
     "java.configuration.workspaceFolders": [
         "backend"
     ],
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    
+    // 🚫 Prevenir auto-restauración de archivos problemáticos
+    "files.hotExit": "off",
+    "workbench.editor.restoreViewState": false,
+    "workbench.startupEditor": "none",
+    
+    // 🗂️ Excluir archivos del explorador
+    "files.exclude": {
+        "**/.vscode/tasks.json": true,
+        "**/*.tmp": true,
+        "**/*.temp": true,
+        "**/node_modules": true,
+        "**/target": true
+    },
+    
+    // ☕ Control de Java para evitar archivos extra
+    "java.autobuild.enabled": false,
+    "java.configuration.checkProjectSettingsExclusions": false,
+    "java.clean.workspace": true
 }

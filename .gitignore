@@ -27,6 +27,16 @@ Thumbs.db
 *.tmp
 *.temp
 
-# Test files (keeping test.js and test-exec.js for now)
-# test.js
-# test-exec.js
+# Scripts redundantes (mantener solo los esenciales)
+start-app.bat
+start.js
+backend/start-server.bat
+backend/start-server.ps1
+
+# Test files redundantes
+test.js
+test-exec.js
+
+# Logs temporales
+backend/.github/
+.github/workflows/ci-cd.yml
