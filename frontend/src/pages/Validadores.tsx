@@ -14,7 +14,7 @@ interface Validador {
 }
 
 const Validadores: React.FC = () => {
-  const { user } = useAuth();
+  useAuth();
   const [validadores, setValidadores] = useState<Validador[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -241,6 +241,7 @@ const Validadores: React.FC = () => {
                   <Button 
                     onClick={() => eliminarValidador(validador.id)}
                     className="danger-button"
+                    aria-label="Eliminar validador"
                   >
                     🗑️ Eliminar
                   </Button>
@@ -313,14 +314,39 @@ const InviteValidadorModal: React.FC<{
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <dialog
+      className="modal-overlay"
+      open
+    >
+      <button
+        type="button"
+        className="modal-backdrop"
+        aria-label="Cerrar modal"
+        onClick={onClose}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+            onClose();
+          }
+        }}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.3)',
+          zIndex: 1
+        }}
+        tabIndex={0}
+      />
+      <form
+        className="modal-content"
+        onSubmit={handleSubmit}
+        style={{ position: 'relative', zIndex: 2 }}
+      >
         <div className="modal-header">
           <h2>➕ Invitar Validador</h2>
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
 
-        <form onSubmit={handleSubmit} className="invite-form">
+  {/* ...existing code... */}
           <div className="form-field">
             <label htmlFor="email">Email del Validador *</label>
             <input
@@ -379,10 +405,9 @@ const InviteValidadorModal: React.FC<{
             <Button type="submit">
               📧 Enviar Invitación
             </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+            </div>
+          </form>
+        </dialog>
   );
 };
 

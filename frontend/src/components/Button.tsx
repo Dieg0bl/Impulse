@@ -21,28 +21,36 @@ const Button: React.FC<ButtonProps> = ({
   className = '',
   'aria-label': ariaLabel
 }) => {
-  const getVariantStyles = () => {
-    const baseStyles = {
-      padding: size === 'small' ? '0.25rem 0.5rem' : size === 'large' ? '0.75rem 1.5rem' : '0.5rem 1rem',
-      borderRadius: 6,
-      border: 'none',
-      fontWeight: 600,
-      cursor: disabled ? 'not-allowed' : 'pointer',
-      opacity: disabled ? 0.6 : 1,
-      fontSize: size === 'small' ? '0.875rem' : size === 'large' ? '1.125rem' : '1rem',
-      transition: 'all 0.2s ease'
-    };
 
-    const variantStyles = {
-      primary: { background: '#007bff', color: '#fff' },
-      secondary: { background: '#6c757d', color: '#fff' },
-      success: { background: '#28a745', color: '#fff' },
-      danger: { background: '#dc3545', color: '#fff' },
-      warning: { background: '#ffc107', color: '#212529' }
-    };
+  // Extracción de ternarios anidados para cumplir con SonarLint
+  let padding = '0.5rem 1rem';
+  if (size === 'small') padding = '0.25rem 0.5rem';
+  else if (size === 'large') padding = '0.75rem 1.5rem';
 
-    return { ...baseStyles, ...variantStyles[variant] };
+  let fontSize = '1rem';
+  if (size === 'small') fontSize = '0.875rem';
+  else if (size === 'large') fontSize = '1.125rem';
+
+  const baseStyles = {
+    padding,
+    borderRadius: 6,
+    border: 'none',
+    fontWeight: 600,
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    opacity: disabled ? 0.6 : 1,
+    fontSize,
+    transition: 'all 0.2s ease'
   };
+
+  const variantStyles = {
+    primary: { background: '#007bff', color: '#fff' },
+    secondary: { background: '#6c757d', color: '#fff' },
+    success: { background: '#28a745', color: '#fff' },
+    danger: { background: '#dc3545', color: '#fff' },
+    warning: { background: '#ffc107', color: '#212529' }
+  };
+
+  const style = { ...baseStyles, ...variantStyles[variant] };
 
   return (
     <button
@@ -51,7 +59,7 @@ const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       className={className}
       aria-label={ariaLabel}
-      style={getVariantStyles()}
+      style={style}
     >
       {children}
     </button>

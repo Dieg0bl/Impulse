@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Button from '../components/Button.tsx';
 import FormField from '../components/FormField.tsx';
 import { useAppContext } from '../contexts/AppContext.tsx';
+import { logger } from '../utils/logger.ts';
 
 interface OnboardingData {
   // Datos personales
@@ -148,14 +149,23 @@ const Onboarding: React.FC = () => {
         throw new Error(errorData.message || 'Error en el registro');
       }
 
-      const data = await response.json();
+  await response.json();
       
       // Registro exitoso - redirigir a login o dashboard
       localStorage.setItem('registrationSuccess', 'true');
       navigate('login');
 
     } catch (err) {
-      console.error('Error en registro:', err);
+      logger.error(
+        'Error durante el proceso de registro',
+        'OnboardingPage',
+        {
+          error: err instanceof Error ? err.message : String(err),
+          step: currentStep,
+          userId: formData.email,
+          timestamp: new Date().toISOString()
+        }
+      );
       setError(err instanceof Error ? err.message : 'Error en el registro');
     } finally {
       setLoading(false);
@@ -168,7 +178,7 @@ const Onboarding: React.FC = () => {
         {/* Header */}
         <div className="onboarding-header">
           <h1 className="onboarding-title">
-            <span role="img" aria-label="Cohete">🚀</span>
+            <img src="/assets/rocket.svg" alt="Cohete" style={{ width: 32, height: 32, display: 'inline', verticalAlign: 'middle', marginRight: 8 }} />{' '}
             Únete a IMPULSE
           </h1>
           <p className="onboarding-subtitle">
@@ -178,17 +188,14 @@ const Onboarding: React.FC = () => {
 
         {/* Progreso */}
         <div className="progress-indicator">
-          <div className="progress-bar">
-            <div 
-              className="progress-fill" 
-              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-              role="progressbar"
-              aria-valuenow={currentStep}
-              aria-valuemin={1}
-              aria-valuemax={totalSteps}
-              aria-label={`Paso ${currentStep} de ${totalSteps}`}
-            ></div>
-          </div>
+          <progress
+            className="progress-bar"
+            value={currentStep}
+            max={totalSteps}
+            aria-label={`Paso ${currentStep} de ${totalSteps}`}
+          >
+            {currentStep}
+          </progress>
           <span className="progress-text">Paso {currentStep} de {totalSteps}</span>
         </div>
 

@@ -23,6 +23,7 @@
     
     // ☕ Control de Java para evitar archivos extra
     "java.autobuild.enabled": false,
-    "java.configuration.checkProjectSettingsExclusions": false,
-    "java.clean.workspace": true
+    "java.import.generatesMetadataFilesAtProjectRoot": false,
+    "java.clean.workspace": true,
+    "java.configuration.updateBuildConfiguration": "automatic"
 }

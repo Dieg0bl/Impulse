@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppContext } from '../contexts/AppContext.tsx';
 import FormField from '../components/FormField.tsx';
 import Button from '../components/Button.tsx';
+import { logger } from '../utils/logger.ts';
 
 interface ReporteForm {
   descripcion: string;
@@ -63,15 +64,20 @@ const ReportarAvance: React.FC = () => {
     setEnviando(true);
 
     try {
-      // Simular envío del reporte
-      console.log('Enviando reporte:', {
-        ...formData,
-        retoId: retoActual.id
+      // Crear reporte de progreso
+      logger.info('Iniciando envío de reporte de progreso', 'REPORTE_AVANCE', {
+        retoId: retoActual.id,
+        tipoEvidencia: formData.tipoEvidencia,
+        hasEvidencia: !!formData.evidencia
       });
 
-      // Simular upload de archivo si existe
+      // Upload de archivo si existe
       if (formData.evidencia) {
-        console.log('Subiendo evidencia:', formData.evidencia.name);
+        logger.info('Subiendo evidencia de progreso', 'REPORTE_AVANCE', {
+          fileName: formData.evidencia.name,
+          fileSize: formData.evidencia.size,
+          fileType: formData.evidencia.type
+        });
       }
 
       // Simular delay de envío
@@ -80,7 +86,7 @@ const ReportarAvance: React.FC = () => {
       // Redirigir al detalle del reto o dashboard
       navigate('reto-detalle');
     } catch (error) {
-      console.error('Error al enviar reporte:', error);
+      logger.error('Error al enviar reporte', 'REPORTE_AVANCE', error);
     } finally {
       setEnviando(false);
     }
@@ -175,52 +181,57 @@ const ReportarAvance: React.FC = () => {
                 </select>
               </div>
 
-              {formData.tipoEvidencia !== 'ninguna' && (
-                <div>
-                  <label htmlFor="evidencia" className="block text-sm font-medium mb-2">
-                    Subir archivo
-                  </label>
-                  <input
-                    id="evidencia"
-                    type="file"
-                    onChange={handleFileChange}
-                    accept={
-                      formData.tipoEvidencia === 'foto' ? 'image/*' :
-                      formData.tipoEvidencia === 'video' ? 'video/*' :
-                      '.pdf,.doc,.docx,.txt'
-                    }
-                    className="w-full p-3 border rounded-lg"
-                  />
-                  
-                  {formData.evidencia && (
-                    <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm">
-                          📎 {formData.evidencia.name} ({Math.round(formData.evidencia.size / 1024)} KB)
-                        </span>
-                        <Button
-                          type="button"
-                          variant="danger"
-                          size="small"
-                          onClick={handleEliminarEvidencia}
-                        >
-                          Eliminar
-                        </Button>
-                      </div>
-                      
-                      {previewUrl && (
-                        <div className="mt-3">
-                          <img
-                            src={previewUrl}
-                            alt="Preview"
-                            className="max-w-full h-32 object-cover rounded border"
-                          />
+              {formData.tipoEvidencia !== 'ninguna' && (() => {
+                let acceptType = '';
+                if (formData.tipoEvidencia === 'foto') {
+                  acceptType = 'image/*';
+                } else if (formData.tipoEvidencia === 'video') {
+                  acceptType = 'video/*';
+                } else {
+                  acceptType = '.pdf,.doc,.docx,.txt';
+                }
+                return (
+                  <div>
+                    <label htmlFor="evidencia" className="block text-sm font-medium mb-2">
+                      Subir archivo
+                    </label>
+                    <input
+                      id="evidencia"
+                      type="file"
+                      onChange={handleFileChange}
+                      accept={acceptType}
+                      className="w-full p-3 border rounded-lg"
+                    />
+                    {formData.evidencia && (
+                      <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm">
+                            📎 {formData.evidencia.name} ({Math.round(formData.evidencia.size / 1024)} KB)
+                          </span>
+                          <Button
+                            type="button"
+                            variant="danger"
+                            size="small"
+                            onClick={handleEliminarEvidencia}
+                          >
+                            Eliminar
+                          </Button>
                         </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
+                        {previewUrl && (
+                          <div className="mt-3">
+                            <img
+                              src={previewUrl}
+                              alt="Preview"
+                              className="max-w-full h-32 object-cover rounded border"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+              )
             </div>
           </div>
 

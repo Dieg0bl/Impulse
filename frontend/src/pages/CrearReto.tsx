@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppContext } from '../contexts/AppContext.tsx';
 import FormField from '../components/FormField.tsx';
 import Button from '../components/Button.tsx';
+import { logger } from '../utils/logger.ts';
 
 interface RetoForm {
   titulo: string;
@@ -38,16 +39,45 @@ const CrearReto: React.FC = () => {
     setLoading(true);
     
     try {
-      // Aquí iría la lógica para crear el reto
-      console.log('Creando reto:', formData);
+      // Validar datos del formulario
+      if (formData.titulo.length < 5) {
+        throw new Error('El título debe tener al menos 5 caracteres');
+      }
+      
+      if (formData.descripcion.length < 20) {
+        throw new Error('La descripción debe tener al menos 20 caracteres');
+      }
+
+      logger.info(
+        'Iniciando creación de nuevo reto',
+        'CrearReto',
+        {
+          titulo: formData.titulo,
+          categoria: formData.categoria,
+          dificultad: formData.dificultad
+        }
+      );
       
       // Simular llamada a API
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      logger.info(
+        'Reto creado exitosamente',
+        'CrearReto',
+        { titulo: formData.titulo }
+      );
+      
       // Navegar a mis retos después de crear
       navigate('mis-retos');
     } catch (error) {
-      console.error('Error al crear reto:', error);
+      logger.error(
+        'Error al crear reto',
+        'CrearReto',
+        {
+          titulo: formData.titulo,
+          error: error instanceof Error ? error.message : String(error)
+        }
+      );
     } finally {
       setLoading(false);
     }

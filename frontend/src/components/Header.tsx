@@ -1,9 +1,12 @@
 import * as React from 'react';
 import { useAppContext } from '../contexts/AppContext.tsx';
+import { useNavigation } from '../contexts/NavigationContext.tsx';
+import Breadcrumbs from './Breadcrumbs.tsx';
 
 const Header: React.FC = () => {
   const { state, navigate, logout, openModal } = useAppContext();
   const { currentUser, notificaciones, currentPage } = state;
+  const { navigationState } = useNavigation();
   
   const notificacionesNoLeidas = notificaciones.filter(n => !n.leida).length;
   
@@ -24,10 +27,17 @@ const Header: React.FC = () => {
       <div className="header-content">
         {/* Logo y navegación principal */}
         <div className="header-left">
-          <div className="logo" onClick={handleLogoClick} style={{ cursor: 'pointer' }}>
+          <button
+            className="logo"
+            onClick={handleLogoClick}
+            style={{ cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
+            aria-label="Ir al inicio"
+            tabIndex={0}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleLogoClick(); }}
+          >
             <span className="logo-icon">⚡</span>
             <span className="logo-text">IMPULSE</span>
-          </div>
+          </button>
           
           <nav className="main-nav" role="navigation" aria-label="Navegación principal">
             <button 
@@ -52,6 +62,15 @@ const Header: React.FC = () => {
               ✅ Validaciones
             </button>
           </nav>
+          
+          {/* Breadcrumbs de navegación */}
+          <div className="breadcrumbs-container">
+            <Breadcrumbs 
+              variant="compact" 
+              maxItems={4} 
+              showHome={true}
+            />
+          </div>
         </div>
         
         {/* Acciones del usuario */}
@@ -69,7 +88,11 @@ const Header: React.FC = () => {
           <button 
             className="notification-btn"
             onClick={handleNotificationClick}
-            aria-label={`Notificaciones ${notificacionesNoLeidas > 0 ? `(${notificacionesNoLeidas} sin leer)` : ''}`}
+            aria-label={
+              notificacionesNoLeidas > 0
+                ? `Notificaciones (${notificacionesNoLeidas} sin leer)`
+                : 'Notificaciones'
+            }
           >
             🔔
             {notificacionesNoLeidas > 0 && (

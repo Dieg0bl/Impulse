@@ -17,12 +17,22 @@
   {
     "name": "impulse.notifications.email-smtp-port",
     "type": "java.lang.String",
-    "description": "A description for 'impulse.notifications.email-smtp-port'"
+    "description": "SMTP port for outbound email"
   },
   {
-    "name": "impulse.notifications.email-smtp-port",
-    "type": "java.lang.String",
-    "description": "A description for 'impulse.notifications.email-smtp-port'"
+    "name": "impulse.monetization.paywall",
+    "type": "java.lang.Boolean",
+    "description": "Enable paywall UI feature"
+  },
+  {
+    "name": "impulse.launch.banner",
+    "type": "java.lang.Boolean",
+    "description": "Enable launch banner flag"
+  },
+  {
+    "name": "impulse.validators.enabled",
+    "type": "java.lang.Boolean",
+    "description": "Enable validators domain features"
   },
   {
     "name": "impulse.notifications.email-smtp-pass",

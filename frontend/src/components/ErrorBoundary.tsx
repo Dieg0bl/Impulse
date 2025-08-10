@@ -1,30 +1,117 @@
-import React, { Component, ReactNode } from 'react';
+/**
+ * Sistema de manejo de errores unificado para IMPULSE
+ * Reemplaza manejo inconsistente de errores
+ */
+
+import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { logger } from '../utils/logger.ts';
 
 interface ErrorBoundaryState {
   hasError: boolean;
-  error?: Error;
-  errorInfo?: any;
+  error: Error | null;
+  errorInfo: any;
+  errorId: string;
 }
 
 interface ErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
+  onError?: (error: Error, errorInfo: any) => void;
+  level?: 'page' | 'component' | 'critical';
 }
 
-class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false };
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      errorId: ''
+    };
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error };
+  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+    const errorId = `ERR_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return {
+      hasError: true,
+      error,
+      errorId
+    };
   }
 
-  componentDidCatch(error: Error, errorInfo: any) {
-    console.error('Error capturado por ErrorBoundary:', error, errorInfo);
-    this.setState({ errorInfo });
+  componentDidCatch(error: Error, errorInfo: any): void {
+    const { onError, level = 'component' } = this.props;
+    
+    // Log del error usando sistema profesional
+    logger.error(
+      `ErrorBoundary caught error at ${level} level`,
+      'ERROR_BOUNDARY',
+      {
+        error: error.message,
+        stack: error.stack,
+        errorInfo,
+        errorId: this.state.errorId,
+        level
+      }
+    );
+
+    // Callback personalizado
+    if (onError) {
+      onError(error, errorInfo);
+    }
+
+    // Actualizar estado
+    this.setState({
+      errorInfo
+    });
+
+    // Para errores críticos, reportar al sistema de monitoreo
+    if (level === 'critical') {
+      this.reportCriticalError(error, errorInfo);
+    }
   }
+
+  private reportCriticalError(error: Error, errorInfo: any): void {
+    // Implementar reporte a sistema de monitoreo externo
+    try {
+      fetch('/api/errors/critical', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          error: error.message,
+          stack: error.stack,
+          errorInfo,
+          timestamp: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          userId: this.getCurrentUserId()
+        })
+      }).catch(() => {
+        // Silencioso en caso de fallo
+      });
+    } catch {
+      // Silencioso en caso de fallo
+    }
+  }
+
+  private getCurrentUserId(): string | null {
+    try {
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      return user.id || null;
+    } catch {
+      return null;
+    }
+  }
+
+  private handleRetry = () => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      errorId: ''
+    });
+  };
 
   handleReload = () => {
     window.location.reload();
@@ -35,66 +122,91 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   };
 
   render() {
-    if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
+    const { hasError, error, errorId } = this.state;
+    const { children, fallback, level = 'component' } = this.props;
+
+    if (hasError) {
+      // Fallback personalizado
+      if (fallback) {
+        return fallback;
       }
 
-      return (
-        <div className="error-boundary">
-          <div className="error-container">
-            <div className="error-icon">⚠️</div>
-            <h1 className="error-title">¡Oops! Algo salió mal</h1>
-            <p className="error-message">
-              Ha ocurrido un error inesperado. Por favor, intenta recargar la página 
-              o contacta con soporte si el problema persiste.
-            </p>
-            
-            {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details className="error-details">
-                <summary>Detalles del error (solo en desarrollo)</summary>
-                <pre className="error-stack">
-                  {this.state.error.toString()}
-                  {this.state.errorInfo?.componentStack}
-                </pre>
-              </details>
-            )}
-            
-            <div className="error-actions">
-              <button 
-                className="btn btn-primary"
-                onClick={this.handleReload}
-                aria-label="Recargar página"
-              >
-                🔄 Recargar Página
-              </button>
-              <button 
-                className="btn btn-secondary"
-                onClick={this.handleGoHome}
-                aria-label="Ir al inicio"
-              >
-                🏠 Ir al Inicio
-              </button>
-            </div>
-            
-            <div className="error-support">
-              <p className="support-text">
-                Si necesitas ayuda, contacta con soporte:
-              </p>
-              <a 
-                href="mailto:soporte@impulse.dev" 
-                className="support-link"
-                aria-label="Contactar soporte por email"
-              >
-                📧 soporte@impulse.dev
-              </a>
-            </div>
-          </div>
-        </div>
-      );
+      // UI por defecto según nivel
+      return this.renderErrorUI(level, error, errorId);
     }
 
-    return this.props.children;
+    return children;
+  }
+
+  private renderErrorUI(level: string, error: Error | null, errorId: string): ReactNode {
+    const isCritical = level === 'critical';
+    const isPage = level === 'page';
+
+    return (
+      <div className={`error-boundary ${level}`}>
+        <div className="error-container">
+          <div className="error-icon">
+            {isCritical ? '💥' : isPage ? '📄' : '⚠️'}
+          </div>
+          
+          <h2 className="error-title">
+            {isCritical 
+              ? 'Error Crítico' 
+              : isPage 
+                ? 'Error en la Página' 
+                : 'Algo salió mal'
+            }
+          </h2>
+          
+          <p className="error-message">
+            {isCritical 
+              ? 'Se ha producido un error crítico en la aplicación.' 
+              : isPage
+                ? 'No se pudo cargar esta página correctamente.'
+                : 'Este componente no está funcionando correctamente.'
+            }
+          </p>
+
+          {error && window.location.hostname === 'localhost' && (
+            <details className="error-details">
+              <summary>Detalles técnicos (solo en desarrollo)</summary>
+              <pre className="error-stack">
+                {error.message}
+                {error.stack && `\n\n${error.stack}`}
+              </pre>
+              <p className="error-id">ID del Error: {errorId}</p>
+            </details>
+          )}
+
+          <div className="error-actions">
+            {!isCritical && (
+              <button 
+                onClick={this.handleRetry}
+                className="btn btn-primary"
+              >
+                🔄 Reintentar
+              </button>
+            )}
+            
+            <button 
+              onClick={this.handleReload}
+              className={`btn ${isCritical ? 'btn-primary' : 'btn-secondary'}`}
+            >
+              🔄 Recargar página
+            </button>
+            
+            {isCritical && (
+              <button 
+                onClick={() => window.location.href = '/'}
+                className="btn btn-outline"
+              >
+                🏠 Ir al inicio
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   }
 }
 

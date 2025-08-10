@@ -19,10 +19,15 @@ spring:
   profiles:
     active: dev
 
+# Configuración JWT (compatibilidad legacy)
 jwt:
-  secret: ${JWT_SECRET:cambia-esto-por-un-secreto-seguro}
-  expiration: ${JWT_EXPIRATION:3600000} # 1 hora en milisegundos
+  secret: ${JWT_SECRET:impulse-enterprise-jwt-secret-key-256-bits-minimum-required-for-security}
+  expiration: ${JWT_EXPIRATION:900000} # 15 minutos para tokens de acceso
 
+# Variables de entorno para configuración empresarial
+# FRONTEND_URL, PRODUCTION_MODE, COOKIE_SECURE, COOKIE_DOMAIN
+      
 logging:
   level:
     root: INFO
+    '[com.impulse.common.security]': DEBUG # Debug para autenticación empresarial

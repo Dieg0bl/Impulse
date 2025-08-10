@@ -1,4 +1,5 @@
 // Mock Auth Service para compilación exitosa
+import { logger } from '../utils/logger.ts';
 
 export const getToken = (): string | null => {
   return localStorage.getItem('authToken');
@@ -36,7 +37,7 @@ export const login = async (email: string, password: string) => {
       throw new Error('Login failed');
     }
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Error en login', 'AUTH', error);
     throw error;
   }
 };
@@ -58,7 +59,7 @@ export const validateToken = async (token: string) => {
       throw new Error('Token validation failed');
     }
   } catch (error) {
-    console.error('Token validation error:', error);
+    logger.error('Error en validación de token', 'AUTH', error);
     throw error;
   }
 };

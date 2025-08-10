@@ -112,4 +112,27 @@ public class UsuarioService {
             .map(UsuarioMapper::toDTO)
             .toList();
     }
+
+    /**
+     * Busca un usuario por email para autenticación.
+     * @param email Email del usuario
+     * @return UsuarioDTO o null si no existe
+     */
+    public UsuarioDTO buscarPorEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email);
+        if (usuario == null || usuario.getDeletedAt() != null) {
+            return null; // Usuario no existe o está eliminado
+        }
+        return UsuarioMapper.toDTO(usuario);
+    }
+
+    /**
+     * Busca un usuario por ID devolviendo DTO o null (uso interno autenticación tokens).
+     */
+    public UsuarioDTO buscarPorId(Long id){
+        return usuarioRepository.findById(id)
+            .filter(u -> u.getDeletedAt() == null)
+            .map(UsuarioMapper::toDTO)
+            .orElse(null);
+    }
 }

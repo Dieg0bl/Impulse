@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
         {/* Sección principal */}
         <div className="footer-main">
           <div className="footer-brand">
-            <span className="footer-logo" role="img" aria-label="Cohete">🚀</span>
+              <img className="footer-logo" src="data:image/svg+xml,%F0%9F%9A%80" alt="Cohete" style={{width:'1.5em',height:'1.5em',display:'inline'}} />
             <span className="footer-title">IMPULSE</span>
             <p className="footer-description">
               Plataforma de gamificación educativa con validación humana real y presión social auténtica.

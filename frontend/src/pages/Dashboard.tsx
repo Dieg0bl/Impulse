@@ -3,6 +3,8 @@ import { useAuth } from '../hooks/useAuth.ts';
 import { useReto, Reto } from '../hooks/useReto.ts';
 import Button from '../components/Button.tsx';
 import Modal from '../components/Modal.tsx';
+import { logger } from '../utils/logger.ts';
+import ViralShare from '../components/ViralShare';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -39,7 +41,15 @@ const Dashboard: React.FC = () => {
       });
       setShowCreateModal(false);
     } catch (error) {
-      console.error('Error creando reto:', error);
+      logger.error(
+        'Error al crear nuevo reto',
+        'Dashboard',
+        {
+          titulo: formData.titulo,
+          dificultad: formData.dificultad,
+          error: error instanceof Error ? error.message : String(error)
+        }
+      );
     }
   };
 
@@ -62,7 +72,16 @@ const Dashboard: React.FC = () => {
       setShowReportModal(false);
       setSelectedReto(null);
     } catch (error) {
-      console.error('Error reportando avance:', error);
+      logger.error(
+        'Error al reportar avance del reto',
+        'Dashboard',
+        {
+          retoId: selectedReto?.id,
+          retoTitulo: selectedReto?.titulo,
+          evidenciaTipo: formData.evidenciaTipo,
+          error: error instanceof Error ? error.message : String(error)
+        }
+      );
     }
   };
 
@@ -83,33 +102,43 @@ const Dashboard: React.FC = () => {
 
   if (loading && retos.length === 0) {
     return (
-      <div className="dashboard-loading">
-        <div className="spinner" role="status" aria-label="Cargando dashboard...">
-          🚀 Cargando tu dashboard...
+      <div className="page-container">
+        <div className="page-content">
+          <div className="loading-container">
+            <output className="spinner" aria-label="Cargando dashboard...">
+              🚀 Cargando tu dashboard...
+            </output>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="dashboard">
-      {/* Header del Dashboard */}
-      <div className="dashboard-header">
-        <div className="welcome-section">
-          <h1 className="dashboard-title">
-            ¡Hola, {user?.nombre}! 👋
-          </h1>
-          <p className="dashboard-subtitle">
-            Aquí tienes el resumen de tus retos y progreso.
-          </p>
-        </div>
-        
-        <div className="dashboard-actions">
-          <Button onClick={() => setShowCreateModal(true)}>
-            🎯 Crear Nuevo Reto
-          </Button>
-        </div>
-      </div>
+    <div className="page-container">
+      <div className="page-content">
+        <header className="internal-header">
+          <div className="internal-header-content">
+            <div className="internal-logo">{/* div en lugar de a href="#" */}
+              <span className="internal-logo-icon">⚡</span>
+              <span>IMPULSE</span>
+            </div>
+            <div className="page-actions">
+              <Button onClick={() => setShowCreateModal(true)}>
+                🎯 Crear Nuevo Reto
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        <main className="page-main">
+          {/* Welcome section */}
+          <div className="content-card">
+            <h1>¡Hola, {user?.nombre}! 👋</h1>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 0 }}>
+              Aquí tienes el resumen de tus retos y progreso.
+            </p>
+          </div>
 
       {/* Estadísticas */}
       <div className="stats-grid">
@@ -146,6 +175,10 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
+      <div style={{marginTop:24}}>
+  {user?.id && <ViralShare referrerId={Number(user.id)} />}
+      </div>
+
       {/* Lista de Retos */}
       <div className="retos-section">
         <h2 className="section-title">Mis Retos</h2>
@@ -179,17 +212,14 @@ const Dashboard: React.FC = () => {
                 <p className="reto-description">{reto.descripcion}</p>
 
                 <div className="reto-progress">
-                  <div className="progress-bar">
-                    <div 
-                      className="progress-fill" 
-                      style={{ width: `${reto.progreso}%` }}
-                      role="progressbar"
-                      aria-valuenow={reto.progreso}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-label={`Progreso: ${reto.progreso}%`}
-                    ></div>
-                  </div>
+                  <progress
+                    className="progress-bar"
+                    value={reto.progreso}
+                    max={100}
+                    aria-label={`Progreso: ${reto.progreso}%`}
+                  >
+                    {reto.progreso}%
+                  </progress>
                   <span className="progress-text">{reto.progreso}%</span>
                 </div>
 
@@ -252,6 +282,8 @@ const Dashboard: React.FC = () => {
           />
         </Modal>
       )}
+        </main>
+      </div>
     </div>
   );
 };

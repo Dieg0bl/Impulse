@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../contexts/AppContext.tsx';
 import Button from '../components/Button.tsx';
+import { logger } from '../utils/logger.ts';
 
 const Login: React.FC = () => {
   const { state, login, navigate } = useAppContext();
@@ -29,7 +30,14 @@ const Login: React.FC = () => {
     try {
       await login(formData.email, formData.password);
     } catch (error) {
-      console.error('Error en login:', error);
+      logger.error(
+        'Error durante el proceso de login',
+        'LoginPage',
+        {
+          email: formData.email,
+          error: error instanceof Error ? error.message : String(error)
+        }
+      );
     }
   };
 
@@ -38,10 +46,17 @@ const Login: React.FC = () => {
       {/* Header simple para páginas de auth */}
       <header className="auth-header">
         <div className="auth-header-content">
-          <div className="logo" onClick={() => navigate('home')} style={{ cursor: 'pointer' }}>
+          <button
+            className="logo"
+            onClick={() => navigate('home')}
+            style={{ cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
+            aria-label="Ir al inicio"
+            tabIndex={0}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate('home'); }}
+          >
             <span className="logo-icon">⚡</span>
             <span className="logo-text">IMPULSE</span>
-          </div>
+          </button>
         </div>
       </header>
 
@@ -180,9 +195,9 @@ const Login: React.FC = () => {
         <div className="auth-footer-content">
           <p>&copy; 2024 IMPULSE. Convierte tus retos en realidad.</p>
           <div className="footer-links">
-            <a href="/privacy" className="footer-link">Privacidad</a>
-            <a href="/terms" className="footer-link">Términos</a>
-            <a href="mailto:soporte@impulse.dev" className="footer-link">Soporte</a>
+            <a href="/privacy" className="auth-footer-link">Privacidad</a>
+            <a href="/terms" className="auth-footer-link">Términos</a>
+            <a href="mailto:soporte@impulse.dev" className="auth-footer-link">Soporte</a>
           </div>
         </div>
       </footer>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../contexts/AppContext.tsx';
 import Button from '../components/Button.tsx';
+import { logger } from '../utils/logger.ts';
 
 interface RetoDetalle {
   id: string;
@@ -79,7 +80,7 @@ const RetoDetalle: React.FC = () => {
         
         setReto(mockReto);
       } catch (error) {
-        console.error('Error al cargar reto:', error);
+        logger.error('Error al cargar reto', 'RETO_DETALLE', error);
       } finally {
         setLoading(false);
       }
@@ -90,10 +91,14 @@ const RetoDetalle: React.FC = () => {
 
   const handleUnirseReto = async () => {
     try {
-      console.log('Uniéndose al reto...');
+      logger.info('Usuario iniciando unión al reto', 'RETO_DETALLE', { retoId });
       // Lógica para unirse al reto
+      logger.info('Usuario se unió exitosamente al reto', 'RETO_DETALLE', { retoId });
     } catch (error) {
-      console.error('Error al unirse al reto:', error);
+      logger.error('Error al unirse al reto', 'RETO_DETALLE', { 
+        retoId, 
+        error: error instanceof Error ? error.message : String(error) 
+      });
     }
   };
 

@@ -11,8 +11,10 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
   if (!isOpen) return null;
 
   return (
-    <div 
+    <button
+      type="button"
       className="modal-overlay"
+      aria-label="Cerrar modal"
       style={{
         position: 'fixed',
         top: 0,
@@ -26,8 +28,14 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         zIndex: 1000
       }}
       onClick={onClose}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
+          onClose();
+        }
+      }}
+      tabIndex={0}
     >
-      <div 
+      <div
         className="modal-content"
         style={{
           backgroundColor: '#fff',
@@ -38,9 +46,9 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
           overflow: 'auto',
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)'
         }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
-        <div 
+        <div
           className="modal-header"
           style={{
             padding: '1rem 1.5rem',
@@ -69,7 +77,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
           {children}
         </div>
       </div>
-    </div>
+    </button>
   );
 };
 

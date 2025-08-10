@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -27,6 +28,23 @@ public class RootController {
         }
         // Para navegadores normales, sirve el frontend HTML
         return "index.html";
+    }
+
+    @GetMapping(value = "/robots.txt", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String robots(){
+        return "User-agent: *\nAllow: /\nSitemap: /sitemap.xml\n";
+    }
+
+    @GetMapping(value = "/sitemap.xml", produces = MediaType.APPLICATION_XML_VALUE)
+    public String sitemap(){
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">" +
+                url("/") + url("/login") + url("/register") + url("/onboarding") +
+                "</urlset>";
+    }
+
+    private String url(String path){
+        return "<url><loc>https://app.impulse.local"+path+"</loc></url>";
     }
 
     @GetMapping("/api/status")

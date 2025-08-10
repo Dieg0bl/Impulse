@@ -1,6 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import Header from '../components/Header.tsx';
-import Footer from '../components/Footer.tsx';
+import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button.tsx';
 import { useAppContext } from '../contexts/AppContext.tsx';
 
@@ -18,7 +17,8 @@ interface Reto {
 }
 
 const MisRetos: React.FC = () => {
-  const { state, navigate } = useAppContext();
+  const navigate = useNavigate();
+  const { state } = useAppContext();
   const { currentUser: user } = state;
   const [retos, setRetos] = useState<Reto[]>([]);
   const [filtro, setFiltro] = useState<string>('TODOS');
@@ -75,53 +75,98 @@ const MisRetos: React.FC = () => {
     }, 1000);
   }, [user, navigate]);
 
-  const retosFiltrados = retos.filter(reto => 
+  const retosFiltrados = retos.filter(reto =>
     filtro === 'TODOS' || reto.estado === filtro
   );
 
-  const getEstadoColor = (estado: string) => {
+    const getEstadoColor = (estado: string) => {
     switch (estado) {
-      case 'ACTIVO': return 'text-green-600 bg-green-100';
-      case 'COMPLETADO': return 'text-blue-600 bg-blue-100';
-      case 'PAUSADO': return 'text-yellow-600 bg-yellow-100';
-      case 'CANCELADO': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'ACTIVO': return 'bg-green-100 text-green-800';
+      case 'COMPLETADO': return 'bg-blue-100 text-blue-800';
+      case 'PAUSADO': return 'bg-yellow-100 text-yellow-800';
+      case 'CANCELADO': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('es-ES', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   if (!user) return null;
 
   return (
-    <div className="page">
-      <Header />
-      <main className="main-content">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold">Mis Retos</h1>
-            <Button 
-              variant="primary" 
-              onClick={() => navigate('/retos/nuevo')}
-            >
-              + Crear Reto
-            </Button>
+    <div className="page-container">
+      <div className="page-content">
+        <header className="internal-header">
+          <div className="internal-header-content">
+            <div className="internal-logo">
+              <span className="internal-logo-icon">⚡</span>
+              <span>IMPULSE</span>
+            </div>
+            <div className="page-actions">
+              <Button
+                variant="primary"
+                onClick={() => navigate('/retos/nuevo')}
+              >
+                + Crear Reto
+              </Button>
+            </div>
+          </div>
+        </header>
+
+        <main className="page-main">
+          <div className="content-card">
+            <h1>🎯 Mis Retos</h1>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 0 }}>
+              Gestiona y da seguimiento a todos tus retos personales
+            </p>
+          </div>
+
+          {/* Stats cards */}
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stat-value">{retosFiltrados.filter(r => r.estado === 'ACTIVO').length}</div>
+              <div className="stat-label">Activos</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-value">{retosFiltrados.filter(r => r.estado === 'COMPLETADO').length}</div>
+              <div className="stat-label">Completados</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-value">{retosFiltrados.reduce((total, reto) => total + reto.puntos, 0)}</div>
+              <div className="stat-label">Puntos Totales</div>
+            </div>
           </div>
 
           {/* Filtros */}
-          <div className="mb-6">
-            <div className="flex space-x-2">
-              {['TODOS', 'ACTIVO', 'COMPLETADO', 'PAUSADO'].map(estado => (
-                <button
-                  key={estado}
-                  onClick={() => setFiltro(estado)}
-                  className={`px-4 py-2 rounded-lg transition-colors ${
-                    filtro === estado
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
-                >
-                  {estado === 'TODOS' ? 'Todos' : estado.charAt(0) + estado.slice(1).toLowerCase()}
-                </button>
-              ))}
+          <div className="content-card">
+            <h3>Filtros</h3>
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+              {['TODOS', 'ACTIVO', 'COMPLETADO', 'PAUSADO'].map(estado => {
+                const isActive = filtro === estado;
+                const label = estado === 'TODOS' ? 'Todos' : estado.charAt(0) + estado.slice(1).toLowerCase();
+                return (
+                  <button
+                    key={estado}
+                    onClick={() => setFiltro(estado)}
+                    className={`status-badge ${isActive ? 'active' : ''}`}
+                    style={{
+                      background: isActive ? 'var(--gradient-primary)' : 'rgba(102, 126, 234, 0.1)',
+                      color: isActive ? 'white' : 'var(--color-primary)',
+                      border: 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -133,14 +178,20 @@ const MisRetos: React.FC = () => {
             </div>
           ) : retosFiltrados.length === 0 ? (
             <div className="text-center py-12">
-              <h3 className="text-xl font-semibold mb-4">No tienes retos {filtro.toLowerCase()}</h3>
-              <p className="text-gray-600 mb-6">¡Crea tu primer reto y comienza tu journey!</p>
-              <Button 
-                variant="primary" 
-                onClick={() => navigate('/retos/nuevo')}
-              >
-                Crear Mi Primer Reto
-              </Button>
+              <h3 className="text-xl font-semibold mb-4">
+                {filtro === 'TODOS' ? '¡Crea tu primer reto!' : `No tienes retos ${filtro.toLowerCase()}`}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {filtro === 'TODOS' 
+                  ? 'Comienza tu viaje de crecimiento personal creando tu primer reto'
+                  : 'Cambia el filtro para ver tus otros retos'
+                }
+              </p>
+              {filtro === 'TODOS' && (
+                <Button onClick={() => navigate('/crear-reto')}>
+                  ✨ Crear mi primer reto
+                </Button>
+              )}
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -152,42 +203,38 @@ const MisRetos: React.FC = () => {
                       {reto.estado}
                     </span>
                   </div>
-                  
                   <p className="text-gray-600 mb-4 line-clamp-2">{reto.descripcion}</p>
-                  
                   <div className="mb-4">
                     <div className="flex justify-between text-sm mb-1">
                       <span>Progreso</span>
                       <span>{reto.progreso}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
+                      <div
                         className="bg-blue-500 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${reto.progreso}%` }}
                       ></div>
                     </div>
                   </div>
-
                   <div className="text-sm text-gray-500 mb-4">
                     <p><strong>Categoría:</strong> {reto.categoria}</p>
                     <p><strong>Dificultad:</strong> {reto.dificultad}</p>
                     <p><strong>Puntos:</strong> {reto.puntos}</p>
-                    <p><strong>Fin:</strong> {new Date(reto.fechaFin).toLocaleDateString()}</p>
+                    <p><strong>Fin:</strong> {formatDate(reto.fechaFin)}</p>
                   </div>
-
                   <div className="flex space-x-2">
-                    <Button 
-                      variant="primary" 
-                      size="sm"
-                      onClick={() => navigate(`/retos/${reto.id}`)}
+                    <Button
+                      variant="primary"
+                      size="small"
+                      onClick={() => navigate(`/reto/${reto.id}`)}
                     >
                       Ver Detalles
                     </Button>
                     {reto.estado === 'ACTIVO' && (
-                      <Button 
-                        variant="secondary" 
-                        size="sm"
-                        onClick={() => navigate(`/retos/${reto.id}/evidencia`)}
+                      <Button
+                        variant="secondary"
+                        size="small"
+                        onClick={() => navigate(`/reportar-avance?reto=${reto.id}`)}
                       >
                         Subir Evidencia
                       </Button>
@@ -197,40 +244,8 @@ const MisRetos: React.FC = () => {
               ))}
             </div>
           )}
-
-          {/* Estadísticas resumidas */}
-          {!loading && retos.length > 0 && (
-            <div className="mt-12 bg-gray-50 rounded-lg p-6">
-              <h3 className="text-lg font-semibold mb-4">Estadísticas</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-blue-600">{retos.length}</div>
-                  <div className="text-sm text-gray-600">Total Retos</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-green-600">
-                    {retos.filter(r => r.estado === 'COMPLETADO').length}
-                  </div>
-                  <div className="text-sm text-gray-600">Completados</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-yellow-600">
-                    {retos.filter(r => r.estado === 'ACTIVO').length}
-                  </div>
-                  <div className="text-sm text-gray-600">Activos</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-purple-600">
-                    {retos.reduce((total, reto) => total + reto.puntos, 0)}
-                  </div>
-                  <div className="text-sm text-gray-600">Puntos Totales</div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </main>
-      <Footer />
+        </main>
+      </div>
     </div>
   );
 };

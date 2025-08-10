@@ -39,8 +39,8 @@ const Home: React.FC = () => {
         <header className="hero hero-section">
           <div className="hero-content">
             <h1 className="hero-title">
-              Convierte tus <span className="text-gradient">RETOS</span> en 
-              <span className="text-gradient"> REALIDAD</span>
+              Convierte tus <span className="text-gradient">RETOS</span> en{' '}
+              <span className="text-gradient">REALIDAD</span>
             </h1>
             <p className="hero-subtitle">
               🎯 <strong>PRESIÓN SOCIAL REAL</strong> • 👥 <strong>VALIDACIÓN HUMANA AUTÉNTICA</strong> • 🚀 <strong>RESULTADOS MEDIBLES</strong>
@@ -74,7 +74,7 @@ const Home: React.FC = () => {
             <h2 className="section-title">¿Cómo funciona IMPULSE?</h2>
             <div className="features-grid">
               <article className="feature-card">
-                <span className="feature-icon" role="img" aria-label="Objetivo">🎯</span>
+                <img className="feature-icon" src="/assets/objetivo.svg" alt="Objetivo" />
                 <h3>Define tu RETO</h3>
                 <p>
                   Establece objetivos claros, medibles y con fecha límite.
@@ -82,7 +82,7 @@ const Home: React.FC = () => {
                 </p>
               </article>
               <article className="feature-card">
-                <span className="feature-icon" role="img" aria-label="Personas">👥</span>
+                <img className="feature-icon" src="/assets/personas.svg" alt="Personas" />
                 <h3>Elige VALIDADORES</h3>
                 <p>
                   Selecciona personas de confianza que verificarán tu progreso.
@@ -90,7 +90,7 @@ const Home: React.FC = () => {
                 </p>
               </article>
               <article className="feature-card">
-                <span className="feature-icon" role="img" aria-label="Evidencia">📸</span>
+                <img className="feature-icon" src="/assets/evidencia.svg" alt="Evidencia" />
                 <h3>Reporta EVIDENCIAS</h3>
                 <p>
                   Sube fotos, videos o textos que demuestren tu avance.
@@ -98,7 +98,7 @@ const Home: React.FC = () => {
                 </p>
               </article>
               <article className="feature-card">
-                <span className="feature-icon" role="img" aria-label="Validación">✅</span>
+                <img className="feature-icon" src="/assets/validacion.svg" alt="Validación" />
                 <h3>Recibe VALIDACIÓN</h3>
                 <p>
                   Tus validadores aprueban o rechazan tu progreso.
@@ -106,7 +106,7 @@ const Home: React.FC = () => {
                 </p>
               </article>
               <article className="feature-card">
-                <span className="feature-icon" role="img" aria-label="Recompensa">🏆</span>
+                <img className="feature-icon" src="/assets/recompensa.svg" alt="Recompensa" />
                 <h3>Obtén RECOMPENSAS</h3>
                 <p>
                   Gana puntos, badges y reconocimiento real.
@@ -114,7 +114,7 @@ const Home: React.FC = () => {
                 </p>
               </article>
               <article className="feature-card">
-                <span className="feature-icon" role="img" aria-label="Consecuencias">⚖️</span>
+                <img className="feature-icon" src="/assets/consecuencias.svg" alt="Consecuencias" />
                 <h3>Asume CONSECUENCIAS</h3>
                 <p>
                   Define qué pasa si no cumples.

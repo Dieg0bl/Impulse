@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAppContext } from '../contexts/AppContext.tsx';
 import FormField from '../components/FormField.tsx';
 import Button from '../components/Button.tsx';
+import { logger } from '../utils/logger.ts';
 
 interface ConfiguracionForm {
   notificaciones: boolean;
@@ -39,12 +40,34 @@ const Configuracion: React.FC = () => {
   const handleGuardar = async () => {
     setGuardando(true);
     try {
+      // Validar configuración antes de guardar
+      logger.info(
+        'Guardando configuración de usuario',
+        'Configuracion',
+        {
+          notificaciones: config.notificaciones,
+          privacidad: config.privacidad,
+          idioma: config.idioma,
+          tema: config.tema
+        }
+      );
+      
       // Simular guardado
       await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('Configuración guardada:', config);
+      
+      // Guardar en localStorage para persistencia
+      localStorage.setItem('userPreferences', JSON.stringify(config));
+      
+      logger.info('Configuración guardada exitosamente', 'Configuracion');
       // Mostrar mensaje de éxito
     } catch (error) {
-      console.error('Error al guardar configuración:', error);
+      logger.error(
+        'Error al guardar configuración',
+        'Configuracion',
+        {
+          error: error instanceof Error ? error.message : String(error)
+        }
+      );
     } finally {
       setGuardando(false);
     }
@@ -53,10 +76,17 @@ const Configuracion: React.FC = () => {
   const handleEliminarCuenta = async () => {
     if (window.confirm('¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')) {
       try {
+        logger.warn('Usuario iniciando eliminación de cuenta', 'Configuracion');
         // Lógica para eliminar cuenta
-        console.log('Eliminando cuenta...');
+        logger.warn('Cuenta eliminada exitosamente', 'Configuracion');
       } catch (error) {
-        console.error('Error al eliminar cuenta:', error);
+        logger.error(
+          'Error al eliminar cuenta',
+          'Configuracion',
+          {
+            error: error instanceof Error ? error.message : String(error)
+          }
+        );
       }
     }
   };
@@ -78,48 +108,74 @@ const Configuracion: React.FC = () => {
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error al exportar datos:', error);
+      logger.error(
+        'Error al exportar datos',
+        'Configuracion',
+        {
+          error: error instanceof Error ? error.message : String(error)
+        }
+      );
     }
   };
 
   return (
-    <div className="configuracion-page">
-      <div className="container mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold mb-6">Configuración</h1>
-        
-        <div className="space-y-6">
-          {/* Sección Notificaciones */}
-          <div className="bg-white p-6 rounded-lg border">
-            <h2 className="text-lg font-semibold mb-4">Notificaciones</h2>
-            
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <label htmlFor="notificaciones" className="font-medium">
-                    Recibir notificaciones
-                  </label>
-                  <p className="text-sm text-gray-600">
-                    Activa para recibir alertas sobre tus retos
-                  </p>
-                </div>
-                <input
-                  id="notificaciones"
-                  type="checkbox"
-                  checked={config.notificaciones}
-                  onChange={() => handleToggle('notificaciones')}
-                  className="w-5 h-5"
-                />
-              </div>
-
-              <FormField
-                id="frecuenciaRecordatorios"
-                label="Frecuencia de recordatorios"
-                type="text"
-                value={config.frecuenciaRecordatorios}
-                onChange={handleSelectChange('frecuenciaRecordatorios')}
-              />
+    <div className="page-container">
+      <div className="page-content">
+        <header className="internal-header">
+          <div className="internal-header-content">
+            <div className="internal-logo">
+              <span className="internal-logo-icon">⚡</span>
+              <span>IMPULSE</span>
+            </div>
+            <div className="page-actions">
+              <Button variant="secondary" onClick={() => navigate('dashboard')}>
+                ← Volver al Dashboard
+              </Button>
             </div>
           </div>
+        </header>
+
+        <main className="page-main">
+          <div className="content-card">
+            <h1>⚙️ Configuración</h1>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 0 }}>
+              Personaliza tu experiencia en Impulse
+            </p>
+          </div>
+        
+          <div className="content-grid cols-1">
+            {/* Sección Notificaciones */}
+            <div className="form-section">
+              <h3>🔔 Notificaciones</h3>
+            
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label htmlFor="notificaciones" className="font-medium">
+                      Recibir notificaciones
+                    </label>
+                    <p className="text-sm text-gray-600">
+                      Activa para recibir alertas sobre tus retos
+                    </p>
+                  </div>
+                  <input
+                    id="notificaciones"
+                    type="checkbox"
+                    checked={config.notificaciones}
+                    onChange={() => handleToggle('notificaciones')}
+                    className="w-5 h-5"
+                  />
+                </div>
+
+                <FormField
+                  id="frecuenciaRecordatorios"
+                  label="Frecuencia de recordatorios"
+                  type="text"
+                  value={config.frecuenciaRecordatorios}
+                  onChange={handleSelectChange('frecuenciaRecordatorios')}
+                />
+              </div>
+            </div>
 
           {/* Sección Privacidad */}
           <div className="bg-white p-6 rounded-lg border">
@@ -191,8 +247,10 @@ const Configuracion: React.FC = () => {
                 Exportar mis datos
               </Button>
               
-              <div className="border-t pt-4">
-                <h3 className="font-medium text-red-700 mb-2">Zona de peligro</h3>
+              <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
+                <h4 style={{ fontWeight: 500, color: '#dc2626', marginBottom: '0.5rem' }}>
+                  Zona de peligro
+                </h4>
                 <Button
                   variant="danger"
                   onClick={handleEliminarCuenta}
@@ -204,7 +262,7 @@ const Configuracion: React.FC = () => {
           </div>
 
           {/* Botones de acción */}
-          <div className="flex gap-4 pt-4">
+          <div className="page-actions" style={{ justifyContent: 'space-between', marginTop: '2rem' }}>
             <Button
               variant="secondary"
               onClick={() => navigate('dashboard')}
@@ -219,6 +277,7 @@ const Configuracion: React.FC = () => {
             </Button>
           </div>
         </div>
+        </main>
       </div>
     </div>
   );

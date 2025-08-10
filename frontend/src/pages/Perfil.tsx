@@ -128,9 +128,10 @@ const Perfil: React.FC = () => {
 
           <div className="form-grid">
             <div className="form-field">
-              <label>Nombre</label>
+              <label htmlFor="perfil-nombre">Nombre</label>
               {isEditing ? (
                 <input
+                  id="perfil-nombre"
                   type="text"
                   value={formData.nombre}
                   onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
@@ -141,9 +142,10 @@ const Perfil: React.FC = () => {
             </div>
 
             <div className="form-field">
-              <label>Apellidos</label>
+              <label htmlFor="perfil-apellidos">Apellidos</label>
               {isEditing ? (
                 <input
+                  id="perfil-apellidos"
                   type="text"
                   value={formData.apellidos}
                   onChange={(e) => setFormData({ ...formData, apellidos: e.target.value })}
@@ -154,9 +156,10 @@ const Perfil: React.FC = () => {
             </div>
 
             <div className="form-field">
-              <label>Email</label>
+              <label htmlFor="perfil-email">Email</label>
               {isEditing ? (
                 <input
+                  id="perfil-email"
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -167,7 +170,7 @@ const Perfil: React.FC = () => {
             </div>
 
             <div className="form-field">
-              <label>Estado</label>
+              <span className="field-label">Estado</span>
               <span className={`status-badge status-${user.estado.toLowerCase()}`}>
                 {user.estado === 'ACTIVO' && '🟢 Activo'}
                 {user.estado === 'PENDIENTE' && '🟡 Pendiente'}
@@ -202,6 +205,7 @@ const Perfil: React.FC = () => {
                   type="checkbox"
                   checked={formData.consentimientos.cookies}
                   disabled
+                  aria-label="Cookies técnicas (Requerido)"
                 />
                 <span className="consent-text">
                   <strong>Cookies técnicas</strong> (Requerido)
@@ -224,6 +228,7 @@ const Perfil: React.FC = () => {
                     }
                   })}
                   disabled={!isEditing}
+                  aria-label="Analytics y métricas"
                 />
                 <span className="consent-text">
                   <strong>Analytics y métricas</strong>
@@ -246,6 +251,7 @@ const Perfil: React.FC = () => {
                     }
                   })}
                   disabled={!isEditing}
+                  aria-label="Comunicaciones de marketing"
                 />
                 <span className="consent-text">
                   <strong>Comunicaciones de marketing</strong>
@@ -268,6 +274,7 @@ const Perfil: React.FC = () => {
                     }
                   })}
                   disabled={!isEditing}
+                  aria-label="Comunicaciones del sistema"
                 />
                 <span className="consent-text">
                   <strong>Comunicaciones del sistema</strong>

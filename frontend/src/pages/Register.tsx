@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../contexts/AppContext.tsx';
 import Button from '../components/Button.tsx';
+import { logger } from '../utils/logger.ts';
 
 const Register: React.FC = () => {
   const { state, register, navigate } = useAppContext();
@@ -13,7 +14,8 @@ const Register: React.FC = () => {
     nombre: '',
     apellidos: '',
     telefono: '',
-    acceptTerms: false
+  acceptTerms: false,
+  inviteCode: ''
   });
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -67,6 +69,10 @@ const Register: React.FC = () => {
       newErrors.acceptTerms = 'Debes aceptar los términos y condiciones';
     }
 
+    if (formData.inviteCode && formData.inviteCode.length < 6) {
+      newErrors.inviteCode = 'Código de invitación demasiado corto';
+    }
+
     setFormErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -84,9 +90,10 @@ const Register: React.FC = () => {
         nombre: formData.nombre,
         apellidos: formData.apellidos,
         telefono: formData.telefono || undefined,
+        inviteCode: formData.inviteCode || undefined
       });
     } catch (error) {
-      console.error('Error en registro:', error);
+      logger.error('Error en registro', 'AUTH', error);
     }
   };
 
@@ -95,10 +102,17 @@ const Register: React.FC = () => {
       {/* Header simple para páginas de auth */}
       <header className="auth-header">
         <div className="auth-header-content">
-          <div className="logo" onClick={() => navigate('home')} style={{ cursor: 'pointer' }}>
+          <button
+            className="logo"
+            onClick={() => navigate('home')}
+            style={{ cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
+            aria-label="Ir al inicio"
+            tabIndex={0}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate('home'); }}
+          >
             <span className="logo-icon">⚡</span>
             <span className="logo-text">IMPULSE</span>
-          </div>
+          </button>
         </div>
       </header>
 
@@ -191,6 +205,23 @@ const Register: React.FC = () => {
                 <div className="field-help">
                   Para notificaciones importantes por WhatsApp
                 </div>
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="inviteCode" className="form-label">Código de invitación (opcional)</label>
+                <input
+                  id="inviteCode"
+                  type="text"
+                  name="inviteCode"
+                  value={formData.inviteCode}
+                  onChange={handleInputChange}
+                  placeholder="Ingresa tu código si tienes uno"
+                  className={`form-input ${formErrors.inviteCode ? 'error' : ''}`}
+                />
+                {formErrors.inviteCode && (
+                  <div className="field-error">{formErrors.inviteCode}</div>
+                )}
+                <div className="field-help">Nos ayuda a reconocer quién te invitó.</div>
               </div>
 
               <div className="form-row">

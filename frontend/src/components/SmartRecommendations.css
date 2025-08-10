@@ -1,0 +1,321 @@
+/* Smart Recommendations Component Styles */
+
+.smart-recommendations {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  color: white;
+  transition: all 0.3s ease;
+  max-width: 400px;
+}
+
+.smart-recommendations.compact {
+  padding: 12px;
+  margin: 8px 0;
+}
+
+.smart-recommendations:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.recommendations-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.recommendations-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recommendations-header .icon {
+  font-size: 18px;
+}
+
+.dismiss-all-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.dismiss-all-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.recommendations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recommendation-item {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.recommendation-item:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.02);
+}
+
+.recommendation-item:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.recommendation-content {
+  flex: 1;
+}
+
+.recommendation-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.category-badge {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  font-weight: 500;
+}
+
+.category-badge.frecuent {
+  background: rgba(255, 87, 51, 0.3);
+}
+
+.category-badge.role-based {
+  background: rgba(74, 144, 226, 0.3);
+}
+
+.category-badge.contextual {
+  background: rgba(149, 117, 205, 0.3);
+}
+
+.category-badge.trending {
+  background: rgba(46, 204, 113, 0.3);
+}
+
+.recommendation-title .title {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.recommendation-reason {
+  font-size: 12px;
+  opacity: 0.8;
+  line-height: 1.3;
+}
+
+.recommendation-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.priority-indicator {
+  font-size: 16px;
+  animation: sparkle 2s infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+.dismiss-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: background-color 0.2s ease;
+  opacity: 0.7;
+}
+
+.dismiss-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  opacity: 1;
+}
+
+.quick-action {
+  margin-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 12px;
+}
+
+.optimal-route-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  color: white;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.optimal-route-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.optimal-route-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.optimal-route-btn .icon {
+  font-size: 16px;
+}
+
+/* Priority-based styling */
+.recommendation-item.priority-10,
+.recommendation-item.priority-9 {
+  border-left: 3px solid #f39c12;
+}
+
+.recommendation-item.priority-8,
+.recommendation-item.priority-7 {
+  border-left: 3px solid #3498db;
+}
+
+.recommendation-item.priority-6,
+.recommendation-item.priority-5 {
+  border-left: 3px solid #2ecc71;
+}
+
+/* Compact mode adjustments */
+.smart-recommendations.compact .recommendation-item {
+  padding: 8px;
+}
+
+.smart-recommendations.compact .recommendation-title .title {
+  font-size: 13px;
+}
+
+.smart-recommendations.compact .category-badge {
+  font-size: 10px;
+  padding: 1px 4px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .smart-recommendations {
+    margin: 8px;
+    max-width: none;
+  }
+  
+  .recommendation-item {
+    padding: 10px;
+  }
+  
+  .recommendations-header h3 {
+    font-size: 15px;
+  }
+  
+  .recommendation-title .title {
+    font-size: 13px;
+  }
+  
+  .recommendation-reason {
+    font-size: 11px;
+  }
+}
+
+/* Dark mode compatibility */
+@media (prefers-color-scheme: dark) {
+  .smart-recommendations {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  }
+  
+  .recommendation-item {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .recommendation-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* Animation for new recommendations */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.recommendation-item:not(.loaded) {
+  animation: slideInRight 0.3s ease-out;
+}
+
+/* Loading state */
+.recommendations-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+}
+
+.recommendations-loading::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
