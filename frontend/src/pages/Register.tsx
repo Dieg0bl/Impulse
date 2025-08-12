@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useAppContext } from '../contexts/AppContext.tsx';
 import Button from '../components/Button.tsx';
-import { logger } from '../utils/logger.ts';
+import { useRegister } from '../hooks/useRegister';
 
 const Register: React.FC = () => {
-  const { state, register, navigate } = useAppContext();
-  const { loading, errors } = state;
+  const { register, loading, error } = useRegister();
+  const [success, setSuccess] = useState(false);
+  const navigate = (route: string) => window.location.assign(`/${route}`);
   
   const [formData, setFormData] = useState({
     email: '',
@@ -14,8 +14,7 @@ const Register: React.FC = () => {
     nombre: '',
     apellidos: '',
     telefono: '',
-  acceptTerms: false,
-  inviteCode: ''
+    acceptTerms: false
   });
 
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -69,31 +68,18 @@ const Register: React.FC = () => {
       newErrors.acceptTerms = 'Debes aceptar los términos y condiciones';
     }
 
-    if (formData.inviteCode && formData.inviteCode.length < 6) {
-      newErrors.inviteCode = 'Código de invitación demasiado corto';
-    }
-
     setFormErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     try {
-      await register({
-        email: formData.email,
-        nombre: formData.nombre,
-        apellidos: formData.apellidos,
-        telefono: formData.telefono || undefined,
-        inviteCode: formData.inviteCode || undefined
-      });
-    } catch (error) {
-      logger.error('Error en registro', 'AUTH', error);
+      await register(formData.email, formData.password, formData.nombre);
+      setSuccess(true);
+    } catch (err) {
+      // El error ya se maneja en el hook
     }
   };
 
@@ -129,10 +115,16 @@ const Register: React.FC = () => {
 
             {/* Formulario de registro */}
             <form className="auth-form" onSubmit={handleSubmit}>
-              {errors.auth && (
+              {error && (
                 <div className="error-message" role="alert">
                   <span className="error-icon">⚠️</span>
-                  {errors.auth}
+                  {error}
+                </div>
+              )}
+              {success && (
+                <div className="success-message" role="status">
+                  <span className="success-icon">✅</span>
+                  ¡Registro exitoso! Revisa tu correo para verificar tu cuenta.
                 </div>
               )}
 
@@ -207,23 +199,6 @@ const Register: React.FC = () => {
                 </div>
               </div>
 
-              <div className="form-field">
-                <label htmlFor="inviteCode" className="form-label">Código de invitación (opcional)</label>
-                <input
-                  id="inviteCode"
-                  type="text"
-                  name="inviteCode"
-                  value={formData.inviteCode}
-                  onChange={handleInputChange}
-                  placeholder="Ingresa tu código si tienes uno"
-                  className={`form-input ${formErrors.inviteCode ? 'error' : ''}`}
-                />
-                {formErrors.inviteCode && (
-                  <div className="field-error">{formErrors.inviteCode}</div>
-                )}
-                <div className="field-help">Nos ayuda a reconocer quién te invitó.</div>
-              </div>
-
               <div className="form-row">
                 <div className="form-field">
                   <label htmlFor="password" className="form-label">Contraseña *</label>
@@ -286,10 +261,10 @@ const Register: React.FC = () => {
                 type="submit"
                 variant="primary"
                 size="large"
-                disabled={loading.auth}
+                disabled={loading}
                 className="auth-submit-btn"
               >
-                {loading.auth ? '⏳ Creando cuenta...' : '🚀 Crear mi cuenta'}
+                {loading ? '⏳ Creando cuenta...' : '🚀 Crear mi cuenta'}
               </Button>
             </form>
 

@@ -1,18 +1,32 @@
-﻿#  IMPULSE
+﻿
+# Impulse
 
-> **Plataforma de Retos Personales y Validación Comunitaria**
+> **Disclaimer legal:** Este repositorio contiene información y plantillas legales que deben ser completadas con datos reales y validadas por un profesional legal antes de su uso en producción. Todos los campos marcados como `{{CAMPO_PENDIENTE}}` o similares deben ser rellenados con la información real de la empresa, responsable, DPO, domicilio, NIF, contacto, etc. La responsabilidad última de la adecuación legal recae en el responsable del proyecto.
 
-##  Descripción General
 
-IMPULSE es una plataforma innovadora que permite a los usuarios crear y participar en retos personales con validación comunitaria **real**. La diferencia clave está en la presión social auténtica y la validación humana, no simulada.
+Impulse es una plataforma modular y escalable para retos, gamificación y automatización de procesos.
 
-###  **Características Principales**
+## Documentación principal
 
-- **Validación Humana Real**: Sin simulacros, la validación es siempre humana y auditable
-- **Presión Social Auténtica**: El usuario elige validadores y controla la exposición
-- **Gamificación Genuina**: Logros y rankings basados en progreso real
-- **Compliance Total**: GDPR, ISO 27001, ENS - Cumplimiento exhaustivo
-- **Arquitectura Sólida**: React + Spring Boot + MySQL con seguridad avanzada
+- [Guía de Implementación](docs/IMPLEMENTATION_GUIDE.md)
+- [Checklist Go-Live](docs/release/go-live-checklist.md)
+- [Estrategia y Producto](docs/strategy/one-pager.md)
+- [Roadmap](docs/roadmap/roadmap.md)
+- [Seguridad](docs/security/)
+- [Privacidad y Cumplimiento](docs/privacy/)
+- [SRE e Infraestructura](docs/sre/)
+- [Calidad y QA](docs/qa/)
+- [Propiedad y Ownership](docs/ownership/)
+- [Monetización](docs/monetization/)
+- [Compliance](docs/compliance/)
+- [Soporte y Runbooks](docs/support/)
+
+
+**Nota:** Las plantillas legales y de políticas en `/docs/privacy/` y otras carpetas deben ser completadas con los datos reales de la empresa antes de cualquier despliegue en producción. Los campos en blanco o con marcador `{{CAMPO_PENDIENTE}}` indican información pendiente de completar y validar legalmente.
+
+---
+
+> Este README solo contiene resumen y enlaces. Toda la evidencia y detalle está en los documentos enlazados bajo `/docs/`.
 
 ##  **Arquitectura Técnica**
 

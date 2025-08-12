@@ -1,42 +1,24 @@
+
 package com.impulse.domain.evidencia;
+
+import org.mapstruct.*;
+import org.springframework.stereotype.Component;
 
 /**
  * Mapper para Evidencia <-> EvidenciaDTO. Cumple compliance: RGPD, ISO 27001, ENS.
+ * Usa MapStruct para robustez y alineación con la base de datos.
  */
-public class EvidenciaMapper {
-    public static EvidenciaDTO toDTO(Evidencia evidencia) {
-        if (evidencia == null) return null;
-        EvidenciaDTO dto = new EvidenciaDTO();
-        dto.setId(evidencia.getId());
-        dto.setTipo(evidencia.getTipo());
-        dto.setUrl(evidencia.getUrl());
-        dto.setDescripcion(evidencia.getDescripcion());
-        dto.setRetoId(evidencia.getReto() != null ? evidencia.getReto().getId() : null);
-        dto.setValidado(evidencia.getValidado());
-        dto.setCreatedAt(evidencia.getCreatedAt());
-        dto.setUpdatedAt(evidencia.getUpdatedAt());
-        dto.setDeletedAt(evidencia.getDeletedAt());
-        dto.setCreatedBy(evidencia.getCreatedBy());
-        dto.setUpdatedBy(evidencia.getUpdatedBy());
-        return dto;
-    }
-    /**
-     * Convierte un EvidenciaDTO a entidad Evidencia (sin relaciones, que debe gestionar el servicio).
-     */
-    public static Evidencia toEntity(EvidenciaDTO dto) {
-        if (dto == null) return null;
-        Evidencia evidencia = new Evidencia();
-        evidencia.setId(dto.getId());
-        evidencia.setTipo(dto.getTipo());
-        evidencia.setUrl(dto.getUrl());
-        evidencia.setDescripcion(dto.getDescripcion());
-        evidencia.setValidado(dto.getValidado());
-        // Relación reto debe ser gestionada por el servicio
-        evidencia.setCreatedAt(dto.getCreatedAt());
-        evidencia.setUpdatedAt(dto.getUpdatedAt());
-        evidencia.setDeletedAt(dto.getDeletedAt());
-        evidencia.setCreatedBy(dto.getCreatedBy());
-        evidencia.setUpdatedBy(dto.getUpdatedBy());
-        return evidencia;
-    }
+@Mapper(componentModel = "spring", uses = SignedUrlService.class)
+public interface EvidenciaMapper {
+    @Mapping(target="retoId", source="reto.id")
+    @Mapping(target="usuarioId", source="usuario.id")
+    @Mapping(target="validadorId", source="validador.id")
+    @Mapping(target="tipoEvidencia", expression="java(e.getTipoEvidencia().name())")
+    @Mapping(target="kind", expression="java(e.getKind().name())")
+    @Mapping(target="estadoValidacion", expression="java(e.getEstadoValidacion().name())")
+    @Mapping(target="downloadUrl", expression="java(signedUrlService().signDownload(e.getArchivoUrl()))")
+    @Mapping(target="thumbnailUrl", expression="java(signedUrlService().signDownload(e.getArchivoThumbnail()))")
+    EvidenciaDTO toDTO(Evidencia e);
+
+    @ObjectFactory default SignedUrlService signedUrlService(){ return null; }
 }

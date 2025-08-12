@@ -9,6 +9,8 @@ import jakarta.validation.constraints.Size;
  * DTO para solicitudes de registro empresarial con validaciones de seguridad.
  */
 public class RegisterRequest {
+    // Código de invitación opcional
+    private String inviteCode;
     
     @NotBlank(message = "El email es obligatorio")
     @Email(message = "Formato de email inválido")
@@ -30,8 +32,6 @@ public class RegisterRequest {
     
     @AssertTrue(message = "Debe aceptar el tratamiento de datos personales")
     private boolean aceptaDatos;
-    // Código de invitación (opcional para referidos)
-    private String inviteCode;
     
     // Constructor vacío para Jackson
     public RegisterRequest() {}
@@ -44,6 +44,7 @@ public class RegisterRequest {
         this.confirmPassword = confirmPassword;
         this.aceptaTerminos = aceptaTerminos;
         this.aceptaDatos = aceptaDatos;
+    this.inviteCode = null;
     }
     
     // Validación personalizada para contraseñas coincidentes
@@ -101,13 +102,18 @@ public class RegisterRequest {
         this.aceptaDatos = aceptaDatos;
     }
 
-    public String getInviteCode(){ return inviteCode; }
-    public void setInviteCode(String inviteCode){ this.inviteCode = inviteCode; }
+    public String getInviteCode() {
+        return inviteCode;
+    }
+
+    public void setInviteCode(String inviteCode) {
+        this.inviteCode = inviteCode;
+    }
     
     @Override
     public String toString() {
     return "RegisterRequest{email='" + email + "', nombre='" + nombre + 
            "', password='[PROTECTED]', aceptaTerminos=" + aceptaTerminos + 
-           ", aceptaDatos=" + aceptaDatos + ", inviteCode=" + inviteCode + "}";
+           ", aceptaDatos=" + aceptaDatos + ", inviteCode='" + inviteCode + "'}";
     }
 }

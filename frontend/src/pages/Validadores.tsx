@@ -1,94 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth.ts';
 import Button from '../components/Button.tsx';
-
-interface Validador {
-  id: string;
-  nombre: string;
-  email: string;
-  relacion: 'FAMILIAR' | 'AMIGO' | 'MENTOR' | 'COLEGA' | 'OTRO';
-  estado: 'ACTIVO' | 'PENDIENTE' | 'INACTIVO';
-  fechaInvitacion: string;
-  validacionesRealizadas: number;
-  confianza: number; // 1-5
-}
+import { useValidadores } from '../hooks/useValidadores';
 
 const Validadores: React.FC = () => {
   useAuth();
-  const [validadores, setValidadores] = useState<Validador[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const { validadores, loading, error, invitar, eliminar } = useValidadores();
   const [showInviteModal, setShowInviteModal] = useState(false);
 
-  useEffect(() => {
-    obtenerValidadores();
-  }, []);
-
-  const obtenerValidadores = async () => {
+  const invitarValidador = async (email: string) => {
     try {
-      setLoading(true);
-      const response = await fetch('/api/validadores', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setValidadores(data);
-      } else {
-        throw new Error('Error obteniendo validadores');
-      }
+      await invitar(email);
+      setShowInviteModal(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error obteniendo validadores');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const invitarValidador = async (email: string, relacion: string) => {
-    try {
-      const response = await fetch('/api/validadores/invitar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ email, relacion })
-      });
-
-      if (response.ok) {
-        const nuevoValidador = await response.json();
-        setValidadores(prev => [...prev, nuevoValidador]);
-        setShowInviteModal(false);
-      } else {
-        throw new Error('Error enviando invitación');
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error enviando invitación');
+      // Manejo de error opcional
     }
   };
 
   const eliminarValidador = async (validadorId: string) => {
-    if (!window.confirm('¿Estás seguro de que quieres eliminar este validador?')) {
-      return;
-    }
-
+    if (!window.confirm('¿Estás seguro de que quieres eliminar este validador?')) return;
     try {
-      const response = await fetch(`/api/validadores/${validadorId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (response.ok) {
-        setValidadores(prev => prev.filter(v => v.id !== validadorId));
-      } else {
-        throw new Error('Error eliminando validador');
-      }
+      await eliminar(validadorId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error eliminando validador');
+      // Manejo de error opcional
     }
   };
 
@@ -150,7 +84,6 @@ const Validadores: React.FC = () => {
               confirmar si realmente has cumplido con tus objetivos.
             </p>
           </div>
-          
           <div className="info-card">
             <h3>🔍 ¿Cómo funciona?</h3>
             <p>
@@ -200,7 +133,6 @@ const Validadores: React.FC = () => {
                     </span>
                   </div>
                 </div>
-
                 <div className="validador-details">
                   <div className="detail-item">
                     <span className="detail-label">Relación:</span>
@@ -208,21 +140,18 @@ const Validadores: React.FC = () => {
                       {getRelacionEmoji(validador.relacion)} {validador.relacion}
                     </span>
                   </div>
-
                   <div className="detail-item">
                     <span className="detail-label">Confianza:</span>
                     <span className="detail-value">
                       {renderConfianzaStars(validador.confianza)}
                     </span>
                   </div>
-
                   <div className="detail-item">
                     <span className="detail-label">Validaciones:</span>
                     <span className="detail-value">
                       {validador.validacionesRealizadas} realizadas
                     </span>
                   </div>
-
                   <div className="detail-item">
                     <span className="detail-label">Invitado:</span>
                     <span className="detail-value">
@@ -230,14 +159,12 @@ const Validadores: React.FC = () => {
                     </span>
                   </div>
                 </div>
-
                 <div className="validador-actions">
                   {validador.estado === 'PENDIENTE' && (
                     <Button onClick={() => alert('Reenviar invitación (funcionalidad en desarrollo)')}>
                       📧 Reenviar Invitación
                     </Button>
                   )}
-                  
                   <Button 
                     onClick={() => eliminarValidador(validador.id)}
                     className="danger-button"
@@ -297,27 +224,22 @@ const Validadores: React.FC = () => {
   );
 };
 
-// Componente Modal para invitar validador
 const InviteValidadorModal: React.FC<{
-  onInvite: (email: string, relacion: string) => void;
+  onInvite: (email: string) => void;
   onClose: () => void;
 }> = ({ onInvite, onClose }) => {
   const [email, setEmail] = useState('');
-  const [relacion, setRelacion] = useState('AMIGO');
   const [mensaje, setMensaje] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && relacion) {
-      onInvite(email, relacion);
+    if (email) {
+      onInvite(email);
     }
   };
 
   return (
-    <dialog
-      className="modal-overlay"
-      open
-    >
+    <dialog className="modal-overlay" open>
       <button
         type="button"
         className="modal-backdrop"
@@ -345,69 +267,48 @@ const InviteValidadorModal: React.FC<{
           <h2>➕ Invitar Validador</h2>
           <button className="modal-close" onClick={onClose}>✕</button>
         </div>
-
-  {/* ...existing code... */}
-          <div className="form-field">
-            <label htmlFor="email">Email del Validador *</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="validador@ejemplo.com"
-              required
-            />
+        <div className="form-field">
+          <label htmlFor="email">Email del Validador *</label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="validador@ejemplo.com"
+            required
+          />
+        </div>
+        <div className="form-field">
+          <label htmlFor="mensaje">Mensaje Personal (Opcional)</label>
+          <textarea
+            id="mensaje"
+            value={mensaje}
+            onChange={(e) => setMensaje(e.target.value)}
+            placeholder="Añade un mensaje personal para tu invitación..."
+            rows={3}
+            maxLength={500}
+          />
+        </div>
+        <div className="form-info">
+          <div className="info-item">
+            <h4>🔒 ¿Qué verá el validador?</h4>
+            <ul>
+              <li>Solo los retos en los que lo incluyas</li>
+              <li>Solo la información que compartas en reportes</li>
+              <li>Puede aprobar, rechazar o comentar tus avances</li>
+            </ul>
           </div>
-
-          <div className="form-field">
-            <label htmlFor="relacion">Relación *</label>
-            <select
-              id="relacion"
-              value={relacion}
-              onChange={(e) => setRelacion(e.target.value)}
-              required
-            >
-              <option value="FAMILIAR">👨‍👩‍👧‍👦 Familiar</option>
-              <option value="AMIGO">👫 Amigo/a</option>
-              <option value="MENTOR">🎓 Mentor</option>
-              <option value="COLEGA">💼 Colega</option>
-              <option value="OTRO">👤 Otro</option>
-            </select>
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="mensaje">Mensaje Personal (Opcional)</label>
-            <textarea
-              id="mensaje"
-              value={mensaje}
-              onChange={(e) => setMensaje(e.target.value)}
-              placeholder="Añade un mensaje personal para tu invitación..."
-              rows={3}
-              maxLength={500}
-            />
-          </div>
-
-          <div className="form-info">
-            <div className="info-item">
-              <h4>🔒 ¿Qué verá el validador?</h4>
-              <ul>
-                <li>Solo los retos en los que lo incluyas</li>
-                <li>Solo la información que compartas en reportes</li>
-                <li>Puede aprobar, rechazar o comentar tus avances</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="form-actions">
-            <Button type="button" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button type="submit">
-              📧 Enviar Invitación
-            </Button>
-            </div>
-          </form>
-        </dialog>
+        </div>
+        <div className="form-actions">
+          <Button type="button" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button type="submit">
+            📧 Enviar Invitación
+          </Button>
+        </div>
+      </form>
+    </dialog>
   );
 };
 

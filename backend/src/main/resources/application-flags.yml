@@ -1,43 +1,13 @@
-pmf:
-  surveys: true
-activation:
-  quickwin: true
-  onboarding: true
-  habit: true
-experiments:
-  core: true
-growth:
-  viral_share: true
-  referrals: true
-lifecycle:
-  guardrails: true
-support:
-  csat: true
-  nps: true
-press:
-  live_counter: true
-economics:
-  nsm: true
-  counters: true
-  advanced: true
-anti_fraud:
-  referrals: true
-monetization:
-  paywall: true
-launch:
-  banner: false
-validators:
-  enabled: true
-  metrics: true
-privacy:
-  kill_switch: true
-dsa:
-  appeals: true
-cookies:
-  cmp_strict: true
-dac7:
-  enabled: false
-ai:
-  moderation_review_required: true
-communication:
-  email: true
+# Catálogo cerrado (2 niveles) — ver README §4
+plans.pro:                { type: boolean, rollout: prod, owner: "@payments",   expiresOn: 2026-01-31 }
+paywall.second_validator: { type: boolean, rollout: prod, owner: "@growth",     expiresOn: 2026-01-31 }
+notifications.external:   { type: boolean, rollout: prod, owner: "@lifecycle",  expiresOn: 2026-01-31 }
+public.pages:             { type: boolean, rollout: prod, owner: "@privacy",    expiresOn: 2026-01-31 }
+library.templates:        { type: boolean, rollout: prod, owner: "@growth",     expiresOn: 2026-01-31 }
+referrals.enabled:        { type: boolean, rollout: prod, owner: "@growth",     expiresOn: 2026-01-31 }
+connect.enabled:          { type: boolean, rollout: off,  owner: "@payments",   expiresOn: 2026-01-31 }
+dac7.enabled:             { type: boolean, rollout: off,  owner: "@finance",    expiresOn: 2026-01-31 }
+share.wins:               { type: boolean, rollout: prod, owner: "@growth",     expiresOn: 2026-01-31 }
+privacy.kill_switch:      { type: boolean, rollout: prod, owner: "@privacy",    expiresOn: 2026-03-31 }
+exp.trial_copy_kill:      { type: boolean, rollout: off,  owner: "@growth",     expiresOn: 2026-01-31 }
+teams.enabled:            { type: boolean, rollout: off,  owner: "@b2b",        expiresOn: 2026-01-31 }

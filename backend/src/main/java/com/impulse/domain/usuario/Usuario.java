@@ -1,134 +1,121 @@
+
 package com.impulse.domain.usuario;
+
+import java.time.Instant;
+
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.impulse.infrastructure.security.pii.PII;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.List;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 /**
- * Entidad Usuario.
- * Cumple con las directrices de compliance: RGPD, ISO 27001, ENS.
- * Clasificación de campos:
- * - email: público (requiere consentimiento explícito)
- * - password: secreto (cifrado, nunca expuesto)
- * - nombre: público
- * - fechaNacimiento: confidencial (requiere consentimiento)
- * - validadores: público (relación con Tutor)
- * - createdAt, updatedAt, deletedAt: auditoría
+ * Entidad Usuario. Cumple compliance: RGPD, ISO 27001, ENS.
+ * Incluye anotaciones PII, enums, campos de auditoría y estructura JPA moderna.
  */
 @Entity
-@Table(name = "usuarios")
+@Table(name = "Usuario")
+@SQLDelete(sql = "UPDATE Usuario SET deleted_at = NOW(3), estado = 'ELIMINADO' WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Usuario {
 
-    /** Consentimiento RGPD aceptado (obligatorio para operar, compliance) */
-    @Column(nullable = false)
-    private boolean consentimientoAceptado;
+    public enum Estado { ACTIVO, INACTIVO, SUSPENDIDO, ELIMINADO }
+    public enum Visibility { PRIVATE, VALIDATORS, PUBLIC }
 
-    /** Identificador único (público) */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Email del usuario (público, UNIQUE, requiere consentimiento) */
-    @Column(nullable = false, unique = true)
+    @Email @NotBlank
+    @Column(length=254, nullable=false, unique=true)
+    @PII(PII.Level.HIGH)
     private String email;
 
-    /** Contraseña cifrada (secreto, nunca exponer, requiere consentimiento) */
-    @Column(nullable = false)
-    private String password;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name="password_hash", length=60, nullable=false)
+    private String passwordHash;
 
-    /** Nombre del usuario (público) */
-    @Column(nullable = false)
+    @NotBlank @Size(max=100) @PII(PII.Level.LOW)
     private String nombre;
 
-    /** Fecha de nacimiento (confidencial, requiere consentimiento) */
-    @Column(nullable = true)
-    private LocalDateTime fechaNacimiento;
+    @Size(max=150) @PII(PII.Level.LOW)
+    private String apellidos;
 
-    /** Estado del usuario (público: PENDIENTE, ACTIVO, BLOQUEADO, ELIMINADO) */
-    @Column(nullable = false)
-    private String estado;
+    @Size(max=512) @Column(name="photo_url") private String photoUrl;
+    @Size(max=32)  private String phone;
 
-    /** Roles del usuario (público, ej: USER, ADMIN) */
-    @Column(nullable = false, length = 50)
-    private String roles;
+    @NotBlank @Size(max=16) private String locale = "es-ES";
+    @NotBlank @Size(max=64) private String timezone = "Europe/Madrid";
 
-    /**
-     * Relación con Tutor (validadores humanos, público).
-     * Un usuario puede tener varios validadores (N:M).
-     * Justificación: presión social real y validación humana.
-     */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "usuario_tutor",
-        joinColumns = @JoinColumn(name = "usuario_id"),
-        inverseJoinColumns = @JoinColumn(name = "tutor_id")
-    )
-    private List<com.impulse.domain.tutor.Tutor> validadores;
+    @Enumerated(EnumType.STRING) @Column(nullable=false, length=10)
+    private Estado estado = Estado.ACTIVO;
 
-    /** Fecha de creación (auditoría, no modificable) */
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Enumerated(EnumType.STRING) @Column(name="default_visibility", nullable=false, length=12)
+    private Visibility defaultVisibility = Visibility.PRIVATE;
 
-    /** Fecha de última actualización (auditoría) */
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    @Column(name="marketing_opt_in", nullable=false)
+    private boolean marketingOptIn;
 
-    /** Fecha de borrado lógico (auditoría, soft delete) */
-    @Column(nullable = true)
-    private LocalDateTime deletedAt;
+    @Column(name="verified_at") private Instant verifiedAt;
 
-    /** Usuario que creó el registro (auditoría) */
-    @Column(nullable = false)
-    private String createdBy;
+    @Column(name="created_at", nullable=false)  private Instant createdAt;
+    @Column(name="updated_at", nullable=false)  private Instant updatedAt;
+    @Column(name="deleted_at")                  private Instant deletedAt;
 
-    /** Usuario que actualizó el registro (auditoría) */
-    @Column(nullable = false)
-    private String updatedBy;
+    @Version private Long version;
 
-    /** Usuario que borró el registro (auditoría, confidencial, puede ser null) */
-    @Column
-    private String deletedBy;
+    @PrePersist void prePersist(){ var now = Instant.now(); createdAt = now; updatedAt = now; }
+    @PreUpdate  void preUpdate(){ updatedAt = Instant.now(); }
 
-    // Getters y setters omitidos por brevedad. Implementar según estándar JavaBean.
-    // --- Getters y setters obligatorios para mappers, DTOs y JPA ---
+    // Getters y setters estándar
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public String getPasswordHash() { return passwordHash; }
+    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
-    public LocalDateTime getFechaNacimiento() { return fechaNacimiento; }
-    public void setFechaNacimiento(LocalDateTime fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
-    public String getRoles() { return roles; }
-    public void setRoles(String roles) { this.roles = roles; }
-    public List<com.impulse.domain.tutor.Tutor> getValidadores() { return validadores; }
-    public void setValidadores(List<com.impulse.domain.tutor.Tutor> validadores) { this.validadores = validadores; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
-    public LocalDateTime getDeletedAt() { return deletedAt; }
-    public void setDeletedAt(LocalDateTime deletedAt) { this.deletedAt = deletedAt; }
-    public String getCreatedBy() { return createdBy; }
-    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
-    public String getUpdatedBy() { return updatedBy; }
-    public void setUpdatedBy(String updatedBy) { this.updatedBy = updatedBy; }
-    public String getDeletedBy() { return deletedBy; }
-    public void setDeletedBy(String deletedBy) { this.deletedBy = deletedBy; }
-
-    public boolean isConsentimientoAceptado() { return consentimientoAceptado; }
-    public void setConsentimientoAceptado(boolean consentimientoAceptado) { this.consentimientoAceptado = consentimientoAceptado; }
+    public String getApellidos() { return apellidos; }
+    public void setApellidos(String apellidos) { this.apellidos = apellidos; }
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public String getLocale() { return locale; }
+    public void setLocale(String locale) { this.locale = locale; }
+    public String getTimezone() { return timezone; }
+    public void setTimezone(String timezone) { this.timezone = timezone; }
+    public Estado getEstado() { return estado; }
+    public void setEstado(Estado estado) { this.estado = estado; }
+    public Visibility getDefaultVisibility() { return defaultVisibility; }
+    public void setDefaultVisibility(Visibility defaultVisibility) { this.defaultVisibility = defaultVisibility; }
+    public boolean isMarketingOptIn() { return marketingOptIn; }
+    public void setMarketingOptIn(boolean marketingOptIn) { this.marketingOptIn = marketingOptIn; }
+    public Instant getVerifiedAt() { return verifiedAt; }
+    public void setVerifiedAt(Instant verifiedAt) { this.verifiedAt = verifiedAt; }
+    public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+    public Instant getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+    public Instant getDeletedAt() { return deletedAt; }
+    public void setDeletedAt(Instant deletedAt) { this.deletedAt = deletedAt; }
+    public Long getVersion() { return version; }
+    public void setVersion(Long version) { this.version = version; }
 }

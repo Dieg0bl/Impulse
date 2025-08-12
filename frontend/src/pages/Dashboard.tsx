@@ -4,7 +4,6 @@ import { useReto, Reto } from '../hooks/useReto.ts';
 import Button from '../components/Button.tsx';
 import Modal from '../components/Modal.tsx';
 import { logger } from '../utils/logger.ts';
-import ViralShare from '../components/ViralShare';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
@@ -173,10 +172,6 @@ const Dashboard: React.FC = () => {
             <div className="stat-label">Progreso Promedio</div>
           </div>
         </div>
-      </div>
-
-      <div style={{marginTop:24}}>
-  {user?.id && <ViralShare referrerId={Number(user.id)} />}
       </div>
 
       {/* Lista de Retos */}

@@ -1,0 +1,5 @@
+{
+  "name": "Impulse Dev",
+  "image": "mcr.microsoft.com/vscode/devcontainers/typescript-node:18",
+  "postCreateCommand": "npm install"
+}

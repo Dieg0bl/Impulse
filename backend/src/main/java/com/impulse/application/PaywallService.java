@@ -46,7 +46,7 @@ public class PaywallService {
     }
 
     public boolean hasEntitlement(Long userId, String feature){
-        // Simple heuristic: any ACTIVE subscription grants all entitlements for now.
+        // Currently any active plan grants all entitlements until feature matrix added to Plan entity.
         return subRepo.findByUserId(userId).stream().anyMatch(s -> "ACTIVE".equalsIgnoreCase(s.getStatus()));
     }
 }

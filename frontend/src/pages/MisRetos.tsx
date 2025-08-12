@@ -1,7 +1,10 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button.tsx';
 import { useAppContext } from '../contexts/AppContext.tsx';
+import { useReto } from '../hooks/useReto';
+import Skeleton from '../components/Skeleton';
+import * as zod from 'zod';
 
 interface Reto {
   id: string;
@@ -16,70 +19,23 @@ interface Reto {
   puntos: number;
 }
 
+const retoSchema = zod.object({
+  titulo: zod.string().min(3, 'El título es obligatorio'),
+  descripcion: zod.string().min(5, 'La descripción es obligatoria'),
+  categoria: zod.string(),
+  dificultad: zod.string(),
+});
+
 const MisRetos: React.FC = () => {
   const navigate = useNavigate();
   const { state } = useAppContext();
   const { currentUser: user } = state;
-  const [retos, setRetos] = useState<Reto[]>([]);
+  const { retos, loading, error, crearReto, eliminarReto, actualizarReto } = useReto();
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [success, setSuccess] = useState('');
   const [filtro, setFiltro] = useState<string>('TODOS');
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
-    // Simular carga de retos del usuario
-    setTimeout(() => {
-      const retosSimulados: Reto[] = [
-        {
-          id: '1',
-          titulo: '30 días de ejercicio',
-          descripcion: 'Ejercitar 30 minutos diarios durante un mes',
-          categoria: 'Fitness',
-          dificultad: 'Intermedio',
-          estado: 'ACTIVO',
-          progreso: 65,
-          fechaInicio: '2025-07-15',
-          fechaFin: '2025-08-15',
-          puntos: 300
-        },
-        {
-          id: '2',
-          titulo: 'Aprender TypeScript',
-          descripcion: 'Completar curso de TypeScript',
-          categoria: 'Tecnología',
-          dificultad: 'Difícil',
-          estado: 'COMPLETADO',
-          progreso: 100,
-          fechaInicio: '2025-06-01',
-          fechaFin: '2025-07-01',
-          puntos: 500
-        },
-        {
-          id: '3',
-          titulo: 'Leer 10 libros',
-          descripcion: 'Leer 10 libros en 3 meses',
-          categoria: 'Educación',
-          dificultad: 'Intermedio',
-          estado: 'PAUSADO',
-          progreso: 40,
-          fechaInicio: '2025-05-01',
-          fechaFin: '2025-08-01',
-          puntos: 400
-        }
-      ];
-      setRetos(retosSimulados);
-      setLoading(false);
-    }, 1000);
-  }, [user, navigate]);
-
-  const retosFiltrados = retos.filter(reto =>
-    filtro === 'TODOS' || reto.estado === filtro
-  );
-
-    const getEstadoColor = (estado: string) => {
+  const getEstadoColor = (estado: string) => {
     switch (estado) {
       case 'ACTIVO': return 'bg-green-100 text-green-800';
       case 'COMPLETADO': return 'bg-blue-100 text-blue-800';
@@ -97,7 +53,52 @@ const MisRetos: React.FC = () => {
     });
   };
 
-  if (!user) return null;
+  const handleCrearReto = async (nuevoReto: any) => {
+    const result = retoSchema.safeParse(nuevoReto);
+    if (!result.success) {
+      const errors: Record<string, string> = {};
+      result.error.errors.forEach(e => {
+        if (e.path[0]) errors[e.path[0]] = e.message;
+      });
+      setFormErrors(errors);
+      return;
+    }
+    setFormErrors({});
+    try {
+      await crearReto(nuevoReto); // Optimistic update ya en hook
+      setSuccess('Reto creado correctamente');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      // error ya manejado en hook
+    }
+  };
+
+  if (!user) {
+    navigate('/login');
+    return null;
+  }
+
+  if (loading) {
+    return (
+      <div style={{ maxWidth: 600, margin: '2rem auto' }}>
+        <Skeleton height={40} />
+        <Skeleton height={40} />
+        <Skeleton height={40} />
+        <Skeleton height={40} />
+        <Skeleton height={40} />
+      </div>
+    );
+  }
+  if (error) {
+    return <div className="error-message" role="alert">{error}</div>;
+  }
+  if (!retos || retos.length === 0) {
+    return <div className="empty-state" role="status">No tienes retos activos. ¡Crea tu primer reto!</div>;
+  }
+
+  const retosFiltrados = retos.filter(reto =>
+    filtro === 'TODOS' || reto.estado === filtro
+  );
 
   return (
     <div className="page-container">
@@ -137,10 +138,6 @@ const MisRetos: React.FC = () => {
               <div className="stat-value">{retosFiltrados.filter(r => r.estado === 'COMPLETADO').length}</div>
               <div className="stat-label">Completados</div>
             </div>
-            <div className="stat-card">
-              <div className="stat-value">{retosFiltrados.reduce((total, reto) => total + reto.puntos, 0)}</div>
-              <div className="stat-label">Puntos Totales</div>
-            </div>
           </div>
 
           {/* Filtros */}
@@ -171,12 +168,7 @@ const MisRetos: React.FC = () => {
           </div>
 
           {/* Lista de retos */}
-          {loading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Cargando tus retos...</p>
-            </div>
-          ) : retosFiltrados.length === 0 ? (
+          {retosFiltrados.length === 0 ? (
             <div className="text-center py-12">
               <h3 className="text-xl font-semibold mb-4">
                 {filtro === 'TODOS' ? '¡Crea tu primer reto!' : `No tienes retos ${filtro.toLowerCase()}`}
@@ -219,7 +211,6 @@ const MisRetos: React.FC = () => {
                   <div className="text-sm text-gray-500 mb-4">
                     <p><strong>Categoría:</strong> {reto.categoria}</p>
                     <p><strong>Dificultad:</strong> {reto.dificultad}</p>
-                    <p><strong>Puntos:</strong> {reto.puntos}</p>
                     <p><strong>Fin:</strong> {formatDate(reto.fechaFin)}</p>
                   </div>
                   <div className="flex space-x-2">

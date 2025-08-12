@@ -9,6 +9,7 @@ interface ButtonProps {
   size?: 'small' | 'medium' | 'large';
   className?: string;
   'aria-label'?: string;
+  href?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({ 
@@ -19,7 +20,8 @@ const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'medium',
   className = '',
-  'aria-label': ariaLabel
+  'aria-label': ariaLabel,
+  href
 }) => {
 
   // Extracción de ternarios anidados para cumplir con SonarLint
@@ -52,6 +54,23 @@ const Button: React.FC<ButtonProps> = ({
 
   const style = { ...baseStyles, ...variantStyles[variant] };
 
+  if (href) {
+    return (
+      <a
+        href={href}
+        className={className}
+        aria-label={ariaLabel}
+        style={style}
+        tabIndex={disabled ? -1 : 0}
+        onClick={e => {
+          if (disabled) e.preventDefault();
+          if (onClick) onClick();
+        }}
+      >
+        {children}
+      </a>
+    );
+  }
   return (
     <button
       type={type}

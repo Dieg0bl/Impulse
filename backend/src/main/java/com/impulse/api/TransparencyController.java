@@ -1,19 +1,23 @@
 package com.impulse.api;
 
-import com.impulse.application.TransparencyService;
-import org.springframework.http.ResponseEntity;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/api/dsa")
-public class TransparencyController {
-    private final TransparencyService transparency;
-    public TransparencyController(TransparencyService transparency){this.transparency=transparency;}
+import lombok.RequiredArgsConstructor;
 
-    @GetMapping("/amar")
-    public ResponseEntity<?> amar(){
-        return ResponseEntity.ok(transparency.latestAmar());
+@RestController
+@RequestMapping("/api/transparency")
+@RequiredArgsConstructor
+public class TransparencyController {
+    private final JdbcTemplate jdbc;
+
+    @GetMapping("/support-users")
+    public List<Map<String, Object>> getSupportUsers() {
+        return jdbc.queryForList("SELECT * FROM v_support_users");
     }
 }

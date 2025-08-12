@@ -2,9 +2,12 @@ package com.impulse.application;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
-import org.springframework.jdbc.core.JdbcTemplate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.impulse.domain.reto.Reto;
@@ -29,7 +32,7 @@ public class QuickWinService {
      */
     public Map<String,Object> quickWinStatus(Long userId) {
         Map<String,Object> out = new HashMap<>();
-        var retos = retoRepository.findAll(); // TODO optimize with query by user when field indexed
+    var retos = retoRepository.findByUsuario_Id(userId);
         Optional<Reto> firstCompleted = retos.stream()
             .filter(r -> r.getUsuario()!=null && r.getUsuario().getId().equals(userId))
             .filter(r -> "COMPLETADO".equalsIgnoreCase(r.getEstado()))

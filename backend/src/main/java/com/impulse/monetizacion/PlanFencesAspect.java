@@ -21,20 +21,41 @@ public class PlanFencesAspect {
         this.paywall = paywall;
     }
 
-    @Around("execution(* com.impulse.api.secured..*(..)) && args(userId,..)")
-    public Object checkEntitlement(ProceedingJoinPoint pjp, Long userId) throws Throwable {
+    @Around("@annotation(com.impulse.monetizacion.RequiresPlan) || within(@com.impulse.monetizacion.RequiresPlan *)")
+    public Object checkEntitlement(ProceedingJoinPoint pjp) throws Throwable {
+        MethodSignature ms = (MethodSignature) pjp.getSignature();
         String feature = "secured";
-        try {
-            MethodSignature ms = (MethodSignature) pjp.getSignature();
-            RequiresPlan rp = ms.getMethod().getAnnotation(RequiresPlan.class);
-            if(rp == null && pjp.getTarget()!=null){
-                rp = pjp.getTarget().getClass().getAnnotation(RequiresPlan.class);
-            }
-            if(rp != null) feature = rp.value();
-        } catch (Exception ignored) {}
+        RequiresPlan rp = ms.getMethod().getAnnotation(RequiresPlan.class);
+        if(rp==null && pjp.getTarget()!=null){
+            rp = pjp.getTarget().getClass().getAnnotation(RequiresPlan.class);
+        }
+        if(rp!=null) feature = rp.value();
+        Long userId = resolveUserId(pjp.getArgs());
+        if(userId==null){
+            // fallback a SecurityContext si existe
+            try {
+                Object principal = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                if(principal instanceof com.impulse.domain.usuario.Usuario u){ userId = u.getId(); }
+            } catch (Exception ignored) {}
+        }
+        if(userId==null) throw new IllegalStateException("userId_no_disponible_para_entitlement");
         if(!paywall.hasEntitlement(userId, feature)){
             throw new IllegalStateException("Entitlement requerido:" + feature);
         }
         return pjp.proceed();
+    }
+
+    private Long resolveUserId(Object[] args){
+        if(args==null) return null;
+        for(Object o: args){
+            if(o==null) continue;
+            if(o instanceof Long l) return l;
+            try { // DTOs con getUsuarioId
+                var m = o.getClass().getMethod("getUsuarioId");
+                Object v = m.invoke(o);
+                if(v instanceof Long l2) return l2;
+            } catch (ReflectiveOperationException ignored) { }
+        }
+        return null;
     }
 }

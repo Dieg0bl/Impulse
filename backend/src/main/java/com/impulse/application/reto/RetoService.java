@@ -21,15 +21,13 @@ public class RetoService {
     private final RetoRepository retoRepository;
     private final RetoValidator retoValidator;
     private final AuditoriaService auditoriaService;
-    private final com.impulse.monetization.PlanService planService; // monetization enforcement
     // Compliance: Verificación de inyección y logging de dependencias
     // @Autowired removed: only one constructor present
     private static final String NOT_FOUND_MSG = "Reto no encontrado";
-    public RetoService(RetoRepository retoRepository, RetoValidator retoValidator, AuditoriaService auditoriaService, com.impulse.monetization.PlanService planService) {
+    public RetoService(RetoRepository retoRepository, RetoValidator retoValidator, AuditoriaService auditoriaService) {
         this.retoRepository = retoRepository;
         this.retoValidator = retoValidator;
         this.auditoriaService = auditoriaService;
-        this.planService = planService;
         assert this.retoRepository != null : "RetoRepository no inyectado";
         assert this.retoValidator != null : "RetoValidator no inyectado";
         assert this.auditoriaService != null : "AuditoriaService no inyectado";
@@ -46,10 +44,6 @@ public class RetoService {
      */
     @Transactional
     public RetoDTO crearReto(RetoDTO dto) {
-        // Monetization limit check (soft enforcement)
-        if(dto.getUsuarioId()!=null && !planService.canCreateReto(dto.getUsuarioId())){
-            throw new com.impulse.common.exceptions.BadRequestException("Limite de retos alcanzado para tu plan");
-        }
         Reto reto = RetoMapper.toEntity(dto);
         java.util.Set<jakarta.validation.ConstraintViolation<Reto>> violations = retoValidator.validate(reto);
         if (!violations.isEmpty()) {

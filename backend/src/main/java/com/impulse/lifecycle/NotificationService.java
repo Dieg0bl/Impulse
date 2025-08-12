@@ -1,17 +1,25 @@
 package com.impulse.lifecycle;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
+
+import com.impulse.analytics.EventTracker;
+
 @Service
 public class NotificationService {
     private final JdbcTemplate jdbc;
-    public NotificationService(JdbcTemplate jdbc){ this.jdbc = jdbc; }
+    private final EventTracker tracker;
+
+    public NotificationService(JdbcTemplate jdbc, EventTracker tracker){
+        this.jdbc = jdbc;
+        this.tracker = tracker;
+    }
 
     public List<Long> findAtRiskUsers(){
         // Placeholder heurística simple (ajustar a tabla real de usuarios)
@@ -43,6 +51,10 @@ public class NotificationService {
     }
 
     private void logBlocked(Long userId, String channel, String type){
-        // TODO: emitir evento 'notification_blocked_guardrail' (Phase 5 metric integration)
+        try {
+            tracker.track(userId, "notification_blocked_guardrail", Map.of("channel",channel,"type",type), "", "guardrail");
+        } catch (Exception ignore) {
+            // Silenciar errores de tracking para no afectar el flujo principal
+        }
     }
 }

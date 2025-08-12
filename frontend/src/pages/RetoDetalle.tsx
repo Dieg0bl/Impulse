@@ -2,98 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../contexts/AppContext.tsx';
 import Button from '../components/Button.tsx';
 import { logger } from '../utils/logger.ts';
+import { useReto, Reto, ReporteAvance } from '../hooks/useReto';
+import Skeleton from '../components/Skeleton';
 
-interface RetoDetalle {
-  id: string;
-  titulo: string;
-  descripcion: string;
-  categoria: string;
-  dificultad: 'FACIL' | 'MEDIO' | 'DIFICIL';
-  fechaInicio: string;
-  fechaFin: string;
-  estado: 'BORRADOR' | 'ACTIVO' | 'PAUSADO' | 'COMPLETADO' | 'FALLIDO' | 'CANCELADO';
-  progreso: number;
-  puntos: number;
-  validadores: string[];
-  usuarioCreador: {
-    id: string;
-    nombre: string;
-    avatar?: string;
-  };
-  reportes: Array<{
-    id: string;
-    fecha: string;
-    descripcion: string;
-    evidencia?: string;
-    estado: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO';
-  }>;
-}
+import { z } from 'zod';
+
+const retoSchema = z.object({
+  titulo: z.string().min(3, 'El título es obligatorio'),
+  descripcion: z.string().min(5, 'La descripción es obligatoria'),
+  categoria: z.string(),
+  dificultad: z.string(),
+});
+
+
 
 const RetoDetalle: React.FC = () => {
   const { navigate } = useAppContext();
-  const [reto, setReto] = useState<RetoDetalle | null>(null);
-  const [loading, setLoading] = useState(true);
   const [mostrarReportes, setMostrarReportes] = useState(false);
+  const { retos, loading, error, actualizarReto } = useReto();
 
-  // Simular parámetro de reto ID (en una app real vendría de la URL)
-  const retoId = '1';
+  // Obtener retoId de la URL o props
+  const retoId = '1'; // Reemplazar por obtención real
+  const reto: Reto | undefined = retos.find((r: any) => r.id === retoId);
 
   useEffect(() => {
-    const cargarReto = async () => {
-      try {
-        // Simular carga de datos del reto
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const mockReto: RetoDetalle = {
-          id: retoId,
-          titulo: 'Ejercicio Diario de 30 Minutos',
-          descripcion: 'Realizar al menos 30 minutos de ejercicio cardiovascular todos los días durante un mes. Puede incluir correr, caminar rápido, bicicleta o natación.',
-          categoria: 'SALUD',
-          dificultad: 'MEDIO',
-          fechaInicio: '2025-07-01',
-          fechaFin: '2025-07-31',
-          estado: 'ACTIVO',
-          progreso: 65,
-          puntos: 500,
-          validadores: ['validador1', 'validador2'],
-          usuarioCreador: {
-            id: 'user1',
-            nombre: 'María González',
-            avatar: undefined
-          },
-          reportes: [
-            {
-              id: '1',
-              fecha: '2025-07-15',
-              descripcion: 'Completé 35 minutos de caminata rápida en el parque',
-              evidencia: 'foto_ejercicio.jpg',
-              estado: 'APROBADO'
-            },
-            {
-              id: '2',
-              fecha: '2025-07-20',
-              descripcion: '40 minutos de bicicleta estática',
-              estado: 'PENDIENTE'
-            }
-          ]
-        };
-        
-        setReto(mockReto);
-      } catch (error) {
-        logger.error('Error al cargar reto', 'RETO_DETALLE', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (reto) {
+      setMostrarReportes(reto.reportes.length > 0);
+    }
+  }, [reto]);
 
-    cargarReto();
-  }, [retoId]);
 
   const handleUnirseReto = async () => {
     try {
       logger.info('Usuario iniciando unión al reto', 'RETO_DETALLE', { retoId });
-      // Lógica para unirse al reto
-      logger.info('Usuario se unió exitosamente al reto', 'RETO_DETALLE', { retoId });
+      // Aquí lógica real para unirse al reto
     } catch (error) {
       logger.error('Error al unirse al reto', 'RETO_DETALLE', { 
         retoId, 
@@ -103,70 +45,31 @@ const RetoDetalle: React.FC = () => {
   };
 
   const handleReportarAvance = () => {
-    navigate('reportar-avance');
+    // Aquí lógica para abrir modal o navegar a página de reporte de avance
+    logger.info('Reportar avance clicado', 'RETO_DETALLE', { retoId });
   };
 
-  const getEstadoReporteColor = (estado: 'PENDIENTE' | 'APROBADO' | 'RECHAZADO') => {
-    const colores = {
-      APROBADO: 'bg-green-100 text-green-800',
-      RECHAZADO: 'bg-red-100 text-red-800',
-      PENDIENTE: 'bg-yellow-100 text-yellow-800'
-    };
-    return colores[estado];
-  };
-
-  const getEstadoColor = (estado: RetoDetalle['estado']) => {
-    const colores = {
-      BORRADOR: 'bg-gray-100 text-gray-800',
-      ACTIVO: 'bg-green-100 text-green-800',
-      PAUSADO: 'bg-yellow-100 text-yellow-800',
-      COMPLETADO: 'bg-blue-100 text-blue-800',
-      FALLIDO: 'bg-red-100 text-red-800',
-      CANCELADO: 'bg-gray-100 text-gray-600'
-    };
-    return colores[estado];
-  };
-
-  const getDificultadColor = (dificultad: RetoDetalle['dificultad']) => {
-    const colores = {
-      FACIL: 'bg-green-100 text-green-800',
-      MEDIO: 'bg-yellow-100 text-yellow-800',
-      DIFICIL: 'bg-red-100 text-red-800'
-    };
-    return colores[dificultad];
-  };
-
-  const formatearFecha = (fecha: string) => {
-    return new Date(fecha).toLocaleDateString('es-ES', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+  const handleActualizarReto = async (datos: any) => {
+    const result = retoSchema.safeParse(datos);
+    if (!result.success) {
+      // feedback visual de errores
+      return;
+    }
+    try {
+      await actualizarReto(retoId, datos); // Optimistic update
+    } catch (err) {
+      // error ya manejado en hook
+    }
   };
 
   if (loading) {
-    return (
-      <div className="reto-detalle-page">
-        <div className="container mx-auto px-4 py-6">
-          <div className="text-center">Cargando reto...</div>
-        </div>
-      </div>
-    );
+    return <div style={{ maxWidth: 600, margin: '2rem auto' }}><Skeleton height={40} /><Skeleton height={40} /><Skeleton height={40} /></div>;
   }
-
+  if (error) {
+    return <div className="error-message" role="alert">{error}</div>;
+  }
   if (!reto) {
-    return (
-      <div className="reto-detalle-page">
-        <div className="container mx-auto px-4 py-6">
-          <div className="text-center">
-            <h2 className="text-xl font-bold mb-4">Reto no encontrado</h2>
-            <Button onClick={() => navigate('dashboard')}>
-              Volver al inicio
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
+    return <div className="empty-state" role="status">Reto no encontrado.</div>;
   }
 
   return (
@@ -190,69 +93,12 @@ const RetoDetalle: React.FC = () => {
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${getEstadoColor(reto.estado)}`}>
               {reto.estado}
             </span>
-            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getDificultadColor(reto.dificultad)}`}>
-              {reto.dificultad}
-            </span>
+            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getDificultadColor(reto.dificultad)}`}>{reto.dificultad}</span>
             <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
               {reto.categoria}
             </span>
           </div>
-
           <p className="text-gray-700 mb-4">{reto.descripcion}</p>
-
-          <div className="grid md:grid-cols-3 gap-4 mb-4">
-            <div>
-              <span className="text-sm text-gray-500">Fecha de inicio:</span>
-              <p className="font-medium">{formatearFecha(reto.fechaInicio)}</p>
-            </div>
-            <div>
-              <span className="text-sm text-gray-500">Fecha límite:</span>
-              <p className="font-medium">{formatearFecha(reto.fechaFin)}</p>
-            </div>
-            <div>
-              <span className="text-sm text-gray-500">Puntos:</span>
-              <p className="font-medium">{reto.puntos} pts</p>
-            </div>
-          </div>
-
-          {/* Barra de progreso */}
-          <div className="mb-4">
-            <div className="flex justify-between text-sm mb-1">
-              <span>Progreso</span>
-              <span>{reto.progreso}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-blue-600 h-2 rounded-full transition-all"
-                style={{ width: `${reto.progreso}%` }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Creador */}
-          <div className="border-t pt-4">
-            <span className="text-sm text-gray-500">Creado por:</span>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                {reto.usuarioCreador.avatar ? (
-                  <img 
-                    src={reto.usuarioCreador.avatar} 
-                    alt={reto.usuarioCreador.nombre}
-                    className="w-full h-full rounded-full"
-                  />
-                ) : (
-                  <span className="text-sm font-medium">
-                    {reto.usuarioCreador.nombre.charAt(0)}
-                  </span>
-                )}
-              </div>
-              <span className="font-medium">{reto.usuarioCreador.nombre}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Reportes */}
-        <div className="bg-white rounded-lg border p-6 mb-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-semibold">Reportes de Avance</h2>
             <Button
@@ -265,22 +111,37 @@ const RetoDetalle: React.FC = () => {
 
           {mostrarReportes && (
             <div className="space-y-3">
-              {reto.reportes.map(reporte => (
-                <div key={reporte.id} className="border rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="text-sm text-gray-500">
-                      {formatearFecha(reporte.fecha)}
-                    </span>
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getEstadoReporteColor(reporte.estado)}`}>
-                      {reporte.estado}
-                    </span>
+              {reto.reportes.map((reporte: ReporteAvance) => {
+                // Estado principal: el de la primera validación, o 'PENDIENTE' si no hay
+                const estado = reporte.validaciones?.[0]?.estado || 'PENDIENTE';
+                // Evidencia: mostrar texto, imagen o video
+                let evidenciaNode: React.ReactNode = null;
+                if (reporte.evidencia) {
+                  if (reporte.evidencia.tipo === 'IMAGEN' && reporte.evidencia.url) {
+                    evidenciaNode = <img src={reporte.evidencia.url} alt="Evidencia" className="max-w-xs mt-1" />;
+                  } else if (reporte.evidencia.tipo === 'VIDEO' && reporte.evidencia.url) {
+                    evidenciaNode = <video src={reporte.evidencia.url} controls className="max-w-xs mt-1" />;
+                  } else {
+                    evidenciaNode = <span className="text-blue-600 mt-1">📎 {reporte.evidencia.contenido}</span>;
+                  }
+                }
+                return (
+                  <div key={reporte.id} className="border rounded-lg p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-sm text-gray-500">
+                        {formatearFecha(reporte.fecha)}
+                      </span>
+                      <span className={`px-2 py-1 rounded text-xs font-medium ${getEstadoReporteColor(estado)}`}>
+                        {estado}
+                      </span>
+                    </div>
+                    <p className="text-gray-700">{reporte.descripcion}</p>
+                    {evidenciaNode && (
+                      <div>{evidenciaNode}</div>
+                    )}
                   </div>
-                  <p className="text-gray-700">{reporte.descripcion}</p>
-                  {reporte.evidencia && (
-                    <p className="text-sm text-blue-600 mt-1">📎 {reporte.evidencia}</p>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -307,6 +168,35 @@ const RetoDetalle: React.FC = () => {
       </div>
     </div>
   );
+}
+
+// Helpers para colores y formato
+const getEstadoColor = (estado: string) => {
+  const colores: Record<string, string> = {
+    'ACTIVO': 'bg-green-200 text-green-800',
+    'COMPLETADO': 'bg-blue-200 text-blue-800',
+    'FALLIDO': 'bg-red-200 text-red-800',
+    'PAUSADO': 'bg-yellow-200 text-yellow-800',
+  };
+  return colores[estado] || 'bg-gray-200 text-gray-800';
+};
+const getDificultadColor = (dif: string) => {
+  const colores: Record<string, string> = {
+    'FACIL': 'bg-green-100 text-green-700',
+    'MEDIO': 'bg-yellow-100 text-yellow-700',
+    'DIFICIL': 'bg-orange-100 text-orange-700',
+    'EXTREMO': 'bg-red-100 text-red-700',
+  };
+  return colores[dif] || 'bg-gray-100 text-gray-700';
+};
+const formatearFecha = (fecha: string) => new Date(fecha).toLocaleDateString('es-ES');
+const getEstadoReporteColor = (estado: string) => {
+  const colores: Record<string, string> = {
+    'PENDIENTE': 'bg-yellow-100 text-yellow-800',
+    'APROBADO': 'bg-green-100 text-green-800',
+    'RECHAZADO': 'bg-red-100 text-red-800',
+  };
+  return colores[estado] || 'bg-gray-100 text-gray-800';
 };
 
 export default RetoDetalle;

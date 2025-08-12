@@ -1,0 +1,1 @@
+(Contenido movido desde /docs/DOCUMENTACION_COMPLETA_IMPULSE.txt. Aquí debe ir la documentación completa histórica del proyecto, solo si no está duplicada en los nuevos docs.)

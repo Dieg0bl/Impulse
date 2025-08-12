@@ -94,7 +94,7 @@ public class RetoSecurityServiceOptimized {
                 case VALIDATE -> canValidate(reto, currentUser);
                 case COMMENT -> canComment(reto, currentUser);
                 case REPORT -> canReport(reto, currentUser);
-                case MODERATE -> canModerate(reto, currentUser);
+                case MODERATE -> canModerate(currentUser);
                 case FOLLOW -> canFollow(reto, currentUser);
                 case SHARE -> canShare(reto, currentUser);
             };
@@ -238,7 +238,7 @@ public class RetoSecurityServiceOptimized {
         return canRead(reto, user);
     }
 
-    private boolean canModerate(Reto reto, Usuario user) {
+    private boolean canModerate(Usuario user) {
         return hasRole(user, MODERATOR_ROLE, ADMIN_ROLE);
     }
 

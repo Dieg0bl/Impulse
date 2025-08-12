@@ -19,6 +19,9 @@ public class Plan {
     private String period; // MONTH, YEAR
     @Column(nullable=false)
     private Boolean active = true;
+    @Lob
+    @Column(name="features_json")
+    private String featuresJson;
 
     public Plan(){}
     public Plan(String code,String name,Integer priceCents,String currency,String period){
@@ -32,4 +35,6 @@ public class Plan {
     public String getPeriod(){return period;}
     public Boolean getActive(){return active;}
     public void setActive(Boolean active){this.active=active;}
+    public String getFeaturesJson(){return featuresJson;}
+    public void setFeaturesJson(String featuresJson){this.featuresJson=featuresJson;}
 }

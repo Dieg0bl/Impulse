@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.impulse.application.reto.RetoService;
 import com.impulse.domain.reto.RetoDTO;
-import com.impulse.retention.RetentionService;
-import com.impulse.analytics.EventTracker;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,10 +28,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/reto")
 @Validated
 public class RetoController {
-    private final RetoService retoService; private final RetentionService retention; private final EventTracker tracker;
+    private final RetoService retoService;
 
-    public RetoController(RetoService retoService, RetentionService retention, EventTracker tracker) {
-        this.retoService = retoService; this.retention = retention; this.tracker = tracker;
+    public RetoController(RetoService retoService) {
+        this.retoService = retoService;
     }
 
     @Operation(summary = "Obtener reto por ID", description = "Devuelve el reto correspondiente al ID proporcionado.")
@@ -53,8 +51,7 @@ public class RetoController {
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PostMapping
     public ResponseEntity<RetoDTO> crearReto(@Valid @RequestBody RetoDTO dto) {
-    RetoDTO creado = retoService.crearReto(dto);
-    try { if(creado.getUsuarioId()!=null) { retention.recordActivity(creado.getUsuarioId()); tracker.track(creado.getUsuarioId(), "reto_created", java.util.Map.of("reto_id", creado.getId()), null, "api"); } } catch (Exception ignore) {}
+        RetoDTO creado = retoService.crearReto(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
@@ -65,8 +62,7 @@ public class RetoController {
     @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PutMapping("/{id}")
     public ResponseEntity<RetoDTO> actualizarReto(@PathVariable Long id, @Valid @RequestBody RetoDTO dto) {
-    RetoDTO actualizado = retoService.actualizarReto(id, dto);
-    try { if(actualizado.getUsuarioId()!=null){ retention.recordActivity(actualizado.getUsuarioId()); if("COMPLETADO".equalsIgnoreCase(actualizado.getEstado())) tracker.track(actualizado.getUsuarioId(), "reto_completed", java.util.Map.of("reto_id", actualizado.getId()), null, "api"); } } catch (Exception ignore) {}
+        RetoDTO actualizado = retoService.actualizarReto(id, dto);
         return ResponseEntity.ok(actualizado);
     }
 

@@ -6,10 +6,18 @@ package com.impulse.infrastructure.reto;
  * No se requieren métodos personalizados en esta fase según la lógica de negocio y la guía IMPULSE. Añadir solo si la lógica lo exige y documentar.
  */
 
-import com.impulse.domain.reto.Reto;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.impulse.domain.reto.Reto;
+
 @Repository
 public interface RetoRepository extends JpaRepository<Reto, Long> {
+	/**
+	 * Obtiene todos los retos de un usuario específico.
+	 * Requiere índice en la columna usuario_id para eficiencia.
+	 */
+	List<Reto> findByUsuario_Id(Long usuarioId);
 }
