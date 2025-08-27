@@ -11,7 +11,7 @@ import com.impulse.domain.gamificacion.Gamificacion;
 import com.impulse.domain.gamificacion.GamificacionDTO;
 import com.impulse.domain.gamificacion.GamificacionMapper;
 import com.impulse.domain.gamificacion.GamificacionValidator;
-import com.impulse.infrastructure.gamificacion.GamificacionRepository;
+import com.impulse.application.ports.GamificacionPort;
 
 /**
  * Servicio de aplicación para Gamificación.
@@ -22,11 +22,11 @@ import com.impulse.infrastructure.gamificacion.GamificacionRepository;
 public class GamificacionService {
     private static final String NOT_FOUND_MSG = "Gamificación no encontrada";
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(GamificacionService.class);
-    private final GamificacionRepository gamificacionRepository;
+    private final GamificacionPort gamificacionRepository;
     private final GamificacionValidator gamificacionValidator;
     private final AuditoriaService auditoriaService;
     // Compliance: Verificación de inyección y logging de dependencias
-    public GamificacionService(GamificacionRepository gamificacionRepository, GamificacionValidator gamificacionValidator, AuditoriaService auditoriaService) {
+    public GamificacionService(GamificacionPort gamificacionRepository, GamificacionValidator gamificacionValidator, AuditoriaService auditoriaService) {
         this.gamificacionRepository = gamificacionRepository;
         this.gamificacionValidator = gamificacionValidator;
         this.auditoriaService = auditoriaService;

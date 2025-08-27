@@ -3,10 +3,9 @@ package com.impulse.api;
 
 import com.impulse.application.usuario.UsuarioService;
 import com.impulse.domain.usuario.UsuarioDTO;
-import com.impulse.domain.usuario.UsuarioMapper;
-import com.impulse.infrastructure.auth.AuthTokenRepository;
+import com.impulse.application.ports.AuthTokenPort;
 import com.impulse.domain.auth.AuthToken;
-import org.springframework.beans.factory.annotation.Autowired;
+// Using constructor injection
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,13 +20,17 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private static final String BEARER_PREFIX = "Bearer ";
 
-    @Autowired
-    private UsuarioService usuarioService;
-    @Autowired
-    private AuthTokenRepository authTokenRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final UsuarioService usuarioService;
+    private final AuthTokenPort authTokenRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public AuthController(UsuarioService usuarioService, AuthTokenPort authTokenRepository, PasswordEncoder passwordEncoder) {
+        this.usuarioService = usuarioService;
+        this.authTokenRepository = authTokenRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, Object> request) {
@@ -48,7 +51,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UsuarioDTO request) {
+    public ResponseEntity<Object> register(@RequestBody UsuarioDTO request) {
         try {
             UsuarioDTO creado = usuarioService.crearUsuario(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(creado);
@@ -59,7 +62,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.replace("Bearer ", "");
+    String token = authHeader.replace(BEARER_PREFIX, "");
         Optional<AuthToken> authToken = authTokenRepository.findByToken(token);
         authToken.ifPresent(t -> { t.markUsed(); authTokenRepository.save(t); });
         return ResponseEntity.ok("Sesión cerrada");
@@ -67,7 +70,7 @@ public class AuthController {
 
     @GetMapping("/sessions")
     public ResponseEntity<List<AuthToken>> getSessions(@RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.replace("Bearer ", "");
+    String token = authHeader.replace(BEARER_PREFIX, "");
         Optional<AuthToken> authToken = authTokenRepository.findByToken(token);
         if (authToken.isEmpty()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         Long userId = authToken.get().getUserId();
@@ -79,7 +82,7 @@ public class AuthController {
 
     @DeleteMapping("/sessions/{sessionId}")
     public ResponseEntity<String> revokeSession(@PathVariable Long sessionId, @RequestHeader("Authorization") String authHeader) {
-        String token = authHeader.replace("Bearer ", "");
+    String token = authHeader.replace(BEARER_PREFIX, "");
         Optional<AuthToken> current = authTokenRepository.findByToken(token);
         if (current.isEmpty()) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         Optional<AuthToken> toRevoke = authTokenRepository.findById(sessionId);

@@ -1,15 +1,14 @@
 package com.impulse.api;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import static org.mockito.Mockito.*;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.impulse.application.SupportService;
 import com.impulse.common.flags.FlagService;
@@ -17,36 +16,40 @@ import com.impulse.common.security.CookieAuthenticationService;
 import com.impulse.common.security.JwtProvider;
 import com.impulse.security.EnterpriseRateLimiter;
 
-@ExtendWith(MockitoExtension.class)
-public class SupportControllerTest {
+@WebMvcTest(SupportController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@Import(com.impulse.test.TestMocksConfig.class)
+class SupportControllerTest {
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @Autowired
     private SupportService supportService;
 
-    @Mock
+    @Autowired
     private FlagService flags;
 
-    @Mock
+    @Autowired
     private CookieAuthenticationService cookieAuthenticationService;
 
-    @Mock
+    @Autowired
     private JwtProvider jwtProvider;
 
-    @Mock
+    @Autowired
     private EnterpriseRateLimiter enterpriseRateLimiter;
-
-    @InjectMocks
-    private SupportController supportController;
-
-    @BeforeEach
-    void setup() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(supportController).build();
-    }
+    
 
     @Test
     void createTicket_notFoundIfDisabled() throws Exception {
+        // Arrange
+        when(flags.isOn("support.tickets")).thenReturn(false);
+
+        // Act & Assert
         mockMvc.perform(post("/api/support/ticket/1?subject=test&body=test"))
-                .andExpect(status().isOk()); // Cambia a isNotFound() si el flag está desactivado
+                .andExpect(status().isNotFound());
+
+        // Verifica que solo se consulta el flag y no se llama a los servicios
+        verify(flags).isOn("support.tickets");
+        verifyNoInteractions(supportService, cookieAuthenticationService, jwtProvider, enterpriseRateLimiter);
     }
 }

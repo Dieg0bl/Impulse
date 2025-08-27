@@ -1,6 +1,6 @@
 package com.impulse.application;
 
-import com.impulse.infrastructure.repository.EventRepository;
+import com.impulse.domain.pmf.EventRepositoryPort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -8,8 +8,8 @@ import java.time.temporal.ChronoUnit;
 
 @Service
 public class AnalyticsService {
-    private final EventRepository events;
-    public AnalyticsService(EventRepository events){ this.events = events; }
+    private final EventRepositoryPort events;
+    public AnalyticsService(EventRepositoryPort events){ this.events = events; }
 
     public long weeklyAhaUsers() {
         var from = Instant.now().minus(7, ChronoUnit.DAYS);

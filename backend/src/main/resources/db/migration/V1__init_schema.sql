@@ -829,23 +829,6 @@ CREATE INDEX IF NOT EXISTS idx_monetizacion_user_id ON monetizacion(user_id);
 CREATE INDEX IF NOT EXISTS idx_monetizacion_plan_type ON monetizacion(plan_type);
 
 -- =========================
--- ADDITIONAL NOTES
--- - Some migration files included MySQL-specific constructs (ENUM, FULLTEXT, DELIMITER/TRIGGERS).
+-- FILE MOVED TO TEST RESOURCES. See backend/src/test/resources/db/migration-test/V1__init_schema.sql
+-- To restore to main resources for production, rename the .bak file back to V1__init_schema.sql
 --   These have been adapted to generic types or simplified to ensure the consolidated script
---   runs on MySQL and H2 for tests. If you require triggers and advanced MySQL features,
---   reintroduce them in environment-specific migrations.
--- - If you need to preserve per-version history for production, it's recommended to keep
---   the original V* files and use Flyway baseline/repair procedures when deploying this change.
-
--- =========================
--- SAMPLE SEED DATA
--- =========================
-INSERT INTO categorias (nombre, descripcion, icono, color_hex, orden_visualizacion)
-    SELECT 'Fitness y Salud', 'Retos relacionados con ejercicio físico y bienestar', '', '#10B981', 1
-    WHERE NOT EXISTS (SELECT 1 FROM categorias WHERE nombre = 'Fitness y Salud');
-
-INSERT INTO usuarios (email, password_hash, nombre, apellidos, estado, rol, email_verificado, acepta_terminos, acepta_privacidad, ip_registro)
-    SELECT 'admin@impulse.dev', '$2a$10$example_hash_here', 'Admin', 'IMPULSE', 'ACTIVO', 'ADMIN', TRUE, TRUE, TRUE, '127.0.0.1'
-    WHERE NOT EXISTS (SELECT 1 FROM usuarios WHERE email = 'admin@impulse.dev');
-
-SET FOREIGN_KEY_CHECKS=1;

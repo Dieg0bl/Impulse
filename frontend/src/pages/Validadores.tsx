@@ -1,53 +1,71 @@
 import React, { useState } from 'react';
-import { useAuth } from '../hooks/useAuth.ts';
+import { useAuth } from '../hooks/useAuth';
 import Button from '../components/Button';
-import { useValidadores } from '../hooks/useValidadores';
+import { useValidadores, Validador as BaseValidador } from '../hooks/useValidadores';
+
+// Extend the backend Validador shape with optional UI-only fields
+type Validador = BaseValidador & {
+  relacion?: string;
+  fechaInvitacion?: string | number;
+};
+
+const getErrorMessage = (err: unknown): string =>
+  (typeof err === 'object' && err && 'message' in err && typeof (err as any).message === 'string')
+    ? (err as { message: string }).message
+    : 'Ocurrió un error inesperado.';
+
+const getRelacionEmoji = (relacion?: string) => {
+  const emojis: Record<string, string> = {
+    FAMILIAR: '👨‍👩‍👧‍👦',
+    AMIGO: '👫',
+    MENTOR: '🎓',
+    COLEGA: '💼',
+    OTRO: '👤',
+  };
+  if (!relacion) return '👤';
+  return emojis[relacion] ?? '👤';
+};
+
+const getEstadoColor = (estado: string) => {
+  const colores = {
+    ACTIVO: 'green',
+    PENDIENTE: 'yellow',
+    INACTIVO: 'gray',
+  } as const;
+  return (colores as Record<string, string>)[estado] ?? 'gray';
+};
+
+const renderConfianzaStars = (confianza?: number) => {
+  const n = Math.round(Math.max(0, Math.min(5, confianza ?? 0)));
+  return '⭐'.repeat(n) + '☆'.repeat(5 - n);
+};
 
 const Validadores: React.FC = () => {
   useAuth();
   const { validadores, loading, error, invitar, eliminar } = useValidadores();
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [inviteError, setInviteError] = useState<string | null>(null);
 
   const invitarValidador = async (email: string) => {
     try {
       await invitar(email);
       setShowInviteModal(false);
-    } catch (err) {
-      // Manejo de error opcional
+      setInviteError(null);
+    } catch (err: unknown) {
+      setInviteError(getErrorMessage(err));
     }
   };
 
-  const eliminarValidador = async (validadorId: string) => {
+  const eliminarValidador = async (validadorId: number) => {
     if (!window.confirm('¿Estás seguro de que quieres eliminar este validador?')) return;
     try {
       await eliminar(validadorId);
-    } catch (err) {
-      // Manejo de error opcional
+    } catch (err: unknown) {
+      // Manejo de error mínimo: log para depuración en desarrollo
+      // No romper flujo en UI — se puede mejorar con un toast centralizado
+      // eslint-disable-next-line no-console
+      console.error('Error eliminando validador', err);
     }
-  };
-
-  const getRelacionEmoji = (relacion: string) => {
-    const emojis = {
-      'FAMILIAR': '👨‍👩‍👧‍👦',
-      'AMIGO': '👫',
-      'MENTOR': '🎓',
-      'COLEGA': '💼',
-      'OTRO': '👤'
-    };
-    return emojis[relacion as keyof typeof emojis] || '👤';
-  };
-
-  const getEstadoColor = (estado: string) => {
-    const colores = {
-      'ACTIVO': 'green',
-      'PENDIENTE': 'yellow',
-      'INACTIVO': 'gray'
-    };
-    return colores[estado as keyof typeof colores] || 'gray';
-  };
-
-  const renderConfianzaStars = (confianza: number) => {
-    return '⭐'.repeat(confianza) + '☆'.repeat(5 - confianza);
   };
 
   if (loading) {
@@ -57,6 +75,12 @@ const Validadores: React.FC = () => {
       </div>
     );
   }
+
+  const totalValidadores = validadores.length;
+  const totalActivos = validadores.filter(v => v.estado === 'ACTIVO').length;
+  const totalValidaciones = validadores.reduce((t, v) => t + (v.validacionesRealizadas ?? 0), 0);
+  const sumaConfianza = validadores.reduce((t, v) => t + (v.confianza ?? 0), 0);
+  const confianzaPromedio = totalValidadores > 0 ? Math.round((sumaConfianza / totalValidadores) * 10) / 10 : 0;
 
   return (
     <div className="validadores-page">
@@ -79,15 +103,15 @@ const Validadores: React.FC = () => {
           <div className="info-card">
             <h3>🤔 ¿Qué es un validador?</h3>
             <p>
-              Los validadores son personas de confianza que verifican tu progreso en los retos. 
-              Pueden ser familiares, amigos, mentores o colegas que te conocen bien y pueden 
+              Los validadores son personas de confianza que verifican tu progreso en los retos.
+              Pueden ser familiares, amigos, mentores o colegas que te conocen bien y pueden
               confirmar si realmente has cumplido con tus objetivos.
             </p>
           </div>
           <div className="info-card">
             <h3>🔍 ¿Cómo funciona?</h3>
             <p>
-              Cuando reportas avance en un reto, tus validadores reciben una notificación 
+              Cuando reportas avance en un reto, tus validadores reciben una notificación
               para revisar tu reporte. Ellos pueden aprobar, rechazar o solicitar más información.
             </p>
           </div>
@@ -96,17 +120,17 @@ const Validadores: React.FC = () => {
         {/* Mensajes de error */}
         {error && (
           <div className="error-message" role="alert">
-            ⚠️ {error}
+            ⚠️ {String(error)}
           </div>
         )}
 
         {/* Lista de validadores */}
-        {validadores.length === 0 ? (
+        {totalValidadores === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">👥</div>
             <h3>¡Aún no tienes validadores!</h3>
             <p>
-              Invita a personas de confianza para que validen tu progreso. 
+              Invita a personas de confianza para que validen tu progreso.
               Esto hace que tus compromisos sean más reales y motivadores.
             </p>
             <Button onClick={() => setShowInviteModal(true)}>
@@ -115,8 +139,11 @@ const Validadores: React.FC = () => {
           </div>
         ) : (
           <div className="validadores-grid">
-            {validadores.map((validador) => (
-              <div key={validador.id} className={`validador-card validador-${getEstadoColor(validador.estado)}`}>
+            {validadores.map((validador: Validador) => (
+              <div
+                key={String(validador.id)}
+                className={`validador-card validador-${getEstadoColor(validador.estado)}`}
+              >
                 <div className="validador-header">
                   <div className="validador-avatar">
                     {getRelacionEmoji(validador.relacion)}
@@ -130,14 +157,16 @@ const Validadores: React.FC = () => {
                       {validador.estado === 'ACTIVO' && '🟢 Activo'}
                       {validador.estado === 'PENDIENTE' && '🟡 Pendiente'}
                       {validador.estado === 'INACTIVO' && '⚫ Inactivo'}
+                      {!['ACTIVO', 'PENDIENTE', 'INACTIVO'].includes(validador.estado) && '⚪ Desconocido'}
                     </span>
                   </div>
                 </div>
+
                 <div className="validador-details">
                   <div className="detail-item">
                     <span className="detail-label">Relación:</span>
                     <span className="detail-value">
-                      {getRelacionEmoji(validador.relacion)} {validador.relacion}
+                      {getRelacionEmoji(validador.relacion)} {validador.relacion ?? '—'}
                     </span>
                   </div>
                   <div className="detail-item">
@@ -149,24 +178,27 @@ const Validadores: React.FC = () => {
                   <div className="detail-item">
                     <span className="detail-label">Validaciones:</span>
                     <span className="detail-value">
-                      {validador.validacionesRealizadas} realizadas
+                      {(validador.validacionesRealizadas ?? 0).toString()} realizadas
                     </span>
                   </div>
                   <div className="detail-item">
                     <span className="detail-label">Invitado:</span>
                     <span className="detail-value">
-                      {new Date(validador.fechaInvitacion).toLocaleDateString()}
+                      {validador.fechaInvitacion
+                        ? new Date(validador.fechaInvitacion).toLocaleDateString()
+                        : '—'}
                     </span>
                   </div>
                 </div>
+
                 <div className="validador-actions">
                   {validador.estado === 'PENDIENTE' && (
                     <Button onClick={() => alert('Reenviar invitación (funcionalidad en desarrollo)')}>
                       📧 Reenviar Invitación
                     </Button>
                   )}
-                  <Button 
-                    onClick={() => eliminarValidador(validador.id)}
+                  <Button
+                    onClick={() => eliminarValidador(Number(validador.id))}
                     className="danger-button"
                     aria-label="Eliminar validador"
                   >
@@ -179,33 +211,24 @@ const Validadores: React.FC = () => {
         )}
 
         {/* Estadísticas */}
-        {validadores.length > 0 && (
+        {totalValidadores > 0 && (
           <div className="validadores-stats">
             <h3>📊 Estadísticas</h3>
             <div className="stats-grid">
               <div className="stat-item">
-                <div className="stat-number">{validadores.length}</div>
+                <div className="stat-number">{totalValidadores}</div>
                 <div className="stat-label">Total Validadores</div>
               </div>
               <div className="stat-item">
-                <div className="stat-number">
-                  {validadores.filter(v => v.estado === 'ACTIVO').length}
-                </div>
+                <div className="stat-number">{totalActivos}</div>
                 <div className="stat-label">Activos</div>
               </div>
               <div className="stat-item">
-                <div className="stat-number">
-                  {validadores.reduce((total, v) => total + v.validacionesRealizadas, 0)}
-                </div>
+                <div className="stat-number">{totalValidaciones}</div>
                 <div className="stat-label">Validaciones Totales</div>
               </div>
               <div className="stat-item">
-                <div className="stat-number">
-                  {validadores.length > 0 
-                    ? Math.round(validadores.reduce((total, v) => total + v.confianza, 0) / validadores.length * 10) / 10
-                    : 0
-                  }
-                </div>
+                <div className="stat-number">{confianzaPromedio}</div>
                 <div className="stat-label">Confianza Promedio</div>
               </div>
             </div>
@@ -214,9 +237,10 @@ const Validadores: React.FC = () => {
 
         {/* Modal de invitación */}
         {showInviteModal && (
-          <InviteValidadorModal 
+          <InviteValidadorModal
             onInvite={invitarValidador}
             onClose={() => setShowInviteModal(false)}
+            error={inviteError}
           />
         )}
       </div>
@@ -225,16 +249,17 @@ const Validadores: React.FC = () => {
 };
 
 const InviteValidadorModal: React.FC<{
-  onInvite: (email: string) => void;
+  onInvite: (email: string) => void | Promise<void>;
   onClose: () => void;
-}> = ({ onInvite, onClose }) => {
+  error?: string | null;
+}> = ({ onInvite, onClose, error }) => {
   const [email, setEmail] = useState('');
   const [mensaje, setMensaje] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      onInvite(email);
+      void Promise.resolve(onInvite(email));
     }
   };
 
@@ -245,17 +270,7 @@ const InviteValidadorModal: React.FC<{
         className="modal-backdrop"
         aria-label="Cerrar modal"
         onClick={onClose}
-        onKeyDown={e => {
-          if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') {
-            onClose();
-          }
-        }}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.3)',
-          zIndex: 1
-        }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.3)', zIndex: 1 }}
         tabIndex={0}
       />
       <form
@@ -263,10 +278,6 @@ const InviteValidadorModal: React.FC<{
         onSubmit={handleSubmit}
         style={{ position: 'relative', zIndex: 2 }}
       >
-        <div className="modal-header">
-          <h2>➕ Invitar Validador</h2>
-          <button className="modal-close" onClick={onClose}>✕</button>
-        </div>
         <div className="form-field">
           <label htmlFor="email">Email del Validador *</label>
           <input
@@ -277,7 +288,13 @@ const InviteValidadorModal: React.FC<{
             placeholder="validador@ejemplo.com"
             required
           />
+          {error && (
+            <div className="error-message" role="alert" style={{ marginTop: 8, color: 'red' }}>
+              ⚠️ {error}
+            </div>
+          )}
         </div>
+
         <div className="form-field">
           <label htmlFor="mensaje">Mensaje Personal (Opcional)</label>
           <textarea
@@ -289,6 +306,7 @@ const InviteValidadorModal: React.FC<{
             maxLength={500}
           />
         </div>
+
         <div className="form-info">
           <div className="info-item">
             <h4>🔒 ¿Qué verá el validador?</h4>
@@ -299,6 +317,7 @@ const InviteValidadorModal: React.FC<{
             </ul>
           </div>
         </div>
+
         <div className="form-actions">
           <Button type="button" onClick={onClose}>
             Cancelar

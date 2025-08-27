@@ -7,20 +7,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.impulse.infrastructure.db.Procedures;
+import com.impulse.application.ports.ProceduresPort;
 
 @RestController
 @RequestMapping("/api/privacy")
 public class ErasureController {
-    private final Procedures procedures;
+    private final ProceduresPort procedures;
 
-    public ErasureController(Procedures procedures) {
+    public ErasureController(ProceduresPort procedures) {
         this.procedures = procedures;
     }
 
     @PostMapping("/erase/{userId}")
-    public ResponseEntity<?> eraseUser(@PathVariable Long userId, @RequestParam String actor) {
-        var result = procedures.insertAuditoriaAvanzada(userId, "gdpr_erasure", "", null, null, "privacy", "SUCCESS", "HIGH");
+    public ResponseEntity<Object> eraseUser(@PathVariable Long userId, @RequestParam String actor) {
+        // No dependemos de la implementación infra; pasamos un Map con los campos mínimos
+        var params = java.util.Map.<String,Object>of(
+            "userId", userId,
+            "procedure", "gdpr_erasure",
+            "actor", actor,
+            "category", "privacy",
+            "result", "SUCCESS",
+            "severity", "HIGH"
+        );
+        var result = procedures.insertAuditoriaAvanzada(params);
         // Llama al SP real de borrado GDPR (ajusta si tienes un método específico)
         procedures.callGdprErasure(userId, actor);
         return ResponseEntity.ok(result);

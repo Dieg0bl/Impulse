@@ -5,12 +5,11 @@ import java.security.Principal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.BeforeEach;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.when;
-import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
 import com.impulse.application.reto.RetoService;
@@ -24,9 +23,11 @@ class RetoControllerTest {
     @InjectMocks
     private RetoController controller;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    // Removed unused setUp method per static analysis
+
+    @org.junit.jupiter.api.BeforeEach
+    void initMocks(){
+        org.mockito.MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -64,10 +65,12 @@ class RetoControllerTest {
             null // updatedAt
         );
         when(retoService.obtenerReto(1L)).thenReturn(reto);
-    Principal user = () -> "99";
-    ResponseEntity<PermisoDTO> response = controller.getPermisos(1L, user);
-        assertEquals(200, response.getStatusCodeValue());
-        assertTrue(response.getBody().isValor());
+        Principal user = () -> "99";
+        ResponseEntity<PermisoDTO> response = controller.getPermisos(1L, user);
+    assertEquals(200, response.getStatusCode().value());
+    PermisoDTO body = response.getBody();
+    assertNotNull(body);
+    assertTrue(body.isValor());
     }
 
     @Test
@@ -105,9 +108,11 @@ class RetoControllerTest {
             null // updatedAt
         );
         when(retoService.obtenerReto(1L)).thenReturn(reto);
-    Principal user = () -> "100";
-    ResponseEntity<PermisoDTO> response = controller.getPermisos(1L, user);
-        assertEquals(200, response.getStatusCodeValue());
-        assertFalse(response.getBody().isValor());
+        Principal user = () -> "100";
+        ResponseEntity<PermisoDTO> response = controller.getPermisos(1L, user);
+    assertEquals(200, response.getStatusCode().value());
+    PermisoDTO body = response.getBody();
+    assertNotNull(body);
+    assertFalse(body.isValor());
     }
 }

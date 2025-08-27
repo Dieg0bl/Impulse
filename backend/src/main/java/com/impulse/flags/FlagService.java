@@ -44,7 +44,6 @@ public class FlagService {
     /**
      * Devuelve el mapa (anidado) de flags tal como se define en el YAML.
      */
-    @SuppressWarnings("unchecked")
     public Map<String, Object> getAll() {
         return cache.get();
     }
@@ -54,20 +53,23 @@ public class FlagService {
      * Truthy means Boolean.TRUE or the String "true" (case-insensitive). Any missing
      * intermediate key or non-boolean terminal returns false.
      */
-    @SuppressWarnings({"rawtypes","unchecked"})
     public boolean isEnabled(String path) {
         if (path == null || path.isEmpty()) return false;
         Object current = cache.get();
         String[] parts = path.split("\\.");
         for (String p : parts) {
             if (!(current instanceof Map)) return false;
-            Map m = (Map) current;
+            Map<?,?> m = (Map<?,?>) current;
             if (!m.containsKey(p)) return false;
             current = m.get(p);
         }
-        if (current instanceof Boolean) return (Boolean) current;
-        if (current instanceof String) return Boolean.parseBoolean(((String) current).trim());
-        return false;
+    if (current instanceof Boolean b) {
+        return b;
+    }
+    if (current instanceof String s) {
+        return Boolean.parseBoolean(s.trim());
+    }
+    return false;
     }
 
     /**
@@ -97,7 +99,6 @@ public class FlagService {
         }
         try (InputStream in = resource.getInputStream()) {
             Yaml yaml = new Yaml();
-            @SuppressWarnings("unchecked")
             Map<String, Object> data = yaml.load(in);
             if (data == null) {
                 data = Collections.emptyMap();
@@ -117,8 +118,7 @@ public class FlagService {
     private String computeDeterministicHash(Map<String, Object> data){
         // Normalizar orden de claves para estabilidad de hash
         StringBuilder sb = new StringBuilder();
-    @SuppressWarnings("unchecked")
-    Map<String,Object> casted = (Map<String,Object>) (Map<?,?>) data;
+    Map<String,Object> casted = toStringObjectMap(data);
     buildOrderedString(casted, sb, "");
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -137,12 +137,26 @@ public class FlagService {
             String key = prefix + entry.getKey();
             Object val = entry.getValue();
             if(val instanceof Map){
-                @SuppressWarnings("unchecked")
-                Map<String,Object> nested = (Map<String,Object>) val;
+                Map<String,Object> nested = toStringObjectMap(val);
                 buildOrderedString(nested, sb, key + ".");
             } else {
                 sb.append(key).append("=").append(String.valueOf(val)).append("\n");
             }
         }
+    }
+
+    private Map<String,Object> toStringObjectMap(Object maybeMap) {
+        if (maybeMap instanceof Map) {
+            Map<?,?> raw = (Map<?,?>) maybeMap;
+            Map<String,Object> out = new java.util.LinkedHashMap<>();
+            for (Map.Entry<?,?> e : raw.entrySet()) {
+                Object k = e.getKey();
+                if (k != null) {
+                    out.put(String.valueOf(k), e.getValue());
+                }
+            }
+            return out;
+        }
+        return java.util.Collections.emptyMap();
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.impulse.domain.auditoria.Auditoria;
 import com.impulse.domain.auditoria.AuditoriaDTO;
 import com.impulse.domain.auditoria.AuditoriaMapper;
-import com.impulse.infrastructure.auditoria.AuditoriaRepository;
+import com.impulse.application.ports.AuditoriaPort;
 
 /**
  * Servicio de aplicación para Auditoría.
@@ -25,9 +25,9 @@ public class AuditoriaService {
     private static final String TUTOR = "Tutor";
     private static final String GAMIFICACION = "Gamificacion";
     private static final String NOTIFICACION = "Notificacion";
-    private final AuditoriaRepository auditoriaRepository;
+    private final AuditoriaPort auditoriaRepository;
 
-    public AuditoriaService(AuditoriaRepository auditoriaRepository) {
+    public AuditoriaService(AuditoriaPort auditoriaRepository) {
         this.auditoriaRepository = auditoriaRepository;
     }
 

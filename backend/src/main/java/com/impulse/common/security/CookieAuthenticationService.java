@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+// Using constructor injection for dependencies
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -37,8 +37,7 @@ public class CookieAuthenticationService {
     private final Duration accessTokenDuration = Duration.ofMinutes(15);  // Corto para seguridad
     private final Duration refreshTokenDuration = Duration.ofDays(7);     // Una semana máximo
     
-    @Autowired
-    private EnterpriseTokenCache tokenCache;
+    private final EnterpriseTokenCache tokenCache;
     
     @Value("${app.security.cookie.secure:true}")
     private boolean secureCookies;
@@ -48,8 +47,9 @@ public class CookieAuthenticationService {
     
     private final JwtProvider jwtProvider;
     
-    public CookieAuthenticationService(JwtProvider jwtProvider) {
+    public CookieAuthenticationService(JwtProvider jwtProvider, EnterpriseTokenCache tokenCache) {
         this.jwtProvider = jwtProvider;
+        this.tokenCache = tokenCache;
     }
     
     /**
@@ -108,7 +108,8 @@ public class CookieAuthenticationService {
         Optional<String> csrfTokenOpt = extractCsrfToken(request);
         
         if (refreshTokenOpt.isEmpty()) {
-            logger.warn("Intento de renovación sin refresh token desde IP: {}", getClientIpAddress(request));
+            String ip = getClientIpAddress(request);
+            logger.warn("Intento de renovación sin refresh token desde IP: {}", ip);
             return false;
         }
         
@@ -116,7 +117,8 @@ public class CookieAuthenticationService {
         RefreshTokenData tokenData = tokenCache.remove(refreshToken); // Un solo uso - cache empresarial
         
         if (tokenData == null || tokenData.isExpired(LocalDateTime.now())) {
-            logger.warn("Refresh token inválido o expirado desde IP: {}", getClientIpAddress(request));
+            String ip = getClientIpAddress(request);
+            logger.warn("Refresh token inválido o expirado desde IP: {}", ip);
             return false;
         }
         
@@ -194,7 +196,8 @@ public class CookieAuthenticationService {
                          cookieCsrf.equals(headerCsrf);
         
         if (!isValid) {
-            logger.warn("CSRF token validation failed from IP: {}", getClientIpAddress(request));
+            String ip = getClientIpAddress(request);
+            logger.warn("CSRF token validation failed from IP: {}", ip);
         }
         
         return isValid;
@@ -213,7 +216,6 @@ public class CookieAuthenticationService {
     public void invalidateAllUserSessions(String userId) {
         try {
             // En un cache distribuido real, iteraríamos por tokens del usuario
-            // Por seguridad, limpiamos todo el cache
             tokenCache.clear();
             logger.warn("Cache de tokens limpiado para invalidar sesiones de usuario: {}", userId);
         } catch (Exception e) {

@@ -1,13 +1,5 @@
 name: Quality Gates
 
-# Notes:
-# - This workflow purposely avoids referencing repository secrets (e.g. CODECOV_TOKEN)
-#   and external third-party actions at specific versions that some linters flag.
-# - Coverage artifacts are uploaded as build artifacts. To re-enable Codecov, add
-#   a separate step conditioned on the presence of the secret in the repository
-#   (for example: `if: ${{ secrets.CODECOV_TOKEN != '' }}`) and ensure the secret
-#   exists in GitHub Settings > Secrets.
-
 on:
   push:
     branches: [ main, develop ]
@@ -59,7 +51,7 @@ jobs:
             frontend/coverage
             backend/target/site/jacoco
 
-  codeql-analysis:
+  codeql:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
     needs: build

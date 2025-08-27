@@ -38,17 +38,17 @@ public class RetoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> crearReto(@RequestBody RetoDTO request) {
+    public ResponseEntity<Object> crearReto(@RequestBody RetoDTO request) {
         try {
             RetoDTO creado = retoService.crearReto(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(creado);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getReto(@PathVariable Long id) {
+    public ResponseEntity<Object> getReto(@PathVariable Long id) {
         try {
             RetoDTO reto = retoService.obtenerReto(id);
             return ResponseEntity.ok(reto);
@@ -58,17 +58,17 @@ public class RetoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarReto(@PathVariable Long id, @RequestBody RetoDTO request) {
+    public ResponseEntity<Object> actualizarReto(@PathVariable Long id, @RequestBody RetoDTO request) {
         try {
             RetoDTO actualizado = retoService.actualizarReto(id, request);
             return ResponseEntity.ok(actualizado);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarReto(@PathVariable Long id) {
+    public ResponseEntity<Object> eliminarReto(@PathVariable Long id) {
         try {
             retoService.eliminarReto(id);
             return ResponseEntity.noContent().build();
@@ -90,7 +90,7 @@ public class RetoController {
     // Si en el futuro se requiere lógica de delegación o roles, se puede ampliar aquí.
 
     @PostMapping("/{id}/validar")
-    public ResponseEntity<?> validateReto(@PathVariable Long id, @RequestBody Validation request, Principal principal) {
+    public ResponseEntity<Object> validateReto(@PathVariable Long id, @RequestBody Validation request, Principal principal) {
         try {
             // El validador es el usuario autenticado
             Long validatorId = principal != null ? Long.valueOf(principal.getName()) : null;
@@ -99,7 +99,7 @@ public class RetoController {
             }
             Validation validacion = validationService.submit(id, validatorId, request.getStatus(), request.getFeedback());
             return ResponseEntity.status(HttpStatus.CREATED).body(validacion);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

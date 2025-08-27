@@ -4,17 +4,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.impulse.infrastructure.usuario.ReferralCodeRepository;
-import com.impulse.infrastructure.usuario.ReferralUseRepository;
+import com.impulse.application.ports.ReferralCodePort;
+
 
 @Service
 public class ReferralFraudService {
-    private final ReferralCodeRepository codeRepo;
+    private final ReferralCodePort codeRepo;
     private final JdbcTemplate jdbc;
 
-    public ReferralFraudService(ReferralCodeRepository codeRepo, ReferralUseRepository useRepo, JdbcTemplate jdbc){
+    public ReferralFraudService(ReferralCodePort codeRepo, JdbcTemplate jdbc){
         this.codeRepo = codeRepo;
-        this.jdbc = jdbc; // useRepo intentionally not stored (unused)
+        this.jdbc = jdbc;
     }
 
     @Transactional(readOnly=true)

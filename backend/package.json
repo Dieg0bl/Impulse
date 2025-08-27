@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "description": "Backend placeholder for Jest compatibility.",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "dependency-cruiser": "^17.0.1"
+  }
 }

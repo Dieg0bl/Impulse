@@ -6,7 +6,6 @@ import com.impulse.common.exceptions.NotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,6 @@ public class ValidadorController {
 
     private final ValidadorService validadorService;
 
-    @Autowired
     public ValidadorController(ValidadorService validadorService) {
         this.validadorService = validadorService;
     }
@@ -64,8 +62,12 @@ public class ValidadorController {
         @Email(message = "El email no tiene un formato válido.")
         private String email;
 
-        public ValidadorInvitacionRequest() {
-        }
+    /**
+     * Constructor vacío requerido por frameworks de serialización/deserialización.
+     * No realiza ninguna acción porque esta clase es un DTO puro.
+     */
+    public ValidadorInvitacionRequest() {
+    }
 
         public String getEmail() {
             return email;

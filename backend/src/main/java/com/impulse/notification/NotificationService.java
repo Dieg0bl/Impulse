@@ -9,9 +9,9 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import com.impulse.analytics.EventTracker;
 import org.springframework.util.Assert;
 
@@ -26,7 +26,6 @@ public class NotificationService {
     private final io.micrometer.core.instrument.Counter sentCounter;
     private final io.micrometer.core.instrument.Counter blockedCounter;
 
-    @Autowired
     public NotificationService(JdbcTemplate jdbc, EventTracker tracker){
         this(jdbc, tracker, Clock.systemDefaultZone(), null);
     }
@@ -36,6 +35,7 @@ public class NotificationService {
         this(jdbc, tracker, clock, null);
     }
 
+    @Autowired
     public NotificationService(JdbcTemplate jdbc, EventTracker tracker, Clock clock, MeterRegistry registry){
         this.jdbc = jdbc;
         this.tracker = tracker;
@@ -78,7 +78,11 @@ public class NotificationService {
     private boolean blocked(Long userId, String channel, String type, String reason){
     blockedCounter.increment();
     log.info("notification_blocked_guardrail user={} channel={} type={} reason={}", userId, channel, type, reason);
-    try { tracker.track(userId, "notification_blocked_guardrail", Map.of("channel",channel,"type",type,"reason",reason), "", "guardrail"); } catch (Exception ignore) {}
+    try {
+        tracker.track(userId, "notification_blocked_guardrail", Map.of("channel",channel,"type",type,"reason",reason), "", "guardrail");
+    } catch (Exception e) {
+        log.warn("Failed to track blocked notification event for user {}: {}", userId, e.getMessage());
+    }
         return false;
     }
 

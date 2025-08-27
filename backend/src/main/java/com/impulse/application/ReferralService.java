@@ -11,17 +11,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.impulse.domain.usuario.ReferralCode;
 import com.impulse.domain.usuario.ReferralUse;
 import com.impulse.analytics.EventTracker;
-import com.impulse.infrastructure.usuario.ReferralCodeRepository;
-import com.impulse.infrastructure.usuario.ReferralUseRepository;
+import com.impulse.domain.usuario.ReferralCodeRepositoryPort;
+import com.impulse.domain.usuario.ReferralUseRepositoryPort;
 
 @Service
 public class ReferralService {
-    private final ReferralCodeRepository codeRepo;
-    private final ReferralUseRepository useRepo;
+    private final ReferralCodeRepositoryPort codeRepo;
+    private final ReferralUseRepositoryPort useRepo;
     private final SecureRandom random = new SecureRandom();
     private final EventTracker tracker;
 
-    public ReferralService(ReferralCodeRepository codeRepo, ReferralUseRepository useRepo, EventTracker tracker){
+    public ReferralService(ReferralCodeRepositoryPort codeRepo, ReferralUseRepositoryPort useRepo, EventTracker tracker){
         this.codeRepo = codeRepo;
         this.useRepo = useRepo;
         this.tracker = tracker;
@@ -32,14 +32,14 @@ public class ReferralService {
         if(codeRepo.countByUserId(userId) >= 5) throw new IllegalStateException("max codes reached");
         String code;
         do { code = HexFormat.of().formatHex(random.generateSeed(5)); } while(codeRepo.findByCode(code).isPresent());
-        return codeRepo.save(new ReferralCode(userId, code));
+    return codeRepo.store(new ReferralCode(userId, code));
     }
 
     @Transactional
     public ReferralUse apply(String code, Long referredUserId){
         var rc = codeRepo.findByCode(code).orElseThrow();
         if(useRepo.countByReferredUserId(referredUserId) > 0) throw new IllegalStateException("already referred");
-        var use = useRepo.save(new ReferralUse(rc.getId(), referredUserId));
+    var use = useRepo.store(new ReferralUse(rc.getId(), referredUserId));
         // Emit event for referral usage
         tracker.track(referredUserId, "referral_used", Map.of(
             "code_id", rc.getId(),
@@ -48,7 +48,7 @@ public class ReferralService {
         // Reward release once: first successful use triggers reward for referrer
         if(!rc.isRewardReleased()){
             rc.markRewardReleased();
-            codeRepo.save(rc);
+            codeRepo.store(rc);
             tracker.track(rc.getUserId(), "referral_reward_released", Map.of(
                 "code_id", rc.getId(),
                 "referred_user_id", referredUserId

@@ -2,7 +2,7 @@ package com.impulse.analytics;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.impulse.domain.pmf.Event;
-import com.impulse.infrastructure.repository.EventRepository;
+import com.impulse.domain.pmf.EventRepositoryPort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,10 +11,10 @@ import java.util.Map;
 
 @Service
 public class EventTracker {
-    private final EventRepository repo;
+    private final EventRepositoryPort repo;
     private final ObjectMapper om = new ObjectMapper();
 
-    public EventTracker(EventRepository repo){
+    public EventTracker(EventRepositoryPort repo){
         this.repo = repo;
     }
 

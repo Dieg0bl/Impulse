@@ -8,7 +8,8 @@ package com.impulse.infrastructure.notificacion;
 import com.impulse.domain.notificacion.Notificacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import com.impulse.domain.notificacion.NotificacionRepositoryPort;
 
 @Repository
-public interface NotificacionRepository extends JpaRepository<Notificacion, Long> {
+public interface NotificacionRepository extends JpaRepository<Notificacion, Long>, NotificacionRepositoryPort {
 }

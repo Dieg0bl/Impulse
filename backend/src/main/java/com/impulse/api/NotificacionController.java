@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.impulse.domain.notificacion.Notificacion;
-import com.impulse.infrastructure.notificacion.NotificacionRepository;
+import com.impulse.application.ports.NotificacionPort;
 
 @RestController("notificacionesControllerTop")
 @RequestMapping("/api/notificaciones")
 public class NotificacionController {
 
-    private final NotificacionRepository notificacionRepository;
+    private final NotificacionPort notificacionRepository;
 
-    public NotificacionController(NotificacionRepository notificacionRepository) {
+    public NotificacionController(NotificacionPort notificacionRepository) {
         this.notificacionRepository = notificacionRepository;
     }
 
@@ -33,22 +33,21 @@ public class NotificacionController {
     }
 
     @PostMapping("/marcar-leida/{id}")
-    public ResponseEntity<Object> marcarLeida(@PathVariable Long id) {
+    public ResponseEntity<Notificacion> marcarLeida(@PathVariable Long id) {
         return notificacionRepository.findById(id)
                 .map(n -> {
                     n.setEnviado("ENVIADO");
                     n.setUpdatedAt(LocalDateTime.now());
                     notificacionRepository.save(n);
-                    return (Object) n;
+                    return ResponseEntity.ok(n);
                 })
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Notificación no encontrada"));
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarNotificacion(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminarNotificacion(@PathVariable Long id) {
         if (!notificacionRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Notificación no encontrada");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         notificacionRepository.deleteById(id);
         return ResponseEntity.noContent().build();

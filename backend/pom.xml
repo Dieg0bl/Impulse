@@ -19,7 +19,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
         <java.version>21</java.version>
         <lombok.version>1.18.28</lombok.version>
     <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
-    <!-- TODO(Phase 3): parametrizar version de springdoc y activar build plugin para exportar openapi.json -->
     </properties>
     <dependencies>
         <!-- MapStruct para mapeo robusto -->
@@ -219,6 +218,24 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- Testcontainers para pruebas de integración con contenedores -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- WireMock para pruebas de contrato/mocking HTTP -->
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8</artifactId>
+            <version>2.35.0</version>
+            <scope>test</scope>
+        </dependency>
         <!-- SnakeYAML for flag file parsing -->
         <dependency>
             <groupId>org.yaml</groupId>
@@ -273,7 +290,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
             <plugin>
                 <groupId>org.cyclonedx</groupId>
                 <artifactId>cyclonedx-maven-plugin</artifactId>
-                <version>2.9.1</version>
                 <executions>
                     <execution>
                         <goals><goal>makeAggregateBom</goal></goals>
@@ -342,6 +358,21 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <!-- PIT: mutation testing plugin -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.9.12</version>
+                <configuration>
+                    <targetClasses>com.impulse.*</targetClasses>
+                    <targetTests>com.impulse.*Test</targetTests>
+                    <outputFormats>
+                        <param>HTML</param>
+                    </outputFormats>
+                    <threads>4</threads>
+                    <mutationThreshold>70</mutationThreshold>
+                </configuration>
             </plugin>
         </plugins>
     </build>

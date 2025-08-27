@@ -25,14 +25,14 @@ public class NotificationService {
         // Placeholder heurística simple (ajustar a tabla real de usuarios)
         try {
             return jdbc.queryForList("SELECT id FROM usuario LIMIT 25", Long.class);
-        } catch(Exception e){
-            try { return jdbc.queryForList("SELECT id FROM users LIMIT 25", Long.class); } catch(Exception ex){ return List.of(); }
+        } catch(org.springframework.dao.DataAccessException e){
+            try { return jdbc.queryForList("SELECT id FROM users LIMIT 25", Long.class); } catch(org.springframework.dao.DataAccessException ex){ return List.of(); }
         }
     }
 
     public boolean trySend(Long userId, String channel, String type){
         Map<String,Object> pref;
-        try { pref = jdbc.queryForMap("SELECT * FROM notification_prefs WHERE user_id=?", userId);} catch(Exception e){return false;}
+    try { pref = jdbc.queryForMap("SELECT * FROM notification_prefs WHERE user_id=?", userId);} catch(org.springframework.dao.DataAccessException e){return false;}
         String tz = (String) pref.getOrDefault("tz","Europe/Madrid");
         ZoneId zone = ZoneId.of(tz);
         LocalTime now = LocalTime.now(zone);
@@ -53,7 +53,7 @@ public class NotificationService {
     private void logBlocked(Long userId, String channel, String type){
         try {
             tracker.track(userId, "notification_blocked_guardrail", Map.of("channel",channel,"type",type), "", "guardrail");
-        } catch (Exception ignore) {
+        } catch (RuntimeException ignore) {
             // Silenciar errores de tracking para no afectar el flujo principal
         }
     }

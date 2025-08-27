@@ -10,7 +10,7 @@ import com.impulse.domain.reto.Reto;
 import com.impulse.domain.reto.RetoDTO;
 import com.impulse.domain.reto.RetoMapper;
 import com.impulse.domain.reto.RetoValidator;
-import com.impulse.infrastructure.reto.RetoRepository;
+import com.impulse.domain.reto.RetoRepositoryPort;
 
 /**
  * Servicio de aplicación para Reto.
@@ -19,14 +19,14 @@ import com.impulse.infrastructure.reto.RetoRepository;
  */
 @Service
 public class RetoService {
-    private final RetoRepository retoRepository;
+    private final RetoRepositoryPort retoRepository;
     private final RetoValidator retoValidator;
     private final AuditoriaService auditoriaService;
     private final RetoMapper retoMapper;
     // Compliance: Verificación de inyección y logging de dependencias
     // @Autowired removed: only one constructor present
     private static final String NOT_FOUND_MSG = "Reto no encontrado";
-    public RetoService(RetoRepository retoRepository, RetoValidator retoValidator, AuditoriaService auditoriaService, RetoMapper retoMapper) {
+    public RetoService(RetoRepositoryPort retoRepository, RetoValidator retoValidator, AuditoriaService auditoriaService, RetoMapper retoMapper) {
         this.retoRepository = retoRepository;
         this.retoValidator = retoValidator;
         this.auditoriaService = auditoriaService;

@@ -11,7 +11,7 @@ import com.impulse.domain.notificacion.Notificacion;
 import com.impulse.domain.notificacion.NotificacionDTO;
 import com.impulse.domain.notificacion.NotificacionMapper;
 import com.impulse.domain.notificacion.NotificacionValidator;
-import com.impulse.infrastructure.notificacion.NotificacionRepository;
+import com.impulse.domain.notificacion.NotificacionRepositoryPort;
 
 /**
  * Servicio de aplicación para Notificación.
@@ -20,12 +20,12 @@ import com.impulse.infrastructure.notificacion.NotificacionRepository;
  */
 @Service
 public class NotificacionService {
-    private final NotificacionRepository notificacionRepository;
+    private final NotificacionRepositoryPort notificacionRepository;
     private final AuditoriaService auditoriaService;
 
     private static final String NOTIFICACION_NO_ENCONTRADA = "Notificación no encontrada";
 
-    public NotificacionService(NotificacionRepository notificacionRepository, AuditoriaService auditoriaService) {
+    public NotificacionService(NotificacionRepositoryPort notificacionRepository, AuditoriaService auditoriaService) {
         this.notificacionRepository = notificacionRepository;
         this.auditoriaService = auditoriaService;
     }

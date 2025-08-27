@@ -11,7 +11,7 @@ import com.impulse.domain.evidencia.Evidencia;
 import com.impulse.domain.evidencia.EvidenciaDTO;
 import com.impulse.domain.evidencia.EvidenciaMapper;
 import com.impulse.domain.evidencia.EvidenciaValidator;
-import com.impulse.infrastructure.evidencia.EvidenciaRepository;
+import com.impulse.domain.evidencia.EvidenciaRepositoryPort;
 
 /**
  * Servicio de aplicación para Evidencia.
@@ -21,12 +21,12 @@ import com.impulse.infrastructure.evidencia.EvidenciaRepository;
 @Service
 public class EvidenciaService {
     private static final String EVIDENCIA_NO_ENCONTRADA = "Evidencia no encontrada";
-    private final EvidenciaRepository evidenciaRepository;
+    private final EvidenciaRepositoryPort evidenciaRepository;
     private final AuditoriaService auditoriaService;
     private final EvidenciaMapper evidenciaMapper;
     private final EvidenciaValidator evidenciaValidator;
 
-    public EvidenciaService(EvidenciaRepository evidenciaRepository, AuditoriaService auditoriaService, EvidenciaMapper evidenciaMapper, EvidenciaValidator evidenciaValidator) {
+    public EvidenciaService(EvidenciaRepositoryPort evidenciaRepository, AuditoriaService auditoriaService, EvidenciaMapper evidenciaMapper, EvidenciaValidator evidenciaValidator) {
         this.evidenciaRepository = evidenciaRepository;
         this.auditoriaService = auditoriaService;
         this.evidenciaMapper = evidenciaMapper;
@@ -40,7 +40,7 @@ public class EvidenciaService {
      */
     @Transactional
     public EvidenciaDTO crearEvidencia(EvidenciaDTO dto) {
-    return _crearEvidenciaImpl(dto);
+    return crearEvidenciaImpl(dto);
     }
 
     /**
@@ -57,7 +57,7 @@ public class EvidenciaService {
      */
     @Transactional
     public void eliminarEvidencia(Long id) {
-    _eliminarEvidenciaImpl(id);
+    eliminarEvidenciaImpl(id);
     }
 
     /**
@@ -92,7 +92,7 @@ public class EvidenciaService {
         List<Evidencia> evidencias = evidenciaRepository.findAll();
         return evidencias.stream()
             .filter(e -> e.getDeletedAt() == null)
-            .map(e -> evidenciaMapper.toDTO(e))
+            .map(evidenciaMapper::toDTO)
             .toList();
     }
 
@@ -102,7 +102,7 @@ public class EvidenciaService {
     }
 
     @Transactional
-    public EvidenciaDTO subir(org.springframework.web.multipart.MultipartFile file, Long retoId, String comentario) throws java.io.IOException {
+    public EvidenciaDTO subir(org.springframework.web.multipart.MultipartFile file, Long retoId, String comentario) {
         // Minimal adapter: map incoming multipart to DTO and reuse crearEvidencia
         EvidenciaDTO dto = new EvidenciaDTO(
             null,
@@ -134,7 +134,7 @@ public class EvidenciaService {
 
     // Private implementation helpers to satisfy static analysis that transactional methods
     // should be the ones with @Transactional and to avoid calling them via 'this' in some analyzers.
-    private EvidenciaDTO _crearEvidenciaImpl(EvidenciaDTO dto) {
+    private EvidenciaDTO crearEvidenciaImpl(EvidenciaDTO dto) {
         Evidencia evidencia = evidenciaMapper.toEntity(dto);
         if (evidenciaValidator != null) {
             evidenciaValidator.validarNueva(dto);
@@ -145,7 +145,7 @@ public class EvidenciaService {
         return evidenciaMapper.toDTO(evidencia);
     }
 
-    private void _eliminarEvidenciaImpl(Long id) {
+    private void eliminarEvidenciaImpl(Long id) {
         Evidencia evidencia = evidenciaRepository.findById(id)
                 .orElseThrow(() -> new com.impulse.common.exceptions.NotFoundException(EVIDENCIA_NO_ENCONTRADA));
         evidencia.setDeletedAt(java.time.LocalDateTime.now());

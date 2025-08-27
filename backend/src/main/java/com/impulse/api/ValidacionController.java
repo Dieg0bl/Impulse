@@ -2,7 +2,7 @@
 package com.impulse.api;
 
 import com.impulse.domain.tutor.Validation;
-import com.impulse.infrastructure.tutor.ValidationRepository;
+import com.impulse.application.ports.ValidationPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +12,11 @@ import java.util.List;
 @RequestMapping("/api/validaciones")
 public class ValidacionController {
 
-    private final ValidationRepository validationRepository;
+    private static final String NOT_FOUND_MSG = "Validación no encontrada";
 
-    public ValidacionController(ValidationRepository validationRepository) {
+    private final ValidationPort validationRepository;
+
+    public ValidacionController(ValidationPort validationRepository) {
         this.validationRepository = validationRepository;
     }
 
@@ -25,7 +27,7 @@ public class ValidacionController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> crearValidacion(@RequestBody Validation request) {
+    public ResponseEntity<Object> crearValidacion(@RequestBody Validation request) {
         try {
             Validation creada = validationRepository.save(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(creada);
@@ -36,28 +38,28 @@ public class ValidacionController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getValidacion(@PathVariable Long id) {
+    public ResponseEntity<Object> getValidacion(@PathVariable Long id) {
         return validationRepository.findById(id)
-                .<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Validación no encontrada"));
+                .<ResponseEntity<Object>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND_MSG));
     }
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarValidacion(@PathVariable Long id, @RequestBody Validation request) {
+    public ResponseEntity<Object> actualizarValidacion(@PathVariable Long id, @RequestBody Validation request) {
         return validationRepository.findById(id)
-                .<ResponseEntity<?>>map(v -> {
+                .<ResponseEntity<Object>>map(v -> {
                     Validation actualizado = updateValidationFields(v, request);
                     validationRepository.save(actualizado);
                     return ResponseEntity.ok(actualizado);
                 })
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Validación no encontrada"));
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND_MSG));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarValidacion(@PathVariable Long id) {
+    public ResponseEntity<Object> eliminarValidacion(@PathVariable Long id) {
         if (!validationRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Validación no encontrada");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(NOT_FOUND_MSG);
         }
         validationRepository.deleteById(id);
         return ResponseEntity.noContent().build();

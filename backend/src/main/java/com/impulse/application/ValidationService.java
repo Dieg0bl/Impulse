@@ -4,12 +4,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.impulse.domain.tutor.Validation;
-import com.impulse.infrastructure.tutor.ValidationRepository;
+import com.impulse.application.ports.ValidationPort;
 
 @Service
 public class ValidationService {
-    private final ValidationRepository repo;
-    public ValidationService(ValidationRepository repo){this.repo=repo;}
+    private final ValidationPort repo;
+    public ValidationService(ValidationPort repo){this.repo=repo;}
 
     @Transactional
     public Validation submit(Long retoId, Long validatorId, String status, String feedback){

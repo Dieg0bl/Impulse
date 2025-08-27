@@ -8,6 +8,11 @@ import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
 @AnalyzeClasses(packages = "com.impulse")
 public class ArchitectureTest {
 
+  // Private constructor to prevent instantiation
+  private ArchitectureTest() {
+    throw new AssertionError("Cannot instantiate ArchitectureTest");
+  }
+
   @ArchTest
   public static void controllers_should_not_depend_on_repositories(JavaClasses classes) {
     ArchRuleDefinition.noClasses()

@@ -20,19 +20,19 @@ public class PaywallController {
     private boolean enabled(){ return flags.isOn("monetization.paywall"); }
 
     @GetMapping("/plans")
-    public ResponseEntity<?> plans(){
+    public ResponseEntity<java.util.List<java.util.Map<String,Object>>> plans(){
         if(!enabled()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(paywall.listActivePlans());
     }
 
     @PostMapping("/subscribe/{userId}/{planCode}")
-    public ResponseEntity<?> subscribe(@PathVariable Long userId, @PathVariable String planCode){
+    public ResponseEntity<com.impulse.domain.monetizacion.Subscription> subscribe(@PathVariable Long userId, @PathVariable String planCode){
         if(!enabled()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(paywall.subscribe(userId, planCode));
     }
 
     @GetMapping("/entitlement/{userId}/{feature}")
-    public ResponseEntity<?> entitlement(@PathVariable Long userId, @PathVariable String feature){
+    public ResponseEntity<java.util.Map<String,Object>> entitlement(@PathVariable Long userId, @PathVariable String feature){
         if(!enabled()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(java.util.Map.of("feature", feature, "entitled", paywall.hasEntitlement(userId, feature)));
     }

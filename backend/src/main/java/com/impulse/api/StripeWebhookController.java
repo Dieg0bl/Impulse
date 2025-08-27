@@ -4,19 +4,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.impulse.infrastructure.monetizacion.StripeWebhookEventRepository;
+import com.impulse.application.ports.StripeWebhookEventPort;
 import com.impulse.domain.monetizacion.StripeWebhookEvent;
 import com.impulse.common.flags.FlagService;
 
 @RestController
 @RequestMapping("/api/stripe")
 public class StripeWebhookController {
-    private final StripeWebhookEventRepository repo;
+    private final StripeWebhookEventPort repo;
     private final FlagService flags;
     @Value("${stripe.webhook.secret:changeme}")
     private String webhookSecret;
 
-    public StripeWebhookController(StripeWebhookEventRepository repo, FlagService flags){
+    public StripeWebhookController(StripeWebhookEventPort repo, FlagService flags){
         this.repo = repo;
         this.flags = flags;
     }
@@ -24,7 +24,7 @@ public class StripeWebhookController {
     private boolean enabled(){ return flags.isOn("monetization.paywall"); }
 
     @PostMapping("/webhook")
-    public ResponseEntity<?> webhook(@RequestBody String payload,
+    public ResponseEntity<java.util.Map<String,Object>> webhook(@RequestBody String payload,
                                      @RequestHeader(name="Stripe-Signature", required=false) String sig,
                                      @RequestHeader(name="Stripe-Event-Id", required=false) String providedEventId){
         if(!enabled()) return ResponseEntity.notFound().build();
@@ -43,43 +43,52 @@ public class StripeWebhookController {
     }
 
     private String extractType(String payload){
-        try {
-            int idx = payload.indexOf("\"type\"");
-            if(idx>-1){
-                int colon = payload.indexOf(':', idx);
-                int quoteStart = payload.indexOf('"', colon+1);
-                int quoteEnd = payload.indexOf('"', quoteStart+1);
-                if(quoteStart>-1 && quoteEnd>-1){
-                    return payload.substring(quoteStart+1, quoteEnd);
-                }
-            }
-        } catch(Exception ignored){}
+        if (payload == null) return "unknown";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile("\\\"type\\\"\\s*:\\s*\\\"([^\\\"]+)\\\"");
+        java.util.regex.Matcher m = p.matcher(payload);
+        if (m.find()) {
+            return m.group(1);
+        }
         return "unknown";
     }
 
     private boolean validateSignature(String sigHeader, String payload){
-        if(sigHeader == null || sigHeader.isBlank()) return false;
+        if (sigHeader == null || sigHeader.isBlank()) return false;
+        java.util.Map<String,String> values = parseSignatureHeader(sigHeader);
+        String v1 = values.get("v1");
+        String t = values.get("t");
+        if (v1 == null) return false;
+        if (t == null) return false;
+        String signedPayload = t + "." + payload;
         try {
-            String[] parts = sigHeader.split(",");
-            String v1 = null; String t = null;
-            for(String p: parts){
-                String[] kv = p.split("=",2);
-                if(kv.length==2){
-                    if("v1".equals(kv[0])) v1 = kv[1];
-                    if("t".equals(kv[0])) t = kv[1];
-                }
-            }
-            if(v1==null || t==null) return false;
-            String signedPayload = t + "." + payload;
-            var mac = javax.crypto.Mac.getInstance("HmacSHA256");
-            mac.init(new javax.crypto.spec.SecretKeySpec(webhookSecret.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256"));
-            byte[] digest = mac.doFinal(signedPayload.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            String expected = java.util.HexFormat.of().formatHex(digest);
-            if(expected.length()!=v1.length()) return false;
-            int diff=0; for(int i=0;i<expected.length();i++){ diff |= expected.charAt(i) ^ v1.charAt(i); }
-            return diff==0;
-        } catch(Exception e){
+            String expectedHex = computeHmacHex(webhookSecret, signedPayload);
+            // Compare as byte arrays using constant-time comparison
+            byte[] expectedBytes = java.util.HexFormat.of().parseHex(expectedHex);
+            byte[] providedBytes = java.util.HexFormat.of().parseHex(v1);
+            return java.security.MessageDigest.isEqual(expectedBytes, providedBytes);
+        } catch (java.security.NoSuchAlgorithmException | java.security.InvalidKeyException | IllegalArgumentException ex) {
+            // IllegalArgumentException can be thrown by parseHex if v1 is malformed
             return false;
         }
+    }
+
+    private java.util.Map<String,String> parseSignatureHeader(String header){
+        var map = new java.util.HashMap<String,String>();
+        if(header == null) return map;
+        String[] parts = header.split(",");
+        for(String p: parts){
+            String[] kv = p.split("=",2);
+            if(kv.length==2){
+                map.put(kv[0], kv[1]);
+            }
+        }
+        return map;
+    }
+
+    private String computeHmacHex(String secret, String signedPayload) throws java.security.NoSuchAlgorithmException, java.security.InvalidKeyException{
+        var mac = javax.crypto.Mac.getInstance("HmacSHA256");
+        mac.init(new javax.crypto.spec.SecretKeySpec(secret.getBytes(java.nio.charset.StandardCharsets.UTF_8), "HmacSHA256"));
+        byte[] digest = mac.doFinal(signedPayload.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        return java.util.HexFormat.of().formatHex(digest);
     }
 }

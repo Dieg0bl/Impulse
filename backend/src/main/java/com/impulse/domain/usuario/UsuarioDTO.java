@@ -60,6 +60,14 @@ public class UsuarioDTO {
         public void setRacha(int racha) { this.racha = racha; }
     }
 
+    /**
+     * Constructor vacío necesario para frameworks de serialización/deserialización (por ejemplo, Jackson).
+     * No realiza ninguna acción porque esta clase es un DTO puro sin lógica de negocio.
+     */
+    /**
+     * Constructor vacío necesario para frameworks de serialización/deserialización (por ejemplo, Jackson).
+     * No realiza ninguna acción porque esta clase es un DTO puro sin lógica de negocio.
+     */
     public UsuarioDTO() {}
 
     // Getters y setters para todos los campos

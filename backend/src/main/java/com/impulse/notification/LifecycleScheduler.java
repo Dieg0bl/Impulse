@@ -8,20 +8,19 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.impulse.common.flags.FlagService;
-import com.impulse.retention.RetentionService;
 
 @Component("notificationLifecycleScheduler")
 public class LifecycleScheduler {
 
     private final NotificationService notifications;
-    private final FlagService flags; private final RetentionService retention;
+    private final FlagService flags;
     private final JdbcTemplate jdbc;
+    private static final String CHANNEL_EMAIL = "email";
 
-    public LifecycleScheduler(NotificationService notifications, FlagService flags, JdbcTemplate jdbc, RetentionService retention) {
+    public LifecycleScheduler(NotificationService notifications, FlagService flags, JdbcTemplate jdbc) {
         this.notifications = notifications;
         this.flags = flags;
         this.jdbc = jdbc;
-        this.retention = retention;
     }
 
     // Ejecuta cada hora
@@ -31,14 +30,14 @@ public class LifecycleScheduler {
         if(Boolean.TRUE.equals(lifecycle)){
             List<Long> users = notifications.findAtRiskUsers();
             for(Long uid : users){
-                notifications.trySend(uid, "email", "deadline_warning");
+                notifications.trySend(uid, CHANNEL_EMAIL, "deadline_warning");
             }
             // Merge dormant scan (previous separate scheduler) every hour
             var dormant = jdbc.queryForList("SELECT id, usuario_id FROM retos WHERE updated_at < DATE_SUB(NOW(), INTERVAL 2 DAY) LIMIT 50");
             dormant.forEach(r -> {
                 Object userId = r.getOrDefault("usuario_id", r.get("id"));
                 if(userId instanceof Number n){
-                    notifications.trySend(n.longValue(), "email", "habit_nudge");
+                    notifications.trySend(n.longValue(), CHANNEL_EMAIL, "habit_nudge");
                 }
             });
         }
@@ -55,7 +54,7 @@ public class LifecycleScheduler {
             Object uidObj = row.get("user_id");
             if(uidObj instanceof Number n){
                 // Se rompe racha: mandar nudge si guardrails permiten
-                notifications.trySend(n.longValue(), "email", "streak_broken");
+                notifications.trySend(n.longValue(), CHANNEL_EMAIL, "streak_broken");
             }
         }
     }

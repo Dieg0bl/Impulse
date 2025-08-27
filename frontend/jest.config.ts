@@ -3,8 +3,8 @@ import type { Config } from "jest";
 const config: Config = {
   rootDir: '.',
   testEnvironment: 'jsdom',
-  setupFiles: ['<rootDir>/src/__tests__/jest-env-shim.js'],
-  setupFilesAfterEnv: ['<rootDir>/src/__tests__/test-setup.ts'],
+  setupFiles: ['<rootDir>/src/test/jest-env-shim.js'],
+  setupFilesAfterEnv: ['<rootDir>/src/test/test-setup.ts'],
   transform: {
     '^.+\\.(t|j)sx?$': ['babel-jest', {}],
   },

@@ -4,12 +4,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.impulse.domain.support.SupportTicket;
-import com.impulse.infrastructure.support.SupportTicketRepository;
+import com.impulse.application.ports.SupportTicketPort;
 
 @Service
 public class SupportService {
-    private final SupportTicketRepository repo;
-    public SupportService(SupportTicketRepository repo){this.repo=repo;}
+    private final SupportTicketPort repo;
+    public SupportService(SupportTicketPort repo){this.repo=repo;}
 
     @Transactional
     public SupportTicket create(Long userId, String subject, String body){

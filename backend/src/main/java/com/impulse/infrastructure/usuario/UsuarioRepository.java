@@ -1,6 +1,7 @@
 package com.impulse.infrastructure.usuario;
 
 import com.impulse.domain.usuario.Usuario;
+import com.impulse.domain.usuario.UsuarioRepositoryPort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,12 +10,12 @@ import org.springframework.stereotype.Repository;
  * Cumple compliance: RGPD, ISO 27001, ENS.
  */
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+public interface UsuarioRepository extends JpaRepository<Usuario, Long>, UsuarioRepositoryPort {
     /**
      * Busca un usuario por email (público, requiere consentimiento).
      * Cumple la guía: solo se añaden métodos personalizados si la lógica de negocio lo exige.
      * @param email Email del usuario
      * @return Usuario o null
      */
-    Usuario findByEmail(String email);
+    java.util.Optional<Usuario> findByEmail(String email);
 }

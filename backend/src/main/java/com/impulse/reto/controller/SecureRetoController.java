@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,11 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.impulse.domain.reto.Reto;
-import com.impulse.infrastructure.reto.RetoRepository;
+import com.impulse.application.ports.RetoPort;
 import com.impulse.security.RetoSecurityService;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 
 /**
  * Controlador seguro para retos que implementa autorización granular.
@@ -37,21 +36,27 @@ import jakarta.persistence.Query;
  */
 @RestController
 @RequestMapping("/api/_internal/retos")
-@Deprecated
+/**
+ * @deprecated since="2024-01", forRemoval=true. Do not use in new code.
+ * <p>
+ * This class is deprecated and will be removed in a future release. Please migrate to the new controller.
+ */
+@Deprecated(since = "2024-01", forRemoval = true)
 public class SecureRetoController {
 
     // Constantes para respuestas
     private static final String SUCCESS_KEY = "success";
     private static final String MESSAGE_KEY = "message";
 
-    @Autowired
-    private RetoRepository retoRepository;
+    private final RetoPort retoRepository;
+    private final RetoSecurityService retoSecurityService;
+    private final EntityManager entityManager;
 
-    @Autowired
-    private RetoSecurityService retoSecurityService;
-
-    @Autowired
-    private EntityManager entityManager;
+    public SecureRetoController(RetoPort retoRepository, RetoSecurityService retoSecurityService, EntityManager entityManager) {
+        this.retoRepository = retoRepository;
+        this.retoSecurityService = retoSecurityService;
+        this.entityManager = entityManager;
+    }
 
     /**
      * Lista retos con filtros de seguridad automáticos.
@@ -75,7 +80,7 @@ public class SecureRetoController {
         
         sql.append(" ORDER BY r.createdAt DESC");
         
-        Query query = entityManager.createQuery(sql.toString());
+    TypedQuery<Reto> query = entityManager.createQuery(sql.toString(), Reto.class);
         
         if (estado != null && !estado.trim().isEmpty()) {
             query.setParameter("estado", estado);
@@ -84,8 +89,7 @@ public class SecureRetoController {
         query.setFirstResult(page * size);
         query.setMaxResults(size);
         
-        @SuppressWarnings("unchecked")
-        List<Reto> retos = query.getResultList();
+    List<Reto> retos = query.getResultList();
         
         return ResponseEntity.ok(retos);
     }
@@ -347,9 +351,9 @@ public class SecureRetoController {
                 ));
             }
             
-            String motivo = (String) reportData.get("motivo");
-            String descripcion = (String) reportData.get("descripcion");
-            String categoria = (String) reportData.get("categoria");
+            String motivo = reportData.get("motivo");
+            String descripcion = reportData.get("descripcion");
+            String categoria = reportData.get("categoria");
             
             // Validar motivo
             if (motivo == null || motivo.trim().isEmpty()) {

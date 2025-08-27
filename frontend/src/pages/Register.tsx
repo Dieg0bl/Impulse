@@ -79,7 +79,9 @@ const Register: React.FC = () => {
       await register(formData.email, formData.password, formData.nombre);
       setSuccess(true);
     } catch (err) {
-      // El error ya se maneja en el hook
+      // El error ya se maneja en el hook, pero logueamos para trazabilidad
+      // eslint-disable-next-line no-console
+      console.error('Register submit error:', err);
     }
   };
 
@@ -122,10 +124,10 @@ const Register: React.FC = () => {
                 </div>
               )}
               {success && (
-                <div className="success-message" role="status">
-                  <span className="success-icon">✅</span>
-                  ¡Registro exitoso! Revisa tu correo para verificar tu cuenta.
-                </div>
+                <output className="success-message">
+                  <span className="success-icon">✅</span>{' '}
+                    ¡Registro exitoso! Revisa tu correo para verificar tu cuenta.
+                </output>
               )}
 
               <div className="form-row">
@@ -267,7 +269,7 @@ const Register: React.FC = () => {
               </div>
 
               <Button type="submit" disabled={loading}>Registrarse</Button>
-              {success && <div className="success-message" role="status">¡Registro exitoso! Ahora puedes iniciar sesión.</div>}
+              {success && <output className="success-message"><span className="success-icon">✅</span>{' '}¡Registro exitoso! Ahora puedes iniciar sesión.</output>}
               {error && <div className="error-message" role="alert">{error}</div>}
             </form>
           </div>

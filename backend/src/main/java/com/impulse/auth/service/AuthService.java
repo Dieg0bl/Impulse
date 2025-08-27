@@ -21,7 +21,7 @@ import com.impulse.auth.dto.LoginResponse;
 import com.impulse.auth.dto.RegisterRequest;
 import com.impulse.common.security.JwtProvider;
 import com.impulse.domain.auth.AuthToken;
-import com.impulse.infrastructure.auth.AuthTokenRepository;
+import com.impulse.application.ports.AuthTokenPort;
 import com.impulse.domain.usuario.UsuarioDTO;
 
 /**
@@ -39,13 +39,13 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     // Persistencia de magic links (tabla auth_tokens)
-    private final AuthTokenRepository authTokenRepository;
+    private final AuthTokenPort authTokenRepository;
     private final com.impulse.security.LoginAttemptService loginAttempts;
     private final com.impulse.security.SecurityAuditService audit;
     private final JdbcTemplate jdbc;
     private final RetentionService retention;
     
-    public AuthService(UsuarioService usuarioService, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, AuthTokenRepository authTokenRepository, com.impulse.security.LoginAttemptService loginAttempts, com.impulse.security.SecurityAuditService audit, JdbcTemplate jdbc, RetentionService retention) {
+    public AuthService(UsuarioService usuarioService, PasswordEncoder passwordEncoder, JwtProvider jwtProvider, AuthTokenPort authTokenRepository, com.impulse.security.LoginAttemptService loginAttempts, com.impulse.security.SecurityAuditService audit, JdbcTemplate jdbc, RetentionService retention) {
         this.usuarioService = usuarioService;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
@@ -69,33 +69,33 @@ public class AuthService {
 
             // Buscar usuario por email
             UsuarioDTO usuario = usuarioService.buscarPorEmail(loginRequest.getEmail());
-            
+
             if (usuario == null) {
-                loginAttempts.record(loginRequest.getEmail(), null, false);
+                loginAttempts.record(loginRequest.getEmail(), false);
                 audit.audit(null, null, "LOGIN_USER_NOT_FOUND", "user", loginRequest.getEmail(), null, "low");
                 return new LoginResponse(false, "Usuario no encontrado");
             }
-            
+
             // Verificar estado del usuario
             if (!ESTADO_ACTIVO.equals(usuario.getEstado())) {
-                loginAttempts.record(loginRequest.getEmail(), null, false);
+                loginAttempts.record(loginRequest.getEmail(), false);
                 audit.audit(usuario.getId(), null, "LOGIN_INACTIVE", "user", String.valueOf(usuario.getId()), java.util.Map.of("estado", usuario.getEstado()), "medium");
                 return new LoginResponse(false, "Usuario inactivo o suspendido");
             }
-            
+
             // Validar contraseña
             if (!passwordEncoder.matches(loginRequest.getPassword(), usuario.getPassword())) {
-                loginAttempts.record(loginRequest.getEmail(), null, false);
+                loginAttempts.record(loginRequest.getEmail(), false);
                 audit.audit(usuario.getId(), null, "LOGIN_BAD_PASSWORD", "user", String.valueOf(usuario.getId()), null, "low");
                 return new LoginResponse(false, "Credenciales inválidas");
             }
-            
+
             // Generar token JWT legacy (compatible con código existente)
             String token = jwtProvider.generateToken(usuario.getEmail(), usuario.getRoles());
-            
-            loginAttempts.record(loginRequest.getEmail(), null, true);
+
+            loginAttempts.record(loginRequest.getEmail(), true);
             audit.audit(usuario.getId(), null, "LOGIN_SUCCESS", "user", String.valueOf(usuario.getId()), null, "low");
-            try { retention.recordActivity(usuario.getId()); } catch (Exception ignore) {}
+            recordRetentionActivity(usuario.getId());
             return new LoginResponse(
                 true,
                 "Login exitoso",
@@ -104,7 +104,7 @@ public class AuthService {
                 usuario.getId(),
                 usuario.getNombre()
             );
-            
+
         } catch (Exception e) {
             logger.error("Error en proceso de login", e);
             return new LoginResponse(false, "Error interno del servidor: " + e.getMessage());
@@ -130,27 +130,16 @@ public class AuthService {
                 error.put(MESSAGE_KEY, "La contraseña no cumple la política (min 12, mayus, minus, dígito, símbolo)");
                 return ResponseEntity.badRequest().body(error);
             }
-            
+
             // Crear nuevo usuario usando DTO existente
             UsuarioDTO nuevoUsuario = createUserFromRequest(registerRequest);
-            
+
             // Guardar usuario
             UsuarioDTO usuarioCreado = usuarioService.crearUsuario(nuevoUsuario);
-            
+
             // Marcar conversión de invitación si aplica
             if(registerRequest.getInviteCode()!=null && !registerRequest.getInviteCode().isBlank()){
-                try {
-                    var rows = jdbc.queryForList("SELECT * FROM invites WHERE code=?", registerRequest.getInviteCode());
-                    if(!rows.isEmpty()){
-                        var row = rows.get(0);
-                        if(!Boolean.TRUE.equals(row.get("accepted"))){
-                            jdbc.update("UPDATE invites SET accepted=TRUE, accepted_at=NOW() WHERE id=?", row.get("id"));
-                            audit.audit(usuarioCreado.getId(), null, "INVITE_CONVERTED_REGISTER", "invite", String.valueOf(row.get("id")), java.util.Map.of("referrer_id", row.get("referrer_id")), "low");
-                        }
-                    }
-                } catch (Exception ex){
-                    logger.warn("Fallo marcando conversión de invitación: {}", ex.getMessage());
-                }
+                markInviteConverted(registerRequest, usuarioCreado);
             }
 
             // Respuesta exitosa sin datos sensibles
@@ -160,9 +149,9 @@ public class AuthService {
             response.put("userId", usuarioCreado.getId());
             response.put("email", usuarioCreado.getEmail());
             response.put("nombre", usuarioCreado.getNombre());
-            
+
             return ResponseEntity.ok(response);
-            
+
         } catch (Exception e) {
             logger.error("Error en proceso de registro", e);
             Map<String, Object> error = new HashMap<>();
@@ -226,6 +215,34 @@ public class AuthService {
     }
     
     // ==================== MÉTODOS PRIVADOS ====================
+    /**
+     * Registra actividad de retención para el usuario (no crítico para login).
+     */
+    private void recordRetentionActivity(Long userId) {
+        try {
+            retention.recordActivity(userId);
+        } catch (Exception ignore) {
+            // intentionally ignored: retention is not critical for login
+        }
+    }
+
+    /**
+     * Marca la conversión de una invitación si aplica.
+     */
+    private void markInviteConverted(RegisterRequest registerRequest, UsuarioDTO usuarioCreado) {
+        try {
+            var rows = jdbc.queryForList("SELECT * FROM invites WHERE code=?", registerRequest.getInviteCode());
+            if(!rows.isEmpty()){
+                var row = rows.get(0);
+                if(!Boolean.TRUE.equals(row.get("accepted"))){
+                    jdbc.update("UPDATE invites SET accepted=TRUE, accepted_at=NOW() WHERE id=?", row.get("id"));
+                    audit.audit(usuarioCreado.getId(), null, "INVITE_CONVERTED_REGISTER", "invite", String.valueOf(row.get("id")), java.util.Map.of("referrer_id", row.get("referrer_id")), "low");
+                }
+            }
+        } catch (Exception ex){
+            logger.warn("Fallo marcando conversión de invitación: {}", ex.getMessage());
+        }
+    }
     
     /**
      * Verifica si un usuario ya existe por email.
@@ -256,9 +273,20 @@ public class AuthService {
 
     private boolean isPasswordStrong(String pwd){
         if(pwd==null || pwd.length()<12) return false;
-        boolean upper=false, lower=false, digit=false, special=false;
+        boolean upper = false;
+        boolean lower = false;
+        boolean digit = false;
+        boolean special = false;
         for(char c: pwd.toCharArray()){
-            if(Character.isUpperCase(c)) upper=true; else if(Character.isLowerCase(c)) lower=true; else if(Character.isDigit(c)) digit=true; else special=true;
+            if(Character.isUpperCase(c)) {
+                upper = true;
+            } else if(Character.isLowerCase(c)) {
+                lower = true;
+            } else if(Character.isDigit(c)) {
+                digit = true;
+            } else {
+                special = true;
+            }
         }
         return upper && lower && digit && special;
     }
@@ -294,7 +322,7 @@ public class AuthService {
                 if(usuario==null) return new LoginResponse(false, "usuario_no_encontrado");
                 String jwt = jwtProvider.generateToken(usuario.getEmail(), usuario.getRoles());
                 updateLastAccess(usuario.getEmail());
-                try { retention.recordActivity(usuario.getId()); } catch (Exception ignore) {}
+                recordRetentionActivity(usuario.getId());
                 return new LoginResponse(true, "login_magic_ok", jwt, usuario.getRoles(), usuario.getId(), usuario.getNombre());
             })
             .orElseGet(() -> new LoginResponse(false, "magic_link_invalido_o_expirado"));

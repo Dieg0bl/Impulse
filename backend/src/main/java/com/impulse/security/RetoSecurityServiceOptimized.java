@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.impulse.domain.reto.Reto;
 import com.impulse.domain.usuario.Usuario;
-import com.impulse.infrastructure.usuario.UsuarioRepository;
+import com.impulse.domain.usuario.UsuarioRepositoryPort;
 
 /**
  * Servicio de seguridad granular para retos MEJORADO.
@@ -25,7 +25,7 @@ public class RetoSecurityServiceOptimized {
 
     private static final Logger logger = LoggerFactory.getLogger(RetoSecurityServiceOptimized.class);
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioRepositoryPort usuarioRepository;
 
     // === CONSTANTES PARA ROLES ===
     private static final String ADMIN_ROLE = "ADMIN";
@@ -71,7 +71,7 @@ public class RetoSecurityServiceOptimized {
      * Verifica si el usuario actual puede realizar una operación específica en un reto.
      * IMPLEMENTACIÓN REAL con lógica de negocio completa.
      */
-    public RetoSecurityServiceOptimized(UsuarioRepository usuarioRepository) {
+    public RetoSecurityServiceOptimized(UsuarioRepositoryPort usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
 
@@ -272,7 +272,8 @@ public class RetoSecurityServiceOptimized {
             }
             
             String username = auth.getName();
-            return usuarioRepository.findByEmail(username);
+            java.util.Optional<Usuario> opt = usuarioRepository.findByEmail(username);
+            return opt.orElse(null);
         } catch (Exception e) {
             logger.error("Error obteniendo usuario actual", e);
             return null;

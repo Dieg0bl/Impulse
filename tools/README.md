@@ -11,6 +11,7 @@ Key scripts (invokable with `node tools/<script>.js`):
 - `event-schema-lint.js` — validates `docs/analytics/events.md` event schema.
 
 Guidance
+
 1. Node v18+ recommended.
 2. Run checks locally from repo root:
 

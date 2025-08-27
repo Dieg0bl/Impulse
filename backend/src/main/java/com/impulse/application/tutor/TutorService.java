@@ -9,7 +9,7 @@ import com.impulse.domain.tutor.Tutor;
 import com.impulse.domain.tutor.TutorDTO;
 import com.impulse.domain.tutor.TutorMapper;
 import com.impulse.domain.tutor.TutorValidator;
-import com.impulse.infrastructure.tutor.TutorRepository;
+import com.impulse.application.ports.TutorPort;
 
 /**
  * Servicio de aplicación para Tutor.
@@ -18,12 +18,12 @@ import com.impulse.infrastructure.tutor.TutorRepository;
  */
 @Service
 public class TutorService {
-    private final TutorRepository tutorRepository;
+    private final TutorPort tutorRepository;
     private final AuditoriaService auditoriaService;
 
     private static final String MSG_TUTOR_NO_ENCONTRADO = "Tutor no encontrado";
 
-    public TutorService(TutorRepository tutorRepository, AuditoriaService auditoriaService) {
+    public TutorService(TutorPort tutorRepository, AuditoriaService auditoriaService) {
         this.tutorRepository = tutorRepository;
         this.auditoriaService = auditoriaService;
     }

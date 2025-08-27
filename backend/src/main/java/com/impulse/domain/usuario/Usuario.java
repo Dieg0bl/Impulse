@@ -4,11 +4,10 @@ package com.impulse.domain.usuario;
 import java.time.Instant;
 
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.impulse.infrastructure.security.pii.PII;
+import com.impulse.domain.security.pii.PII;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,7 +32,6 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "Usuario")
 @SQLDelete(sql = "UPDATE Usuario SET deleted_at = NOW(3), estado = 'ELIMINADO' WHERE id = ?")
-@Where(clause = "deleted_at IS NULL")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Usuario {
 

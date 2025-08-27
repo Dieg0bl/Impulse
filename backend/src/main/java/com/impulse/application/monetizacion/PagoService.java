@@ -9,7 +9,7 @@ import com.impulse.domain.monetizacion.Pago;
 import com.impulse.domain.monetizacion.PagoDTO;
 import com.impulse.domain.monetizacion.PagoMapper;
 import com.impulse.domain.monetizacion.PagoValidator;
-import com.impulse.infrastructure.monetizacion.PagoRepository;
+import com.impulse.application.ports.PagoPort;
 
 import jakarta.validation.ConstraintViolation;
 
@@ -20,9 +20,9 @@ import jakarta.validation.ConstraintViolation;
 @Service
 public class PagoService {
     private static final String PAGO_NO_ENCONTRADO = "Pago no encontrado";
-    private final PagoRepository pagoRepository;
+    private final PagoPort pagoRepository;
 
-    public PagoService(PagoRepository pagoRepository) {
+    public PagoService(PagoPort pagoRepository) {
         this.pagoRepository = pagoRepository;
     }
 

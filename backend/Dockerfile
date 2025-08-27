@@ -1,5 +1,5 @@
 ## Multi-stage build for backend (Maven + Spring Boot)
-FROM maven:3.9.6-eclipse-temurin-21 as builder
+FROM maven:3.9.6-eclipse-temurin-21 AS builder
 WORKDIR /workspace
 COPY backend/pom.xml ./
 COPY backend/src ./src

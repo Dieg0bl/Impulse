@@ -13,7 +13,7 @@ import com.impulse.domain.usuario.Usuario;
 import com.impulse.domain.usuario.UsuarioDTO;
 import com.impulse.domain.usuario.UsuarioMapper;
 import com.impulse.domain.usuario.UsuarioValidator;
-import com.impulse.infrastructure.usuario.UsuarioRepository;
+import com.impulse.domain.usuario.UsuarioRepositoryPort;
 
 
 /**
@@ -23,11 +23,11 @@ import com.impulse.infrastructure.usuario.UsuarioRepository;
 @Service
 public class UsuarioService {
     private static final String USUARIO_NO_ENCONTRADO = "Usuario no encontrado";
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioRepositoryPort usuarioRepository;
     private final AuditoriaService auditoriaService;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository, AuditoriaService auditoriaService, PasswordEncoder passwordEncoder) {
+    public UsuarioService(UsuarioRepositoryPort usuarioRepository, AuditoriaService auditoriaService, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.auditoriaService = auditoriaService;
         this.passwordEncoder = passwordEncoder;
@@ -41,7 +41,7 @@ public class UsuarioService {
     @Transactional
     public UsuarioDTO crearUsuario(UsuarioDTO dto) {
         UsuarioValidator.validar(dto);
-        if (usuarioRepository.findByEmail(dto.getEmail()) != null) {
+        if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new com.impulse.common.exceptions.ConflictException("El email ya está registrado.");
         }
         if (!dto.isConsentimientoAceptado()) {
@@ -85,7 +85,7 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
             .orElseThrow(() -> new com.impulse.common.exceptions.NotFoundException(USUARIO_NO_ENCONTRADO));
         UsuarioValidator.validar(dto);
-        if (!usuario.getEmail().equals(dto.getEmail()) && usuarioRepository.findByEmail(dto.getEmail()) != null) {
+        if (!usuario.getEmail().equals(dto.getEmail()) && usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new com.impulse.common.exceptions.ConflictException("El email ya está registrado.");
         }
         if (!dto.isConsentimientoAceptado()) {
@@ -119,11 +119,10 @@ public class UsuarioService {
      * @return UsuarioDTO o null si no existe
      */
     public UsuarioDTO buscarPorEmail(String email) {
-        Usuario usuario = usuarioRepository.findByEmail(email);
-        if (usuario == null || usuario.getDeletedAt() != null) {
-            return null; // Usuario no existe o está eliminado
-        }
-        return UsuarioMapper.toDTO(usuario);
+        return usuarioRepository.findByEmail(email)
+            .filter(u -> u.getDeletedAt() == null)
+            .map(UsuarioMapper::toDTO)
+            .orElse(null);
     }
 
     /**

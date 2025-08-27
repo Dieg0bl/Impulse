@@ -3,7 +3,6 @@ package com.impulse.lifecycle;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -12,7 +11,13 @@ import com.impulse.common.flags.FlagService;
 
 @Component("genericLifecycleScheduler")
 public class LifecycleScheduler {
-    @Autowired private JdbcTemplate jdbc; @Autowired private FlagService flags;
+    private final JdbcTemplate jdbc;
+    private final FlagService flags;
+
+    public LifecycleScheduler(JdbcTemplate jdbc, FlagService flags) {
+        this.jdbc = jdbc;
+        this.flags = flags;
+    }
     // Hourly scan for dormant retos or users to send nudges (guardrails enforced in NotificationService)
     @Scheduled(cron = "0 5 * * * *")
     public void scanDormant(){

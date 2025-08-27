@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.impulse.domain.monetizacion.Pago;
 import com.impulse.domain.monetizacion.PagoDTO;
-import com.impulse.infrastructure.monetizacion.PagoRepository;
+import com.impulse.application.ports.PagoPort;
 
 /**
  * Test unitario para PagoService.
@@ -24,7 +24,7 @@ import com.impulse.infrastructure.monetizacion.PagoRepository;
 class PagoServiceTest {
 
     @Mock
-    private PagoRepository pagoRepository;
+    private PagoPort pagoRepository;
 
     // AuditoriaService mock removed as it is not used in this test
 

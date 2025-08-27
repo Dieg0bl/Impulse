@@ -9,15 +9,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.impulse.domain.support.NpsResponse;
 import com.impulse.domain.support.CsatResponse;
-import com.impulse.infrastructure.support.NpsResponseRepository;
-import com.impulse.infrastructure.support.CsatResponseRepository;
+import com.impulse.application.ports.NpsResponsePort;
+import com.impulse.application.ports.CsatResponsePort;
 
 @Service
 public class FeedbackService {
-    private final NpsResponseRepository npsRepo;
-    private final CsatResponseRepository csatRepo;
+    private final NpsResponsePort npsRepo;
+    private final CsatResponsePort csatRepo;
 
-    public FeedbackService(NpsResponseRepository npsRepo, CsatResponseRepository csatRepo){
+    public FeedbackService(NpsResponsePort npsRepo, CsatResponsePort csatRepo){
         this.npsRepo = npsRepo; this.csatRepo = csatRepo;
     }
 

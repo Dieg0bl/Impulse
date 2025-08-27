@@ -1,43 +1,53 @@
 package com.impulse.api;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-
 import static org.mockito.Mockito.when;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @WebMvcTest(EmailController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class EmailControllerTest {
+@Import(com.impulse.test.TestMocksConfig.class)
+class EmailControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private com.impulse.application.EmailService emailService;
 
-    @MockBean
+    @Autowired
     private com.impulse.common.flags.FlagService flags;
 
-    @MockBean
+    @Autowired
     private com.impulse.common.security.CookieAuthenticationService cookieAuthenticationService;
 
-    @MockBean
+    @Autowired
     private com.impulse.common.security.JwtProvider jwtProvider;
 
-    @MockBean
+    @Autowired
     private com.impulse.security.EnterpriseRateLimiter enterpriseRateLimiter;
 
     @Test
     void sendEmail_notFoundIfDisabled() throws Exception {
-        // controller should return 404 when the email feature flag is off
+        // Arrange
         when(flags.isOn("communication.email")).thenReturn(false);
 
+        // Act & Assert
         mockMvc.perform(post("/api/email/send/welcome/1"))
                 .andExpect(status().isNotFound());
+
+        // Verifica que solo se consulta el flag y no se llama a los servicios
+    verify(flags).isOn("communication.email");
+    verifyNoInteractions(emailService);
+    verifyNoInteractions(cookieAuthenticationService);
+    // jwtProvider may be accessed by test infra; avoid strict no-interaction assertion
+    verifyNoInteractions(enterpriseRateLimiter);
     }
 }

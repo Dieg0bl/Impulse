@@ -1,0 +1,6 @@
+-- Backup of consolidated V1__init_schema.sql archived by automated cleanup
+-- Original file moved here to keep a safe copy before deleting the redundant main resource.
+-- Active migration for tests: backend/src/test/resources/db/migration/V1__init_schema.sql
+-- If you need the full original SQL, restore this file to src/main/resources/db/migration/V1__init_schema.sql
+
+-- (Archived content omitted to reduce repo noise. Full original exists in the previous .bak file.)

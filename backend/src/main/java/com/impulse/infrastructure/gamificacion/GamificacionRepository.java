@@ -5,10 +5,9 @@ package com.impulse.infrastructure.gamificacion;
  * Cumple compliance: RGPD, ISO 27001, ENS.
  * No se requieren métodos personalizados en esta fase según la lógica de negocio y la guía IMPULSE. Añadir solo si la lógica lo exige y documentar.
  */
-import com.impulse.domain.gamificacion.Gamificacion;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.impulse.application.ports.GamificacionPort;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface GamificacionRepository extends JpaRepository<Gamificacion, Long> {
+public interface GamificacionRepository extends GamificacionPort {
 }

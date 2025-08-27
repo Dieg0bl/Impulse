@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import com.impulse.domain.reto.Reto;
-import com.impulse.infrastructure.reto.RetoRepository;
+import com.impulse.application.ports.RetoPort;
 
 /**
  * Service to compute user QuickWin (first small victory) and onboarding progress.
@@ -19,10 +19,10 @@ import com.impulse.infrastructure.reto.RetoRepository;
  */
 @Service("applicationQuickWinService")
 public class QuickWinService {
-    private final RetoRepository retoRepository;
+    private final RetoPort retoRepository;
     private final JdbcTemplate jdbc;
     private static final List<String> DEFAULT_STEPS = List.of("welcome","choose_goal","first_evidence","share_success");
-    public QuickWinService(RetoRepository retoRepository, JdbcTemplate jdbc) {
+    public QuickWinService(RetoPort retoRepository, JdbcTemplate jdbc) {
         this.retoRepository = retoRepository; this.jdbc=jdbc;
     }
 
@@ -32,7 +32,8 @@ public class QuickWinService {
      */
     public Map<String,Object> quickWinStatus(Long userId) {
         Map<String,Object> out = new HashMap<>();
-    var retos = retoRepository.findByUsuario_Id(userId);
+        var retos = retoRepository.findByUsuario_Id(userId);
+        final String ACHIEVED_KEY = "achieved";
         Optional<Reto> firstCompleted = retos.stream()
             .filter(r -> r.getUsuario()!=null && r.getUsuario().getId().equals(userId))
             .filter(r -> "COMPLETADO".equalsIgnoreCase(r.getEstado()))
@@ -41,10 +42,10 @@ public class QuickWinService {
         if(firstCompleted.isPresent()) {
             Reto r = firstCompleted.get();
             Duration d = Duration.between(r.getCreatedAt(), r.getUpdatedAt());
-            out.put("achieved", d.toHours() <= 48);
+            out.put(ACHIEVED_KEY, d.toHours() <= 48);
             out.put("hoursToWin", d.toHours());
         } else {
-            out.put("achieved", false);
+            out.put(ACHIEVED_KEY, false);
         }
         return out;
     }

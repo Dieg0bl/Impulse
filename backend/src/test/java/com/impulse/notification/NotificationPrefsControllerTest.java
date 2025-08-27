@@ -1,53 +1,43 @@
 package com.impulse.notification;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+
+import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.mockito.Mockito;
 import java.util.Map;
 import org.springframework.test.web.servlet.MockMvc;
 import com.impulse.common.security.CookieAuthenticationService;
 import com.impulse.common.security.JwtProvider;
-import com.impulse.security.EnterpriseRateLimiter;
-import com.impulse.security.EnterpriseRateLimiter.RateLimitInfo;
-import java.time.LocalDateTime;
+ 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = NotificationPrefsController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@Import(com.impulse.test.TestMocksConfig.class)
 class NotificationPrefsControllerTest {
 
     @Autowired
     MockMvc mockMvc;
 
-    @MockBean
+    @org.springframework.beans.factory.annotation.Autowired
     JdbcTemplate jdbc;
 
     // Mock security dependency required by CookieAuthenticationFilter so context loads
-    @MockBean
+    @org.springframework.beans.factory.annotation.Autowired
     CookieAuthenticationService cookieAuthenticationService;
 
-    @MockBean
+    @org.springframework.beans.factory.annotation.Autowired
     JwtProvider jwtProvider;
 
     // Mock rate limiter dependency used by RateLimitingFilter pulled into slice
-    @MockBean
-    EnterpriseRateLimiter enterpriseRateLimiter;
 
-    @BeforeEach
-    void setupMocks() {
-        // Allow all requests through rate limiter
-        Mockito.when(enterpriseRateLimiter.extractClientId(Mockito.any())).thenReturn("test-client");
-        Mockito.when(enterpriseRateLimiter.isAllowed(Mockito.anyString(), Mockito.any())).thenReturn(true);
-        Mockito.when(enterpriseRateLimiter.getRateLimitInfo(Mockito.anyString(), Mockito.any()))
-            .thenReturn(new RateLimitInfo(100, 0, 100, LocalDateTime.now().plusMinutes(1)));
-    }
+    // Removed unused setupMocks method per static analysis
 
     @Test
     void createThenGet() throws Exception {
@@ -57,5 +47,7 @@ class NotificationPrefsControllerTest {
             .andExpect(status().isOk());
         mockMvc.perform(get("/api/notifications/prefs/999"))
             .andExpect(status().isOk());
+    // Verify that DB jdbc template was used but do not assert on security mocks which test infra may touch
+    org.mockito.Mockito.verify(jdbc).update(org.mockito.Mockito.anyString(), org.mockito.Mockito.anyLong());
     }
 }

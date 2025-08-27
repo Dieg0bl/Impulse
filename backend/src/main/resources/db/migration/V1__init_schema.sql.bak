@@ -1,4 +1,8 @@
 -- Backup of the consolidated V1__init_schema.sql before moving to test resources.
 -- If needed, restore by renaming back to V1__init_schema.sql
 
+-- NOTE: This backup contains the original consolidated V1 migration.
+-- The active migration for tests now lives at:
+-- backend/src/test/resources/db/migration/V1__init_schema.sql
+
 -- (backup contents omitted to keep repo small; full content is available in test resources)

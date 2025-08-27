@@ -11,19 +11,49 @@ export enum LogLevel {
   TRACE = 4
 }
 
+type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
+interface JsonObject { [key: string]: JsonValue; }
+
 interface LogEntry {
   timestamp: string;
   level: LogLevel;
   message: string;
   context?: string;
-  data?: any;
+  data?: unknown;     // <- sin any
   userId?: string;
+}
+
+// Util: stringify seguro (evita errores por referencias circulares)
+function safeStringify(value: unknown): string {
+  try {
+    if (typeof value === 'string') return value;
+    return JSON.stringify(value);
+  } catch {
+    return '"[unserializable]"';
+  }
+}
+
+// Util: fetch con timeout
+async function fetchWithTimeout(
+  input: RequestInfo | URL,
+  init: RequestInit = {},
+  timeoutMs = 3000
+): Promise<Response> {
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), timeoutMs);
+  try {
+    return await fetch(input, { ...init, signal: ctrl.signal });
+  } finally {
+    clearTimeout(id);
+  }
 }
 
 class Logger {
   private static instance: Logger;
   private logLevel: LogLevel = LogLevel.INFO;
-  private isDevelopment: boolean = (typeof window !== 'undefined') && !!(window.location && window.location.hostname === 'localhost');
+  private readonly isDevelopment: boolean =
+    (typeof window !== 'undefined') &&
+    !!(window.location && window.location.hostname === 'localhost');
 
   private constructor() {}
 
@@ -46,20 +76,20 @@ class Logger {
     const { timestamp, level, message, context, data, userId } = entry;
     const levelName = LogLevel[level];
     let logMessage = `[${timestamp}] ${levelName}`;
-    
+
     if (context) logMessage += ` [${context}]`;
     if (userId) logMessage += ` [User: ${userId}]`;
-    
+
     logMessage += `: ${message}`;
-    
-    if (data) {
-      logMessage += ` | Data: ${JSON.stringify(data)}`;
+
+    if (typeof data !== 'undefined') {
+      logMessage += ` | Data: ${safeStringify(data)}`;
     }
-    
+
     return logMessage;
   }
 
-  private createLogEntry(level: LogLevel, message: string, context?: string, data?: any): LogEntry {
+  private createLogEntry(level: LogLevel, message: string, context?: string, data?: unknown): LogEntry {
     return {
       timestamp: new Date().toISOString(),
       level,
@@ -75,14 +105,14 @@ class Logger {
       if (typeof localStorage === 'undefined') return undefined;
       const raw = localStorage.getItem('user');
       if (!raw) return undefined;
-      const user = JSON.parse(raw);
+      const user = JSON.parse(raw) as { id?: string } | null;
       return user?.id;
     } catch {
       return undefined;
     }
   }
 
-  private log(level: LogLevel, message: string, context?: string, data?: any): void {
+  private log(level: LogLevel, message: string, context?: string, data?: unknown): void {
     if (!this.shouldLog(level)) return;
 
     const entry = this.createLogEntry(level, message, context, data);
@@ -107,64 +137,75 @@ class Logger {
       }
     }
 
-    // En producción, enviar a servicio de logging
+    // En producción, enviar a servicio de logging (solo WARN/ERROR)
     if (!this.isDevelopment && level <= LogLevel.WARN) {
-      this.sendToLoggingService(entry);
+      // Disparo sin bloquear UI
+      void this.sendToLoggingService(entry);
     }
   }
 
   private async sendToLoggingService(entry: LogEntry): Promise<void> {
     try {
-      // Implementar envío a servicio de logging en producción
-      await fetch('/api/logs', {
+      await fetchWithTimeout('/api/logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        keepalive: true,
         body: JSON.stringify(entry)
-      });
-    } catch (error) {
-      // Fallback silencioso en producción
+      }, 3000);
+    } catch {
+      // Sonar S2486: manejar la excepción (fallback no bloqueante)
+      try {
+        if (typeof navigator !== 'undefined' && 'sendBeacon' in navigator) {
+          const blob = new Blob([JSON.stringify(entry)], { type: 'application/json' });
+          // sendBeacon devuelve boolean; no tiramos si falla.
+          (navigator as Navigator & { sendBeacon?: (url: string | URL, data?: BodyInit | null) => boolean })
+            .sendBeacon?.('/api/logs', blob);
+        }
+      } catch {
+        // Silencioso: no romper UX si el envío de logs falla
+      }
     }
   }
 
   // Métodos públicos
-  public error(message: string, context?: string, data?: any): void {
+  public error(message: string, context?: string, data?: unknown): void {
     this.log(LogLevel.ERROR, message, context, data);
   }
 
-  public warn(message: string, context?: string, data?: any): void {
+  public warn(message: string, context?: string, data?: unknown): void {
     this.log(LogLevel.WARN, message, context, data);
   }
 
-  public info(message: string, context?: string, data?: any): void {
+  public info(message: string, context?: string, data?: unknown): void {
     this.log(LogLevel.INFO, message, context, data);
   }
 
-  public debug(message: string, context?: string, data?: any): void {
+  public debug(message: string, context?: string, data?: unknown): void {
     this.log(LogLevel.DEBUG, message, context, data);
   }
 
-  public trace(message: string, context?: string, data?: any): void {
+  public trace(message: string, context?: string, data?: unknown): void {
     this.log(LogLevel.TRACE, message, context, data);
   }
 
   // Métodos de conveniencia para migración
-  public auth(message: string, data?: any): void {
+  public auth(message: string, data?: unknown): void {
     this.info(message, 'AUTH', data);
   }
 
-  public navigation(message: string, data?: any): void {
+  public navigation(message: string, data?: unknown): void {
     this.debug(message, 'NAVIGATION', data);
   }
 
-  public api(message: string, data?: any): void {
+  public api(message: string, data?: unknown): void {
     this.debug(message, 'API', data);
   }
 
-  public security(message: string, data?: any): void {
+  public security(message: string, data?: unknown): void {
     this.warn(message, 'SECURITY', data);
   }
 
-  public performance(message: string, data?: any): void {
+  public performance(message: string, data?: unknown): void {
     this.debug(message, 'PERFORMANCE', data);
   }
 }

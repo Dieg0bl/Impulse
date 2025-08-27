@@ -8,13 +8,12 @@ package com.impulse.infrastructure.reto;
 
 import java.util.List;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
+import com.impulse.application.ports.RetoPort;
 import com.impulse.domain.reto.Reto;
 
 @Repository
-public interface RetoRepository extends JpaRepository<Reto, Long> {
+public interface RetoRepository extends RetoPort {
 	/**
 	 * Obtiene todos los retos de un usuario específico.
 	 * Requiere índice en la columna usuario_id para eficiencia.
