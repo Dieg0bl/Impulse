@@ -137,6 +137,7 @@ CREATE TABLE IF NOT EXISTS Reto (
   INDEX idx_visibility_status (visibility, estado),
   CONSTRAINT fk_reto_creador   FOREIGN KEY (idCreador)   REFERENCES Usuario(id)      ON DELETE CASCADE,
   CONSTRAINT fk_reto_categoria FOREIGN KEY (idCategoria) REFERENCES CategoriaReto(id) ON DELETE RESTRICT,
+  public_slug           VARCHAR(128) NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Invitaciones a validador (tokenizado)
@@ -155,6 +156,7 @@ CREATE TABLE IF NOT EXISTS validator_invites (
 CREATE TABLE IF NOT EXISTS ValidadorReto (
   id              BIGINT AUTO_INCREMENT PRIMARY KEY,
   idReto          BIGINT NOT NULL,
+  idValidador     BIGINT NOT NULL,
   fechaAsignacion DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   estado          ENUM('ACTIVO','INACTIVO','SUSPENDIDO') DEFAULT 'ACTIVO',
   tipoValidador   ENUM('PRINCIPAL','SECUNDARIO','ESPECIALISTA') DEFAULT 'PRINCIPAL',
@@ -173,6 +175,7 @@ CREATE TABLE IF NOT EXISTS Validacion (
   id            BIGINT AUTO_INCREMENT PRIMARY KEY,
   validator_id  BIGINT NOT NULL,
   challenge_id  BIGINT NOT NULL,  -- Reto.id
+  status        ENUM('accepted','rejected') NOT NULL,
   comment       VARCHAR(512) NULL,
   created_at    DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   CHECK (status='accepted' OR (status='rejected' AND comment IS NOT NULL)),

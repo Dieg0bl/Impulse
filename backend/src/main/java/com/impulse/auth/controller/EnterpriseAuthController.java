@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
  * Implementa estándares de seguridad OWASP para autenticación web moderna.
  */
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auth/enterprise")
 @CrossOrigin(
     origins = {"http://localhost:3000", "https://impulse.empresa.com"}, 
     allowCredentials = "true",

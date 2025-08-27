@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useAppContext } from '../contexts/AppContext.tsx';
 
 const mockAuditoria = [
   { id: 1, tipo: 'LOGIN', usuario: 'demo', fecha: '2025-08-10', detalle: 'Inicio de sesión exitoso' },
@@ -7,6 +8,27 @@ const mockAuditoria = [
 ];
 
 const Auditoria: React.FC = () => {
+  const { state, navigate } = useAppContext();
+  const { currentUser: user } = state;
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    if (user.rol !== 'ADMIN') {
+      navigate('/dashboard');
+    } else {
+      // Log de auditoría
+      import('../utils/logger.ts').then(({ logger }) => {
+        logger.info('Acceso al feed de auditoría', 'AUDIT', {
+          usuario: user.email,
+          fecha: new Date().toISOString()
+        });
+      });
+    }
+  }, [user, navigate]);
+
   return (
     <div className="auditoria-page container mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold mb-4">Feed de Auditoría</h1>

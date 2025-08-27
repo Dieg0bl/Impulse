@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth.ts';
-import Button from '../components/Button.tsx';
+import Button from '../components/Button';
 import { useValidadores } from '../hooks/useValidadores';
 
 const Validadores: React.FC = () => {

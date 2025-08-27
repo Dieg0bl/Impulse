@@ -59,11 +59,10 @@ class URLStateService {
         credentials: 'include',
         body: JSON.stringify({ pageId }),
       });
-
       if (!response.ok) {
-        throw new Error('Error creando estado de página');
+        const error = await response.text();
+        throw new Error(error || 'Error creando estado de página');
       }
-
       const result: PageStateResponse = await response.json();
       this.currentState = result.pageState;
 
@@ -104,11 +103,10 @@ class URLStateService {
           value,
         }),
       });
-
       if (!response.ok) {
-        throw new Error('Error actualizando estado de vista');
+        const error = await response.text();
+        throw new Error(error || 'Error actualizando estado de vista');
       }
-
       const result: PageStateResponse = await response.json();
       this.currentState = result.pageState;
 
@@ -145,11 +143,10 @@ class URLStateService {
           filters,
         }),
       });
-
       if (!response.ok) {
-        throw new Error('Error actualizando filtros');
+        const error = await response.text();
+        throw new Error(error || 'Error actualizando filtros');
       }
-
       const result: PageStateResponse = await response.json();
       this.currentState = result.pageState;
 
@@ -186,11 +183,10 @@ class URLStateService {
           formData,
         }),
       });
-
       if (!response.ok) {
-        throw new Error('Error guardando formulario');
+        const error = await response.text();
+        throw new Error(error || 'Error guardando formulario');
       }
-
       const result: PageStateResponse = await response.json();
       this.currentState = result.pageState;
 
@@ -225,11 +221,10 @@ class URLStateService {
         credentials: 'include',
         body: JSON.stringify({ queryString }),
       });
-
       if (!response.ok) {
-        return null;
+        const error = await response.text();
+        throw new Error(error || 'Error restaurando estado');
       }
-
       const pageState: PageState = await response.json();
       this.currentState = pageState;
 

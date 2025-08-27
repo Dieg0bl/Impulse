@@ -18,7 +18,10 @@ export interface Perfil {
 
 export async function fetchPerfil(): Promise<Perfil> {
   const res = await fetch('/api/usuarios/perfil');
-  if (!res.ok) throw new Error('Error obteniendo perfil');
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error obteniendo perfil');
+  }
   return res.json();
 }
 
@@ -28,6 +31,9 @@ export async function updatePerfil(perfil: Partial<Perfil>): Promise<Perfil> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(perfil),
   });
-  if (!res.ok) throw new Error('Error actualizando perfil');
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error actualizando perfil');
+  }
   return res.json();
 }

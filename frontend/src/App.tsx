@@ -8,6 +8,7 @@ import './assets/styles.css';
 import { FlagsProvider } from './contexts/FlagsContext';
 import { AppProvider } from './contexts/AppContext';
 import { NavigationProvider } from './contexts/NavigationContext';
+import { ComplianceProvider } from './contexts/ComplianceContext';
 import { A11yHelper } from './components/A11yHelper';
 import * as Sentry from './telemetry/sentry';
 
@@ -25,9 +26,11 @@ const App: React.FC = () => {
           <BrowserRouter>
             <FlagsProvider>
               <AppProvider>
-                <NavigationProvider>
-                  <AppRouter />
-                </NavigationProvider>
+                <ComplianceProvider>
+                  <NavigationProvider>
+                    <AppRouter />
+                  </NavigationProvider>
+                </ComplianceProvider>
               </AppProvider>
             </FlagsProvider>
           </BrowserRouter>

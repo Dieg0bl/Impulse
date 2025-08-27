@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import Button from '../components/Button';
+import { useAppContext } from '../contexts/AppContext.tsx';
 
 const mockReportes = [
   { id: '1', tipo: 'EVIDENCIA', estado: 'PENDIENTE', fecha: '2025-08-10', detalle: 'Evidencia sospechosa', usuario: 'demo' },
@@ -7,7 +9,19 @@ const mockReportes = [
 ];
 
 const Moderacion: React.FC = () => {
+  const { state, navigate } = useAppContext();
+  const { currentUser: user } = state;
   const [reportes, setReportes] = useState(mockReportes);
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    if (user.rol !== 'ADMIN') {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const marcarRevisado = (id: string) => {
     setReportes(reportes.map(r => r.id === id ? { ...r, estado: 'REVISADO' } : r));

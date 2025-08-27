@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
  * Controlador REST para gestión de retos.
  * Cumple compliance: RGPD, ISO 27001, ENS.
  */
-@RestController
+@RestController("retoControllerModule")
 @RequestMapping("/api/reto")
 @Validated
 public class RetoController {

@@ -3,6 +3,7 @@ package com.impulse.domain.evidencia;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 /**
@@ -24,5 +25,8 @@ public record EvidenciaDTO(
     Long validadorId,
     BigDecimal valorReportado,
     String unidadMedida,
-    JsonNode metadatos
+    JsonNode metadatos,
+    String retoTitulo,
+    String autorNombre,
+    String contenido
 ) {}

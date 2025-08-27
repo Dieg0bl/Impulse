@@ -1,47 +1,66 @@
-// Obtener sesiones activas
-export const getSessions = async () => {
+// Servicio de autenticación
+// NOTA: Nunca exponer ni loguear contraseñas o tokens en frontend.
+// Los tokens solo se almacenan bajo la clave 'authToken' en localStorage.
+export interface SessionDTO {
+  id: number;
+  active: boolean;
+}
+
+export const getSessions = async (): Promise<SessionDTO[]> => {
   const res = await fetch('/api/auth/sessions');
-  if (!res.ok) throw new Error('Error obteniendo sesiones');
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error obteniendo sesiones');
+  }
   return res.json();
 };
 
-// Revocar sesión
-export const revokeSession = async (sessionId: string) => {
+export const revokeSession = async (sessionId: string): Promise<string> => {
   const res = await fetch(`/api/auth/sessions/${sessionId}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error('Error revocando sesión');
-  return res.json();
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error revocando sesión');
+  }
+  return res.text();
 };
-// Registro de usuario
-export const register = async (email: string, password: string, nombre: string) => {
+
+export const register = async (email: string, password: string, nombre: string): Promise<any> => {
   const res = await fetch('/api/auth/register', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, nombre })
   });
-  if (!res.ok) throw new Error('Error en registro');
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error en registro');
+  }
   return res.json();
 };
 
-// Recuperación de contraseña
-export const forgotPassword = async (email: string) => {
+export const forgotPassword = async (email: string): Promise<string> => {
   const res = await fetch('/api/auth/forgot-password', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email })
   });
-  if (!res.ok) throw new Error('Error enviando email de recuperación');
-  return res.json();
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error enviando email de recuperación');
+  }
+  return res.text();
 };
 
-// Restablecimiento de contraseña
-export const resetPassword = async (token: string, password: string) => {
+export const resetPassword = async (token: string, password: string): Promise<string> => {
   const res = await fetch('/api/auth/reset-password', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, password })
   });
-  if (!res.ok) throw new Error('Error restableciendo contraseña');
-  return res.json();
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error restableciendo contraseña');
+  }
+  return res.text();
 };
 // Mock Auth Service para compilación exitosa
 import { logger } from '../utils/logger.ts';

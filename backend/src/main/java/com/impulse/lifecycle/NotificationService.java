@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.impulse.analytics.EventTracker;
 
-@Service
+@Service("lifecycleNotificationService")
 public class NotificationService {
     private final JdbcTemplate jdbc;
     private final EventTracker tracker;

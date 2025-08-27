@@ -1,9 +1,10 @@
 package com.impulse.application.reto;
 
-import java.time.LocalDateTime;
 import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.impulse.application.auditoria.AuditoriaService;
 import com.impulse.domain.reto.Reto;
 import com.impulse.domain.reto.RetoDTO;
@@ -21,13 +22,15 @@ public class RetoService {
     private final RetoRepository retoRepository;
     private final RetoValidator retoValidator;
     private final AuditoriaService auditoriaService;
+    private final RetoMapper retoMapper;
     // Compliance: Verificación de inyección y logging de dependencias
     // @Autowired removed: only one constructor present
     private static final String NOT_FOUND_MSG = "Reto no encontrado";
-    public RetoService(RetoRepository retoRepository, RetoValidator retoValidator, AuditoriaService auditoriaService) {
+    public RetoService(RetoRepository retoRepository, RetoValidator retoValidator, AuditoriaService auditoriaService, RetoMapper retoMapper) {
         this.retoRepository = retoRepository;
         this.retoValidator = retoValidator;
         this.auditoriaService = auditoriaService;
+        this.retoMapper = retoMapper;
         assert this.retoRepository != null : "RetoRepository no inyectado";
         assert this.retoValidator != null : "RetoValidator no inyectado";
         assert this.auditoriaService != null : "AuditoriaService no inyectado";
@@ -44,15 +47,12 @@ public class RetoService {
      */
     @Transactional
     public RetoDTO crearReto(RetoDTO dto) {
-        Reto reto = RetoMapper.toEntity(dto);
-        java.util.Set<jakarta.validation.ConstraintViolation<Reto>> violations = retoValidator.validate(reto);
-        if (!violations.isEmpty()) {
-            throw new com.impulse.common.exceptions.BadRequestException("Datos de reto inválidos: " + violations.iterator().next().getMessage());
-        }
-        reto.setCreatedAt(LocalDateTime.now());
-        retoRepository.save(reto);
-        auditoriaService.registrarCreacionReto(reto.getId(), reto.getTitulo());
-        return RetoMapper.toDTO(reto);
+    Reto reto = retoMapper.toEntity(dto);
+    retoValidator.validarCreacion(dto);
+    reto.setCreatedAt(java.time.LocalDateTime.now());
+    retoRepository.save(reto);
+    auditoriaService.registrarCreacionReto(reto.getId(), reto.getTitulo());
+    return retoMapper.toDTO(reto);
     }
 
     /**
@@ -61,7 +61,7 @@ public class RetoService {
     public RetoDTO obtenerReto(Long id) {
         Reto reto = retoRepository.findById(id)
                 .orElseThrow(() -> new com.impulse.common.exceptions.NotFoundException(NOT_FOUND_MSG));
-        return RetoMapper.toDTO(reto);
+    return retoMapper.toDTO(reto);
     }
 
     /**
@@ -71,7 +71,7 @@ public class RetoService {
     public void eliminarReto(Long id) {
         Reto reto = retoRepository.findById(id)
                 .orElseThrow(() -> new com.impulse.common.exceptions.NotFoundException(NOT_FOUND_MSG));
-        reto.setDeletedAt(LocalDateTime.now());
+    reto.setDeletedAt(java.time.LocalDateTime.now());
         retoRepository.save(reto);
         auditoriaService.registrarEliminacionReto(reto.getId(), reto.getTitulo());
     }
@@ -86,18 +86,16 @@ public class RetoService {
     public RetoDTO actualizarReto(Long id, RetoDTO dto) {
         Reto reto = retoRepository.findById(id)
                 .orElseThrow(() -> new com.impulse.common.exceptions.NotFoundException(NOT_FOUND_MSG));
-        Reto nuevo = RetoMapper.toEntity(dto);
-        java.util.Set<jakarta.validation.ConstraintViolation<Reto>> violations = retoValidator.validate(nuevo);
-        if (!violations.isEmpty()) {
-            throw new com.impulse.common.exceptions.BadRequestException("Datos de reto inválidos: " + violations.iterator().next().getMessage());
-        }
-        reto.setTitulo(dto.getTitulo());
-        reto.setDescripcion(dto.getDescripcion());
-        reto.setFechaLimite(dto.getFechaLimite());
-        reto.setUpdatedAt(LocalDateTime.now());
-        retoRepository.save(reto);
-        auditoriaService.actualizarReto(reto.getId(), reto.getTitulo());
-        return RetoMapper.toDTO(reto);
+    retoValidator.validarCreacion(dto);
+    // record accessors
+    reto.setTitulo(dto.titulo());
+    reto.setDescripcion(dto.descripcion());
+    // fechaLimite not present in RetoDTO; leave null unless domain provides it elsewhere
+    reto.setFechaLimite(null);
+    reto.setUpdatedAt(java.time.LocalDateTime.now());
+    retoRepository.save(reto);
+    auditoriaService.actualizarReto(reto.getId(), reto.getTitulo());
+    return retoMapper.toDTO(reto);
     }
 
     /**
@@ -106,9 +104,9 @@ public class RetoService {
      */
     public List<RetoDTO> listarRetos() {
         List<Reto> retos = retoRepository.findAll();
-        return retos.stream()
+    return retos.stream()
             .filter(r -> r.getDeletedAt() == null)
-            .map(RetoMapper::toDTO)
+            .map(r -> retoMapper.toDTO(r))
             .toList();
     }
 }

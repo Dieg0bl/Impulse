@@ -17,7 +17,7 @@ import com.impulse.infrastructure.reto.RetoRepository;
  * Service to compute user QuickWin (first small victory) and onboarding progress.
  * Phase 2 - Activation. Avoids heavy queries: uses simple heuristics.
  */
-@Service
+@Service("applicationQuickWinService")
 public class QuickWinService {
     private final RetoRepository retoRepository;
     private final JdbcTemplate jdbc;

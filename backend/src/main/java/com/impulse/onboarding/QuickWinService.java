@@ -2,7 +2,7 @@ package com.impulse.onboarding;
 
 import org.springframework.stereotype.Service;
 
-@Service
+@Service("onboardingQuickWinService")
 public class QuickWinService {
     public record QuickWin(String title, String description, int minutes) {}
     public QuickWin assignFor(Long userId, String vertical){

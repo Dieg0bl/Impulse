@@ -1,13 +1,16 @@
 package com.impulse.lifecycle;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.jdbc.core.JdbcTemplate;
-import com.impulse.common.flags.FlagService;
-import java.time.Instant;import java.time.temporal.ChronoUnit;
 
-@Component
+import com.impulse.common.flags.FlagService;
+
+@Component("genericLifecycleScheduler")
 public class LifecycleScheduler {
     @Autowired private JdbcTemplate jdbc; @Autowired private FlagService flags;
     // Hourly scan for dormant retos or users to send nudges (guardrails enforced in NotificationService)

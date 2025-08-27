@@ -1,22 +1,31 @@
 ﻿import React, { useEffect, useState } from 'react';
 // Opcional: importa sin extensión si tu TS lo soporta
-import Header from '../components/Header.tsx';
-import Footer from '../components/Footer.tsx';
-import Button from '../components/Button.tsx';
-import Modal from '../components/Modal.tsx';
-import { useAppContext } from '../contexts/AppContext.tsx';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import Button from '../components/Button';
+import Modal from '../components/Modal';
+import { useAppContext } from '../contexts/AppContext';
 import { logger } from '../utils/logger.ts';
 
 interface Evidencia {
   id: string;
   retoId: string;
-  retoTitulo: string;
-  autorNombre: string;
-  tipo: 'FOTO' | 'VIDEO' | 'TEXTO';
-  contenido: string;        // URL o vacío si TEXTO
-  descripcion: string;      // texto descriptivo del usuario
-  fechaSubida: string;      // ISO
-  estado: 'PENDIENTE' | 'APROBADA' | 'RECHAZADA';
+  usuarioId?: string;
+  retoTitulo?: string;
+  autorNombre?: string;
+  tipoEvidencia: string;
+  kind?: string;
+  descripcion: string;
+  downloadUrl?: string;
+  thumbnailUrl?: string;
+  contenido?: string;
+  estadoValidacion: string;
+  fechaReporte?: string;
+  fechaValidacion?: string;
+  validadorId?: string;
+  valorReportado?: number;
+  unidadMedida?: string;
+  metadatos?: any;
 }
 
 const Validaciones: React.FC = () => {
@@ -50,33 +59,33 @@ const Validaciones: React.FC = () => {
           retoId: 'reto-1',
           retoTitulo: '30 días de ejercicio',
           autorNombre: 'Ana García',
-          tipo: 'FOTO',
+          tipoEvidencia: 'FOTO',
           contenido: '/api/evidencias/1/foto.jpg',
           descripcion: 'Día 15 - Rutina de 45 minutos en el gimnasio. Hoy enfoqué en piernas y glúteos.',
-          fechaSubida: '2025-08-07T09:30:00Z',
-          estado: 'PENDIENTE'
+          fechaReporte: '2025-08-07T09:30:00Z',
+          estadoValidacion: 'PENDIENTE'
         },
         {
           id: '2',
           retoId: 'reto-2',
           retoTitulo: 'Aprender TypeScript',
           autorNombre: 'Carlos Ruiz',
-          tipo: 'TEXTO',
+          tipoEvidencia: 'TEXTO',
           contenido: '',
           descripcion: 'Completé el módulo de interfaces y types. Adjunto el código de mi proyecto personal donde implementé todo lo aprendido.',
-          fechaSubida: '2025-08-07T14:15:00Z',
-          estado: 'PENDIENTE'
+          fechaReporte: '2025-08-07T14:15:00Z',
+          estadoValidacion: 'PENDIENTE'
         },
         {
           id: '3',
           retoId: 'reto-3',
           retoTitulo: 'Cocinar saludable',
           autorNombre: 'María López',
-          tipo: 'VIDEO',
+          tipoEvidencia: 'VIDEO',
           contenido: '/api/evidencias/3/video.mp4',
           descripcion: 'Preparando ensalada de quinoa con vegetales orgánicos. Receta completa paso a paso.',
-          fechaSubida: '2025-08-07T18:45:00Z',
-          estado: 'PENDIENTE'
+          fechaReporte: '2025-08-07T18:45:00Z',
+          estadoValidacion: 'PENDIENTE'
         }
       ];
       setEvidencias(evidenciasSimuladas);
@@ -102,6 +111,18 @@ const Validaciones: React.FC = () => {
     try {
       // Simula API
       await new Promise((r) => setTimeout(r, 1500));
+
+      // Log de auditoría
+      logger.info(
+        `Evidencia ${aprobada ? 'aprobada' : 'rechazada'}`,
+        'AUDIT',
+        {
+          evidenciaId: evidenciaSeleccionada.id,
+          usuario: user?.email,
+          accion: aprobada ? 'APROBAR' : 'RECHAZAR',
+          fecha: new Date().toISOString()
+        }
+      );
 
       // Elimina de la lista de pendientes
       setEvidencias((prev) => prev.filter((ev) => ev.id !== evidenciaSeleccionada.id));
@@ -129,7 +150,7 @@ const Validaciones: React.FC = () => {
     }).format(fecha);
   };
 
-  const getTipoIcon = (tipo: Evidencia['tipo']) => {
+  const getTipoIcon = (tipo: Evidencia['tipoEvidencia']) => {
     switch (tipo) {
       case 'FOTO': return '📷';
       case 'VIDEO': return '🎥';
@@ -170,7 +191,7 @@ const Validaciones: React.FC = () => {
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-2xl">{getTipoIcon(evidencia.tipo)}</span>
+                  <span className="text-2xl">{getTipoIcon(evidencia.tipoEvidencia)}</span>
                   <h3 className="font-bold text-lg">{evidencia.retoTitulo}</h3>
                   <span className="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium">
                     PENDIENTE
@@ -180,7 +201,7 @@ const Validaciones: React.FC = () => {
                   <strong>Autor:</strong> {evidencia.autorNombre}
                 </p>
                 <p className="text-gray-600 mb-4">
-                  <strong>Enviado:</strong> {formatearFecha(evidencia.fechaSubida)}
+                  <strong>Enviado:</strong> {formatearFecha(evidencia.fechaReporte || '')}
                 </p>
               </div>
             </div>
@@ -190,7 +211,7 @@ const Validaciones: React.FC = () => {
               <p className="text-gray-700">{evidencia.descripcion}</p>
             </div>
 
-            {evidencia.tipo === 'FOTO' && evidencia.contenido && (
+            {evidencia.tipoEvidencia === 'FOTO' && evidencia.contenido && (
               <div className="mb-4">
                 <img
                   src={evidencia.contenido}
@@ -200,7 +221,7 @@ const Validaciones: React.FC = () => {
               </div>
             )}
 
-            {evidencia.tipo === 'VIDEO' && evidencia.contenido && (
+            {evidencia.tipoEvidencia === 'VIDEO' && evidencia.contenido && (
               <div className="mb-4">
                 <video
                   src={evidencia.contenido}
@@ -262,13 +283,13 @@ const Validaciones: React.FC = () => {
             <div>
               <h3 className="font-semibold text-lg">{evidenciaSeleccionada.retoTitulo}</h3>
               <p className="text-gray-600">Por: {evidenciaSeleccionada.autorNombre}</p>
-              <p className="text-sm text-gray-500">{formatearFecha(evidenciaSeleccionada.fechaSubida)}</p>
+              <p className="text-sm text-gray-500">{formatearFecha(evidenciaSeleccionada.fechaReporte || '')}</p>
             </div>
 
             <div>
               <h4 className="font-semibold mb-2">Tipo de evidencia:</h4>
               <span className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-                {getTipoIcon(evidenciaSeleccionada.tipo)} {evidenciaSeleccionada.tipo}
+                {getTipoIcon(evidenciaSeleccionada.tipoEvidencia)} {evidenciaSeleccionada.tipoEvidencia}
               </span>
             </div>
 

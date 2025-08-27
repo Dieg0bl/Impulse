@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useCompliance } from '../contexts/ComplianceContext';
 import Button from '../components/Button.tsx';
 import { usePerfil } from '../hooks/usePerfil';
 import { z } from 'zod';
@@ -20,6 +21,7 @@ interface PerfilForm {
 
 const Perfil: React.FC = () => {
   const { perfil, loading, error, actualizar } = usePerfil();
+  const { consents, update: updateConsent, loading: loadingConsents } = useCompliance();
   const [isEditing, setIsEditing] = useState(false);
   const [success, setSuccess] = useState('');
   const [formData, setFormData] = useState<PerfilForm | null>(perfil ? {
@@ -81,13 +83,19 @@ const Perfil: React.FC = () => {
     }
   };
 
-  // Eliminar cuenta: funcionalidad pendiente de migrar a hook/servicio centralizado
+  // Eliminar cuenta: llamada real a solicitud de privacidad
   const handleDeleteAccount = async () => {
     if (!window.confirm('¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')) {
       return;
     }
-    // Aquí deberías llamar a un servicio/hook para eliminar la cuenta y cerrar sesión
-    alert('Funcionalidad de eliminación de cuenta pendiente de migrar');
+    try {
+      // Lógica real: crear solicitud de borrado de datos personales
+      const res = await import('../services/privacyService');
+      await res.createPrivacyRequest('DELETE');
+      alert('Solicitud de eliminación enviada. Recibirás confirmación por email.');
+    } catch (e) {
+      alert('Error al solicitar la eliminación de cuenta. Intenta de nuevo.');
+    }
   };
 
   if (loading || !perfil) {
@@ -100,13 +108,33 @@ const Perfil: React.FC = () => {
   return (
     <div className="perfil-page" aria-label="Perfil de usuario">
       <h1 tabIndex={0}>Mi Perfil</h1>
+      <a href="/privacidad" target="_blank" rel="noopener noreferrer" className="enlace-privacidad" style={{float:'right',fontSize:'0.9em'}}>Política de privacidad y derechos</a>
       {success && <div className="success-message" role="status">{success}</div>}
       {!isEditing ? (
         <div className="perfil-info">
           <div><strong>Nombre:</strong> {perfil.nombre}</div>
           <div><strong>Apellidos:</strong> {perfil.apellidos}</div>
           <div><strong>Email:</strong> {perfil.email}</div>
-          <div><strong>Consentimientos:</strong> {Object.entries(perfil.consentimientos || {}).map(([k, v]) => <span key={k}>{k}: {String(v)} </span>)}</div>
+          <div><strong>Consentimientos:</strong>
+            {loadingConsents ? <span>Cargando consentimientos...</span> : (
+              <ul style={{margin:0,padding:0,listStyle:'none'}}>
+                {consents && consents.length > 0 ? consents.map(c => (
+                  <li key={c.id}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={!!c.value}
+                        onChange={e => updateConsent(c.id, e.target.checked)}
+                        aria-checked={!!c.value}
+                        aria-label={`Consentimiento ${c.id}`}
+                      />
+                      {c.id}
+                    </label>
+                  </li>
+                )) : <li>No hay consentimientos configurados</li>}
+              </ul>
+            )}
+          </div>
           <Button onClick={() => setIsEditing(true)} aria-label="Editar perfil">Editar</Button>
         </div>
       ) : (
@@ -115,17 +143,38 @@ const Perfil: React.FC = () => {
             <div className="form-field">
               <label htmlFor="nombre">Nombre</label>
               <input id="nombre" value={formData.nombre} onChange={e => setFormData({ ...formData, nombre: e.target.value })} aria-required="true" />
-              {formErrors.nombre && <div className="field-error">{formErrors.nombre}</div>}
+              {formErrors.nombre && <div className="field-error" aria-live="polite">{formErrors.nombre}</div>}
             </div>
             <div className="form-field">
               <label htmlFor="apellidos">Apellidos</label>
               <input id="apellidos" value={formData.apellidos} onChange={e => setFormData({ ...formData, apellidos: e.target.value })} aria-required="true" />
-              {formErrors.apellidos && <div className="field-error">{formErrors.apellidos}</div>}
+              {formErrors.apellidos && <div className="field-error" aria-live="polite">{formErrors.apellidos}</div>}
             </div>
             <div className="form-field">
               <label htmlFor="email">Email</label>
               <input id="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} aria-required="true" />
-              {formErrors.email && <div className="field-error">{formErrors.email}</div>}
+              {formErrors.email && <div className="field-error" aria-live="polite">{formErrors.email}</div>}
+            </div>
+            <div className="form-field">
+              <label>Consentimientos</label>
+              {loadingConsents ? <span>Cargando consentimientos...</span> : (
+                <ul style={{margin:0,padding:0,listStyle:'none'}}>
+                  {consents && consents.length > 0 ? consents.map(c => (
+                    <li key={c.id}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={!!c.value}
+                          onChange={e => updateConsent(c.id, e.target.checked)}
+                          aria-checked={!!c.value}
+                          aria-label={`Consentimiento ${c.id}`}
+                        />
+                        {c.id}
+                      </label>
+                    </li>
+                  )) : <li>No hay consentimientos configurados</li>}
+                </ul>
+              )}
             </div>
             <Button type="submit">Guardar</Button>
             <Button variant="secondary" onClick={() => setIsEditing(false)}>Cancelar</Button>

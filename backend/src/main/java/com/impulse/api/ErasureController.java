@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.impulse.infrastructure.db.Procedures;
 
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/api/privacy")
-@RequiredArgsConstructor
 public class ErasureController {
     private final Procedures procedures;
+
+    public ErasureController(Procedures procedures) {
+        this.procedures = procedures;
+    }
 
     @PostMapping("/erase/{userId}")
     public ResponseEntity<?> eraseUser(@PathVariable Long userId, @RequestParam String actor) {

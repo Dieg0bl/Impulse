@@ -17,9 +17,11 @@ public class UsuarioMapper {
         dto.setEmail(usuario.getEmail());
         dto.setNombre(usuario.getNombre());
         dto.setPassword(null); // Nunca exponer password real
-        dto.setFechaNacimiento(usuario.getFechaNacimiento());
-        dto.setEstado(usuario.getEstado());
-        dto.setRoles(usuario.getRoles());
+    // fechaNacimiento ahora es Instant en entidad y DTO
+    dto.setFechaNacimiento(usuario.getFechaNacimiento());
+    // estado en DTO es String
+    dto.setEstado(usuario.getEstado() != null ? usuario.getEstado().name() : null);
+    dto.setRoles(usuario.getRoles());
         dto.setConsentimientoAceptado(usuario.isConsentimientoAceptado());
         return dto;
     }
@@ -32,7 +34,10 @@ public class UsuarioMapper {
         usuario.setNombre(dto.getNombre());
         usuario.setPassword(dto.getPassword());
         usuario.setFechaNacimiento(dto.getFechaNacimiento());
-        usuario.setEstado(dto.getEstado());
+        // convertir estado String -> enum
+        if (dto.getEstado() != null) {
+            try { usuario.setEstado(Usuario.Estado.valueOf(dto.getEstado())); } catch (IllegalArgumentException ex) { usuario.setEstado(null); }
+        }
         usuario.setRoles(dto.getRoles());
         usuario.setConsentimientoAceptado(dto.isConsentimientoAceptado());
         return usuario;

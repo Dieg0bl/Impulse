@@ -41,8 +41,22 @@ const ReportarAvance: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validación de tipo y tamaño (máx 10MB)
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      const allowedTypes = [
+        'image/jpeg', 'image/png', 'image/gif',
+        'video/mp4', 'video/webm', 'video/ogg',
+        'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Tipo de archivo no permitido.');
+        return;
+      }
+      if (file.size > maxSize) {
+        alert('El archivo supera el tamaño máximo permitido (10MB).');
+        return;
+      }
       setFormData(prev => ({ ...prev, evidencia: file }));
-      
       // Crear preview para imágenes
       if (file.type.startsWith('image/')) {
         const url = URL.createObjectURL(file);

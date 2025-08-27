@@ -2,11 +2,11 @@ package com.impulse.security;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Set;
+// java.util.Set removed (not used after refactor)
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+// org.springframework.beans.factory.annotation.Autowired removed; using constructor injection
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,8 +25,7 @@ public class RetoSecurityServiceOptimized {
 
     private static final Logger logger = LoggerFactory.getLogger(RetoSecurityServiceOptimized.class);
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
     // === CONSTANTES PARA ROLES ===
     private static final String ADMIN_ROLE = "ADMIN";
@@ -72,6 +71,10 @@ public class RetoSecurityServiceOptimized {
      * Verifica si el usuario actual puede realizar una operación específica en un reto.
      * IMPLEMENTACIÓN REAL con lógica de negocio completa.
      */
+    public RetoSecurityServiceOptimized(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
     public boolean canPerformOperation(Reto reto, RetoOperation operation) {
         Usuario currentUser = getCurrentUser();
         
@@ -164,12 +167,8 @@ public class RetoSecurityServiceOptimized {
             return true;
         }
 
-        // El creador puede eliminar su propio reto si no está completado
-        if (isOwner(reto, user) && !isCompleted(reto)) {
-            return true;
-        }
-
-        return false;
+    // El creador puede eliminar su propio reto si no está completado
+    return isOwner(reto, user) && !isCompleted(reto);
     }
 
     private boolean canSubmitEvidence(Reto reto, Usuario user) {
@@ -259,12 +258,8 @@ public class RetoSecurityServiceOptimized {
         }
 
         // No se pueden compartir retos privados (excepto el owner)
-        PrivacyLevel privacy = getPrivacyLevel(reto);
-        if (privacy == PrivacyLevel.PRIVATE && !isOwner(reto, user)) {
-            return false;
-        }
-
-        return true;
+    PrivacyLevel privacy = getPrivacyLevel(reto);
+    return !(privacy == PrivacyLevel.PRIVATE && !isOwner(reto, user));
     }
 
     // === MÉTODOS DE UTILIDAD IMPLEMENTADOS ===
@@ -290,10 +285,16 @@ public class RetoSecurityServiceOptimized {
     }
 
     private boolean hasRole(Usuario user, String... roles) {
-        if (user.getRoles() == null) {
+        if (user == null || user.getRoles() == null) {
             return false;
         }
-        return Set.of(roles).contains(user.getRoles());
+        String userRoles = user.getRoles();
+        for (String r : roles) {
+            if (userRoles.contains(r)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // IMPLEMENTACIÓN REAL: Sistema de privacidad
@@ -320,14 +321,7 @@ public class RetoSecurityServiceOptimized {
             if (creatorId == null || userId == null) {
                 return false;
             }
-            
-            Usuario currentUser = getCurrentUser();
-            if (currentUser == null) {
-                return false;
-            }
-            
             return !creatorId.equals(userId);
-            
         } catch (Exception e) {
             logger.error("Error verificando seguimiento: {} -> {}", userId, creatorId, e);
             return false;
@@ -369,7 +363,7 @@ public class RetoSecurityServiceOptimized {
     // IMPLEMENTACIÓN REAL: Validación de evidencias - method removed as unused
 
     private boolean isActive(Reto reto) {
-        return ESTADO_ACTIVO.equals(reto.getEstado()) && 
+        return ESTADO_ACTIVO.equals(reto.getEstado()) &&
                (reto.getFechaFin() == null || reto.getFechaFin().isAfter(LocalDateTime.now()));
     }
 
@@ -388,22 +382,10 @@ public class RetoSecurityServiceOptimized {
     // IMPLEMENTACIÓN REAL: Evidencias pendientes
     private boolean hasPendingEvidence(Reto reto) {
         try {
-            if (reto == null || reto.getId() == null) {
-                return false;
-            }
-            
-            if (ESTADO_EN_REVISION.equals(reto.getEstado())) {
-                return true;
-            }
-            
-            String descripcion = reto.getDescripcion() != null ? reto.getDescripcion().toLowerCase() : "";
-            if (descripcion.contains("pendiente") || descripcion.contains("revision") || 
-                descripcion.contains("verificando") || descripcion.contains("evaluando")) {
-                return true;
-            }
-            
-            return false;
-            
+         String descripcion = reto != null && reto.getDescripcion() != null ? reto.getDescripcion().toLowerCase() : "";
+         return !(reto == null || reto.getId() == null) && (ESTADO_EN_REVISION.equals(reto.getEstado()) ||
+             descripcion.contains("pendiente") || descripcion.contains("revision") ||
+             descripcion.contains("verificando") || descripcion.contains("evaluando"));
         } catch (Exception e) {
             logger.error("Error verificando evidencias pendientes para reto {}", 
                         reto != null && reto.getId() != null ? reto.getId() : "null", e);
@@ -412,7 +394,7 @@ public class RetoSecurityServiceOptimized {
     }
 
     private boolean isBlocked(Usuario user) {
-        return ESTADO_BLOQUEADO.equals(user.getEstado());
+        return user != null && user.getEstado() != null && ESTADO_BLOQUEADO.equals(user.getEstado().toString());
     }
 
     // IMPLEMENTACIÓN REAL: Configuración de comentarios
@@ -421,19 +403,11 @@ public class RetoSecurityServiceOptimized {
             if (reto == null || reto.getId() == null) {
                 return true;
             }
-            
-            if (ESTADO_BLOQUEADO.equals(reto.getEstado()) || ESTADO_ELIMINADO.equals(reto.getEstado())) {
-                return false;
-            }
-            
             String descripcion = reto.getDescripcion() != null ? reto.getDescripcion().toLowerCase() : "";
-            if (descripcion.contains("sin comentarios") || descripcion.contains("comentarios deshabilitados") ||
-                descripcion.contains("no comments") || descripcion.contains("comentarios cerrados")) {
-                return false;
-            }
-            
-            return true;
-            
+            boolean blockedOrDeleted = ESTADO_BLOQUEADO.equals(reto.getEstado()) || ESTADO_ELIMINADO.equals(reto.getEstado());
+            boolean commentsDisabled = descripcion.contains("sin comentarios") || descripcion.contains("comentarios deshabilitados") ||
+                                      descripcion.contains("no comments") || descripcion.contains("comentarios cerrados");
+            return !blockedOrDeleted && !commentsDisabled;
         } catch (Exception e) {
             logger.error("Error verificando configuración de comentarios para reto {}", 
                         reto != null && reto.getId() != null ? reto.getId() : "null", e);
@@ -444,20 +418,14 @@ public class RetoSecurityServiceOptimized {
     // IMPLEMENTACIÓN REAL: Historial de reportes
     private boolean hasAlreadyReported(Reto reto, Usuario user) {
         try {
+            // Inputs invalid -> not reported
             if (reto == null || reto.getId() == null || user == null || user.getId() == null) {
                 return false;
             }
-            
-            if (Objects.equals(reto.getUsuario().getId(), user.getId())) {
-                return false;
-            }
-            
-            if (hasRole(user, ADMIN_ROLE, MODERATOR_ROLE)) {
-                return false;
-            }
-            
+
+            // Owners and admins/moderators cannot report their own content
+            // persistent history lookup not implemented yet; default: not reported
             return false;
-            
         } catch (Exception e) {
             logger.error("Error verificando historial de reportes - Reto: {}, User: {}", 
                         reto != null && reto.getId() != null ? reto.getId() : "null",
@@ -470,20 +438,8 @@ public class RetoSecurityServiceOptimized {
 
     private boolean isParticipant(Reto reto, Usuario user) {
         try {
-            if (reto == null || reto.getId() == null || user == null || user.getId() == null) {
-                return false;
-            }
-            
-            if (Objects.equals(reto.getUsuario().getId(), user.getId())) {
-                return true;
-            }
-            
-            if (PrivacyLevel.PUBLIC.equals(getPrivacyLevel(reto))) {
-                return true;
-            }
-            
-            return false;
-            
+         return !(reto == null || reto.getId() == null || user == null || user.getId() == null) &&
+             (Objects.equals(reto.getUsuario().getId(), user.getId()) || PrivacyLevel.PUBLIC.equals(getPrivacyLevel(reto)));
         } catch (Exception e) {
             logger.error("Error verificando participación - Reto: {}, User: {}", 
                         reto != null && reto.getId() != null ? reto.getId() : "null",
@@ -494,25 +450,10 @@ public class RetoSecurityServiceOptimized {
 
     private boolean hasSubmittedEvidenceToday(Reto reto, Usuario user) {
         try {
-            if (reto == null || reto.getId() == null || user == null || user.getId() == null) {
-                return false;
-            }
-            
-            LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
-            
-            if (reto.getFechaInicio() != null && reto.getFechaInicio().isAfter(today)) {
-                return true;
-            }
-            
-            if (ESTADO_COMPLETADO.equals(reto.getEstado()) && Objects.equals(reto.getUsuario().getId(), user.getId())) {
-                return true;
-            }
-            if (ESTADO_COMPLETADO.equals(reto.getEstado())) {
-                return true;
-            }
-            
-            return false;
-            
+         LocalDateTime today = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+         return !(reto == null || reto.getId() == null || user == null || user.getId() == null) &&
+             ((reto.getFechaInicio() != null && reto.getFechaInicio().isAfter(today)) ||
+             ESTADO_COMPLETADO.equals(reto.getEstado()));
         } catch (Exception e) {
             logger.error("Error verificando evidencia diaria - Reto: {}, User: {}", 
                         reto != null && reto.getId() != null ? reto.getId() : "null",
@@ -523,19 +464,8 @@ public class RetoSecurityServiceOptimized {
 
     private boolean isMuted(Usuario user, Reto reto) {
         try {
-            if (user == null || user.getId() == null || reto == null || reto.getId() == null) {
-                return false;
-            }
-            
-            if (ESTADO_BLOQUEADO.equals(user.getEstado())) {
-                return true;
-            }
-            
-            if (hasRole(user, ADMIN_ROLE, MODERATOR_ROLE)) {
-                return false;
-            }
-            
-            return false;
+         return !(user == null || user.getId() == null || reto == null || reto.getId() == null) &&
+             user.getEstado() != null && ESTADO_BLOQUEADO.equals(user.getEstado().toString());
             
         } catch (Exception e) {
             logger.error("Error verificando silenciamiento - User: {}, Reto: {}", 
@@ -555,7 +485,7 @@ public class RetoSecurityServiceOptimized {
         }
 
         if (hasRole(currentUser, ADMIN_ROLE)) {
-            return "1=1"; // Admins ven todo
+            return "1=1"; // full access for admins
         }
 
         StringBuilder filter = new StringBuilder();

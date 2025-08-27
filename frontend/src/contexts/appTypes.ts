@@ -6,7 +6,12 @@ export interface Usuario {
   apellidos: string;
   telefono?: string;
   avatar?: string;
-  rol: 'USUARIO' | 'VALIDADOR' | 'ADMIN';
+  rol: 'USUARIO' | 'VALIDADOR' | 'ADMIN'; // Unificado con backend (roles)
+  estado: 'ACTIVO' | 'INACTIVO' | 'SUSPENDIDO' | 'ELIMINADO' | 'PENDIENTE_VERIFICACION';
+  fechaNacimiento?: string;
+  consentimientoAceptado?: boolean;
+  fechaRegistro: string;
+  ultimoAcceso: string;
   configuracion: {
     notificaciones: boolean;
     privacidad: 'PUBLICO' | 'PRIVADO' | 'SOLO_VALIDADORES';
@@ -18,9 +23,10 @@ export interface Usuario {
     badges: string[];
     racha: number;
   };
-  fechaRegistro: string;
-  ultimoAcceso: string;
-  estado: 'ACTIVO' | 'PENDIENTE_VERIFICACION' | 'SUSPENDIDO';
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
   inviteCode?: string; // código con el que se registró (growth tracking)
 }
 
@@ -50,14 +56,23 @@ export interface ReporteAvance {
 
 export interface Reto {
   id: string;
-  usuarioId: string;
+  idCreador: string;
+  idCategoria?: string;
   titulo: string;
   descripcion: string;
-  categoria: 'SALUD' | 'EDUCACION' | 'TRABAJO' | 'PERSONAL' | 'DEPORTE' | 'HABITOS' | 'OTRO';
-  dificultad: 'FACIL' | 'MEDIO' | 'DIFICIL' | 'EXTREMO';
+  categoria?: string; // Puede mapearse a idCategoria
+  dificultad: string;
   fechaInicio: string;
   fechaFin: string;
-  estado: 'BORRADOR' | 'ACTIVO' | 'PAUSADO' | 'COMPLETADO' | 'FALLIDO' | 'CANCELADO';
+  tipoValidacion?: string;
+  esPublico?: boolean;
+  requiereEvidencia: boolean;
+  tipoEvidencia: string;
+  frecuenciaReporte: string;
+  metaObjetivo?: string;
+  unidadMedida?: string;
+  valorObjetivo?: number;
+  estado: string;
   progreso: number;
   validadores: string[];
   reportes: ReporteAvance[];
@@ -68,12 +83,18 @@ export interface Reto {
   };
   configuracion: {
     requiereEvidencia: boolean;
-    tipoEvidencia: 'TEXTO' | 'FOTO' | 'VIDEO' | 'ARCHIVO';
-    frecuenciaReporte: 'DIARIO' | 'SEMANAL' | 'QUINCENAL' | 'MENSUAL';
+  tipoEvidencia: string;
+  frecuenciaReporte: string;
     validacionMinima: number;
   };
+  publicSlug?: string;
+  slaHorasValidacion?: number;
+  tipoConsecuencia?: string;
+  esPlantilla?: boolean;
+  visibility?: string;
   fechaCreacion: string;
   fechaActualizacion: string;
+  updatedAt?: string;
 }
 
 export interface Notificacion {

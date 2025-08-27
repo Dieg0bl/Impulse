@@ -20,6 +20,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -51,6 +52,14 @@ public class Usuario {
     @Column(name="password_hash", length=60, nullable=false)
     private String passwordHash;
 
+    // Compatibilidad: campo roles (cadena simple) utilizado por servicios y DTOs.
+    @Column(name = "roles", length = 255)
+    private String roles;
+
+    // Compatibilidad: fechaNacimiento como Instant para alinear DTOs y servicios.
+    @Column(name = "fecha_nacimiento")
+    private Instant fechaNacimiento;
+
     @NotBlank @Size(max=100) @PII(PII.Level.LOW)
     private String nombre;
 
@@ -78,6 +87,18 @@ public class Usuario {
     @Column(name="updated_at", nullable=false)  private Instant updatedAt;
     @Column(name="deleted_at")                  private Instant deletedAt;
 
+    // Auditoría/compatibilidad adicional
+    @Column(name = "created_by", length = 128)
+    private String createdBy;
+    @Column(name = "updated_by", length = 128)
+    private String updatedBy;
+
+    @Transient
+    private java.util.List<Long> validadores;
+
+    @Column(name = "consentimiento_aceptado")
+    private boolean consentimientoAceptado;
+
     @Version private Long version;
 
     @PrePersist void prePersist(){ var now = Instant.now(); createdAt = now; updatedAt = now; }
@@ -90,6 +111,9 @@ public class Usuario {
     public void setEmail(String email) { this.email = email; }
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    // Compatibilidad con API existente que usa getPassword()/setPassword()
+    public String getPassword() { return this.passwordHash; }
+    public void setPassword(String password) { this.passwordHash = password; }
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
     public String getApellidos() { return apellidos; }
@@ -110,6 +134,21 @@ public class Usuario {
     public void setMarketingOptIn(boolean marketingOptIn) { this.marketingOptIn = marketingOptIn; }
     public Instant getVerifiedAt() { return verifiedAt; }
     public void setVerifiedAt(Instant verifiedAt) { this.verifiedAt = verifiedAt; }
+    public Instant getFechaNacimiento() { return fechaNacimiento; }
+    public void setFechaNacimiento(Instant fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
+
+    public String getRoles() { return roles; }
+    public void setRoles(String roles) { this.roles = roles; }
+    public boolean isConsentimientoAceptado() { return consentimientoAceptado; }
+    public void setConsentimientoAceptado(boolean consentimientoAceptado) { this.consentimientoAceptado = consentimientoAceptado; }
+
+    public java.util.List<Long> getValidadores() { return validadores; }
+    public void setValidadores(java.util.List<Long> validadores) { this.validadores = validadores; }
+
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public String getUpdatedBy() { return updatedBy; }
+    public void setUpdatedBy(String updatedBy) { this.updatedBy = updatedBy; }
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
     public Instant getUpdatedAt() { return updatedAt; }

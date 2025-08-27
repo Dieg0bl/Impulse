@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Button from '../components/Button.tsx';
+import Button from '../components/Button';
 import { useRegister } from '../hooks/useRegister';
 
 const Register: React.FC = () => {
@@ -177,150 +177,102 @@ const Register: React.FC = () => {
                   autoComplete="email"
                   className={`form-input ${formErrors.email ? 'error' : ''}`}
                 />
-                {formErrors.email && (
-                  <div className="field-error">{formErrors.email}</div>
-                )}
               </div>
 
               <div className="form-field">
-                <label htmlFor="telefono" className="form-label">Teléfono (opcional)</label>
+                <label htmlFor="password" className="form-label">Contraseña</label>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                  className="form-input"
+                  aria-describedby="password-help"
+                />
+                <div id="password-help" className="field-help">
+                  Mínimo 6 caracteres
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="confirmPassword" className="form-label">Confirmar contraseña</label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  required
+                  className="form-input"
+                  aria-describedby="confirmPassword-help"
+                />
+                <div id="confirmPassword-help" className="field-help">
+                  Repite la contraseña
+                </div>
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="nombre" className="form-label">Nombre</label>
+                <input
+                  id="nombre"
+                  type="text"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleInputChange}
+                  required
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="apellidos" className="form-label">Apellidos</label>
+                <input
+                  id="apellidos"
+                  type="text"
+                  name="apellidos"
+                  value={formData.apellidos}
+                  onChange={handleInputChange}
+                  required
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-field">
+                <label htmlFor="telefono" className="form-label">Teléfono</label>
                 <input
                   id="telefono"
                   type="tel"
                   name="telefono"
                   value={formData.telefono}
                   onChange={handleInputChange}
-                  placeholder="+34 600 000 000"
-                  autoComplete="tel"
                   className="form-input"
                 />
-                <div className="field-help">
-                  Para notificaciones importantes por WhatsApp
-                </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-field">
-                  <label htmlFor="password" className="form-label">Contraseña *</label>
-                  <input
-                    id="password"
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    placeholder="Mínimo 6 caracteres"
-                    required
-                    autoComplete="new-password"
-                    className={`form-input ${formErrors.password ? 'error' : ''}`}
-                  />
-                  {formErrors.password && (
-                    <div className="field-error">{formErrors.password}</div>
-                  )}
-                </div>
-
-                <div className="form-field">
-                  <label htmlFor="confirmPassword" className="form-label">Confirmar Contraseña *</label>
-                  <input
-                    id="confirmPassword"
-                    type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    placeholder="Repite tu contraseña"
-                    required
-                    autoComplete="new-password"
-                    className={`form-input ${formErrors.confirmPassword ? 'error' : ''}`}
-                  />
-                  {formErrors.confirmPassword && (
-                    <div className="field-error">{formErrors.confirmPassword}</div>
-                  )}
-                </div>
-              </div>
-
-              <div className="form-field checkbox-field">
-                <label className="checkbox-label">
+              <div className="form-field">
+                <label className="form-label">
                   <input
                     type="checkbox"
                     name="acceptTerms"
                     checked={formData.acceptTerms}
                     onChange={handleInputChange}
                     required
-                    className="checkbox-input"
+                    aria-required="true"
                   />
-                  <span className="checkbox-custom"></span>
-                  <span className="checkbox-text">
-                    Acepto los <a href="/terms" target="_blank">términos y condiciones</a> y la <a href="/privacy" target="_blank">política de privacidad</a> *
-                  </span>
+                  {' '}Acepto los <a href="/terminos" target="_blank" rel="noopener noreferrer">términos y condiciones</a> y la <a href="/privacidad" target="_blank" rel="noopener noreferrer">política de privacidad</a>
                 </label>
-                {formErrors.acceptTerms && (
-                  <div className="field-error">{formErrors.acceptTerms}</div>
-                )}
+                {formErrors.acceptTerms && <div className="field-error" aria-live="polite">{formErrors.acceptTerms}</div>}
               </div>
 
-              <Button
-                type="submit"
-                variant="primary"
-                size="large"
-                disabled={loading}
-                className="auth-submit-btn"
-              >
-                {loading ? '⏳ Creando cuenta...' : '🚀 Crear mi cuenta'}
-              </Button>
+              <Button type="submit" disabled={loading}>Registrarse</Button>
+              {success && <div className="success-message" role="status">¡Registro exitoso! Ahora puedes iniciar sesión.</div>}
+              {error && <div className="error-message" role="alert">{error}</div>}
             </form>
-
-            {/* Link a login */}
-            <div className="auth-alternative">
-              <p>¿Ya tienes cuenta?</p>
-              <Button
-                variant="secondary"
-                onClick={() => navigate('login')}
-                aria-label="Iniciar sesión"
-              >
-                Iniciar sesión
-              </Button>
-            </div>
-          </div>
-
-          {/* Panel lateral con información */}
-          <div className="auth-sidebar">
-            <div className="sidebar-content">
-              <h2 className="sidebar-title">🎯 ¿Qué puedes lograr con IMPULSE?</h2>
-              
-              <div className="success-story">
-                <h3>📚 María - Estudiante</h3>
-                <p>"Logré estudiar 2 horas diarias durante 3 meses. Mis padres validaron mi progreso y ahora tengo la mejor nota de la clase."</p>
-              </div>
-              
-              <div className="success-story">
-                <h3>🏃‍♂️ Carlos - Oficinista</h3>
-                <p>"Perdí 15kg en 6 meses. Mi hermano verificaba mis entrenamientos diarios. ¡La presión social funciona!"</p>
-              </div>
-              
-              <div className="success-story">
-                <h3>💰 Ana - Freelancer</h3>
-                <p>"Ahorré 5000€ para mi viaje. Mi novio revisaba mis gastos semanalmente. Sin excusas, sin fallos."</p>
-              </div>
-              
-              <div className="cta-sidebar">
-                <h3>🔥 ¿Tu turno?</h3>
-                <p>Sea cual sea tu objetivo, IMPULSE te ayuda a cumplirlo con <strong>compromiso real</strong>.</p>
-              </div>
-            </div>
           </div>
         </div>
       </main>
-
-      {/* Footer simple */}
-      <footer className="auth-footer">
-        <div className="auth-footer-content">
-          <p>&copy; 2024 IMPULSE. Convierte tus retos en realidad.</p>
-          <div className="footer-links">
-            <a href="/privacy" className="footer-link">Privacidad</a>
-            <a href="/terms" className="footer-link">Términos</a>
-            <a href="mailto:soporte@impulse.dev" className="footer-link">Soporte</a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

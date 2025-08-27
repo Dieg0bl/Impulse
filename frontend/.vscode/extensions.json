@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "orta.vscode-jest",
+    "usernamehw.errorlens",
+    "sonarsource.sonarlint-vscode",
+    "redhat.java",
+    "vscjava.vscode-maven",
+    "rhysd.actionlint",
+    "DavidAnson.vscode-markdownlint"
+  ]
+}

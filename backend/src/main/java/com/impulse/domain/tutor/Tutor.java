@@ -1,14 +1,17 @@
 package com.impulse.domain.tutor;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * Entidad Tutor.
@@ -36,8 +39,12 @@ public class Tutor {
     @Column(nullable = false)
     private String nombre;
 
-    /** Relación con usuarios (N:M, público) */
-    @ManyToMany(mappedBy = "validadores")
+    /** Relación con usuarios (N:M, público) - explicit join table to avoid mappedBy issues */
+    @ManyToMany
+    @JoinTable(name = "tutor_usuario",
+        joinColumns = @JoinColumn(name = "tutor_id"),
+        inverseJoinColumns = @JoinColumn(name = "usuario_id")
+    )
     private List<com.impulse.domain.usuario.Usuario> usuarios;
 
     /** Fecha de creación (auditoría, no modificable) */

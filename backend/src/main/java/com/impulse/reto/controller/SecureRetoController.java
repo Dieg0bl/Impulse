@@ -29,8 +29,15 @@ import jakarta.persistence.Query;
  * Controlador seguro para retos que implementa autorización granular.
  * Cada operación es validada por RetoSecurityService antes de ejecutarse.
  */
+/**
+ * Secure controller for retos providing granular authorization.
+ * Moved to an internal path to avoid conflicts with the public API controllers
+ * during test runs and migration. This class is intended for module-internal
+ * usage only.
+ */
 @RestController
-@RequestMapping("/api/retos")
+@RequestMapping("/api/_internal/retos")
+@Deprecated
 public class SecureRetoController {
 
     // Constantes para respuestas

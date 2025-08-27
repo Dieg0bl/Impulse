@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
  * Controlador REST para gestión de evidencias.
  * Cumple compliance: RGPD, ISO 27001, ENS.
  */
-@RestController
+@RestController("evidenciaControllerSub")
 @RequestMapping("/api/evidencia")
 @Validated
 public class EvidenciaController {

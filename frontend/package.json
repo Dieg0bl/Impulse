@@ -3,15 +3,25 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "prepare": "husky",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "eject": "react-scripts eject",
     "lint:deps": "depcruise --config dependency-cruiser.js src",
     "vitest": "vitest run",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "check:actions": "actionlint -color",
+    "lint": "eslint .",
+    "check": "npm run lint && npm test"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint --fix",
+    "*.{md,markdown}": "markdownlint-cli2"
   },
   "dependencies": {
+    "@sentry/browser": "^7.52.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@types/jest": "^27.5.2",
@@ -21,15 +31,38 @@
     "jest": "^27.5.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.26.2",
     "react-scripts": "^5.0.1"
   },
   "devDependencies": {
+    "@actionlint/cli": "^1.8.0",
+    "@babel/core": "^7.25.0",
+    "@babel/preset-env": "^7.25.0",
+    "@babel/preset-react": "^7.25.0",
+    "@babel/preset-typescript": "^7.25.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@types/jest": "^29.5.4",
     "@types/node": "^16.18.108",
+    "@typescript-eslint/eslint-plugin": "^6.9.0",
+    "@typescript-eslint/parser": "^6.9.0",
+    "@vitest/coverage-c8": "^0.32.0",
+    "babel-jest": "^29.7.0",
     "dependency-cruiser": "^14.0.0",
+    "eslint": "^8.40.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jest": "^27.1.5",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-testing-library": "^5.10.3",
+    "husky": "^8.0.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "lint-staged": "^13.2.0",
     "madge": "^6.0.0",
-    "vitest": "^1.0.0",
-    "@vitest/coverage-c8": "^0.32.0"
+    "markdownlint-cli2": "^0.11.0",
+    "ts-jest": "^29.1.0",
+    "vitest": "^1.0.0"
   },
   "browserslist": {
     "production": [

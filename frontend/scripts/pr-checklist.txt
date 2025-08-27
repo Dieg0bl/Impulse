@@ -1,0 +1,7 @@
+# Checklist de calidad para Pull Requests
+
+- [ ] Tests actualizados o añadidos
+- [ ] Linter y formateo pasados
+- [ ] Documentación relevante actualizada
+- [ ] Logs/contexto de errores revisados
+- [ ] Refactor o deuda técnica considerada

@@ -23,7 +23,7 @@ interface LogEntry {
 class Logger {
   private static instance: Logger;
   private logLevel: LogLevel = LogLevel.INFO;
-  private isDevelopment: boolean = window.location.hostname === 'localhost';
+  private isDevelopment: boolean = (typeof window !== 'undefined') && !!(window.location && window.location.hostname === 'localhost');
 
   private constructor() {}
 
@@ -72,8 +72,11 @@ class Logger {
 
   private getCurrentUserId(): string | undefined {
     try {
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
-      return user.id;
+      if (typeof localStorage === 'undefined') return undefined;
+      const raw = localStorage.getItem('user');
+      if (!raw) return undefined;
+      const user = JSON.parse(raw);
+      return user?.id;
     } catch {
       return undefined;
     }
@@ -169,8 +172,8 @@ class Logger {
 // Instancia singleton
 export const logger = Logger.getInstance();
 
-// Configurar nivel según entorno
-if (window.location.hostname === 'localhost') {
+// Configurar nivel según entorno (protegido para entornos sin window)
+if (typeof window !== 'undefined' && window.location && window.location.hostname === 'localhost') {
   logger.setLogLevel(LogLevel.DEBUG);
 } else {
   logger.setLogLevel(LogLevel.WARN);

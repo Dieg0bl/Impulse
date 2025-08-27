@@ -33,6 +33,11 @@ export const useAuth = (): AuthHook => {
   useEffect(() => {
     const initAuth = async () => {
       try {
+        // Limpieza de tokens antiguos
+        if (localStorage.getItem('token') && !localStorage.getItem('authToken')) {
+          localStorage.setItem('authToken', localStorage.getItem('token')!);
+          localStorage.removeItem('token');
+        }
         const token = getToken();
         if (token) {
           // Validar token y obtener datos del usuario
@@ -42,7 +47,6 @@ export const useAuth = (): AuthHook => {
               'Content-Type': 'application/json'
             }
           });
-          
           if (response.ok) {
             const userData = await response.json();
             setUser(userData);
@@ -58,7 +62,6 @@ export const useAuth = (): AuthHook => {
         setLoading(false);
       }
     };
-
     initAuth();
   }, []);
 
@@ -78,7 +81,8 @@ export const useAuth = (): AuthHook => {
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('authToken', data.token);
+      localStorage.removeItem('token');
       setUser(data.user);
     } catch (error) {
       console.error('Error en login:', error);

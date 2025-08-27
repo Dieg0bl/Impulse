@@ -1,32 +1,49 @@
 // Servicio para consents y privacidad
-export const getConsents = async () => {
+export interface ConsentDTO {
+  id: string;
+  value: boolean;
+}
+
+export const getConsents = async (): Promise<ConsentDTO[]> => {
   const res = await fetch('/api/privacy/consents');
-  if (!res.ok) throw new Error('Error obteniendo consents');
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error obteniendo consents');
+  }
   return res.json();
 };
 
-export const updateConsent = async (consentId: string, value: boolean) => {
+export const updateConsent = async (consentId: string, value: boolean): Promise<ConsentDTO> => {
   const res = await fetch(`/api/privacy/consents/${consentId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ value })
   });
-  if (!res.ok) throw new Error('Error actualizando consent');
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error actualizando consent');
+  }
   return res.json();
 };
 
-export const getPrivacyRequests = async () => {
+export const getPrivacyRequests = async (): Promise<any[]> => {
   const res = await fetch('/api/privacy/requests');
-  if (!res.ok) throw new Error('Error obteniendo solicitudes');
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error obteniendo solicitudes');
+  }
   return res.json();
 };
 
-export const createPrivacyRequest = async (type: string) => {
+export const createPrivacyRequest = async (type: string): Promise<any> => {
   const res = await fetch('/api/privacy/requests', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ type })
   });
-  if (!res.ok) throw new Error('Error creando solicitud');
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Error creando solicitud');
+  }
   return res.json();
 };

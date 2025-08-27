@@ -1,0 +1,9 @@
+# Instrucciones para generar reporte de cobertura
+
+1. Instala dependencias si no están presentes:
+   npm install
+2. Ejecuta:
+   npx jest --coverage
+3. El reporte se generará en frontend/coverage/
+
+Incluye este paso en tu CI para asegurar cobertura mínima.

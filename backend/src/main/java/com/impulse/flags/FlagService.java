@@ -23,7 +23,7 @@ import org.yaml.snakeyaml.Yaml;
  * Lee el archivo application-flags.yml una vez al arranque y permite refresco manual.
  * Expone metadata (ETag, lastModified) para soporte de caching HTTP en el controlador.
  */
-@Service
+@Service("featureFlagService")
 public class FlagService {
 
     private static final Logger log = LoggerFactory.getLogger(FlagService.class);

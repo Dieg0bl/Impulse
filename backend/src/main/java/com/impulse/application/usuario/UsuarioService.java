@@ -1,6 +1,6 @@
 package com.impulse.application.usuario;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,8 +48,8 @@ public class UsuarioService {
             throw new com.impulse.common.exceptions.BadRequestException("Consentimiento obligatorio no aceptado.");
         }
         Usuario usuario = UsuarioMapper.toEntity(dto);
-        usuario.setPassword(passwordEncoder.encode(dto.getPassword())); // Cifrado real con bcrypt
-        usuario.setCreatedAt(LocalDateTime.now());
+    usuario.setPassword(passwordEncoder.encode(dto.getPassword())); // Cifrado real con bcrypt
+    usuario.setCreatedAt(java.time.Instant.now());
         usuarioRepository.save(usuario);
         auditoriaService.registrarCreacionUsuario(usuario.getId(), usuario.getEmail());
         return UsuarioMapper.toDTO(usuario);
@@ -69,7 +69,7 @@ public class UsuarioService {
     @Transactional
     public void eliminarUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new NotFoundException(USUARIO_NO_ENCONTRADO));
-        usuario.setDeletedAt(LocalDateTime.now());
+    usuario.setDeletedAt(Instant.now());
         usuarioRepository.save(usuario);
         auditoriaService.registrarEliminacionUsuario(usuario.getId(), usuario.getEmail());
     }
@@ -93,9 +93,9 @@ public class UsuarioService {
         }
         usuario.setNombre(dto.getNombre());
         usuario.setEmail(dto.getEmail());
-        usuario.setPassword(passwordEncoder.encode(dto.getPassword())); // Cifrado real con bcrypt
-        usuario.setConsentimientoAceptado(dto.isConsentimientoAceptado());
-        usuario.setUpdatedAt(LocalDateTime.now());
+    usuario.setPassword(passwordEncoder.encode(dto.getPassword())); // Cifrado real con bcrypt
+    usuario.setConsentimientoAceptado(dto.isConsentimientoAceptado());
+    usuario.setUpdatedAt(java.time.Instant.now());
         usuarioRepository.save(usuario);
         auditoriaService.actualizarUsuario(usuario.getId(), usuario.getEmail());
         return UsuarioMapper.toDTO(usuario);

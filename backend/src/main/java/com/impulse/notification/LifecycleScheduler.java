@@ -1,16 +1,16 @@
 package com.impulse.notification;
 
+import java.time.LocalDate;
 import java.util.List;
-import org.springframework.jdbc.core.JdbcTemplate;
 
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.impulse.common.flags.FlagService;
 import com.impulse.retention.RetentionService;
-import java.time.LocalDate;
 
-@Component
+@Component("notificationLifecycleScheduler")
 public class LifecycleScheduler {
 
     private final NotificationService notifications;

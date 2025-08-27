@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../components/Button';
+import { useAppContext } from '../contexts/AppContext.tsx';
+import { logger } from '../utils/logger.ts';
 
 const mockCategorias = [
   { id: '1', nombre: 'Salud', descripcion: 'Retos de salud y bienestar.' },
@@ -8,16 +10,35 @@ const mockCategorias = [
 ];
 
 const Categorias: React.FC = () => {
+  const { state, navigate } = useAppContext();
+  const { currentUser: user } = state;
   const [categorias, setCategorias] = useState(mockCategorias);
   const [nueva, setNueva] = useState(false);
   const [nombre, setNombre] = useState('');
   const [descripcion, setDescripcion] = useState('');
 
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    if (user.rol !== 'ADMIN') {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
   const crearCategoria = () => {
+    const nuevaCategoria = { id: String(Date.now()), nombre, descripcion };
     setCategorias([
       ...categorias,
-      { id: String(Date.now()), nombre, descripcion },
+      nuevaCategoria,
     ]);
+    // Log de auditoría
+    logger.info('Categoría creada', 'AUDIT', {
+      categoria: nuevaCategoria,
+      usuario: user?.email,
+      fecha: new Date().toISOString()
+    });
     setNueva(false);
     setNombre('');
     setDescripcion('');

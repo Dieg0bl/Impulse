@@ -1,0 +1,16 @@
+{
+  "devDependencies": {
+    "@babel/preset-env": "^7.28.0",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^16.3.0",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.5",
+    "ts-jest": "^29.4.1"
+  }
+
+  ,"scripts": {
+    "tools:all": "node tools/check-rest-duplicates.js && node tools/check-flyway-versions.js && node tools/check-flags-sync.js && node tools/check-file-size.js && node tools/event-schema-lint.js"
+  }
+}

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useAppContext } from '../contexts/AppContext.tsx';
 
 const mockPaneles = [
   { id: 'usuarios', nombre: 'Usuarios', descripcion: 'Gestión avanzada de usuarios y roles.' },
@@ -7,6 +8,27 @@ const mockPaneles = [
 ];
 
 const PanelAdmin: React.FC = () => {
+  const { state, navigate } = useAppContext();
+  const { currentUser: user } = state;
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    if (user.rol !== 'ADMIN') {
+      navigate('/dashboard');
+    } else {
+      // Log de auditoría
+      import('../utils/logger.ts').then(({ logger }) => {
+        logger.info('Acceso al PanelAdmin', 'AUDIT', {
+          usuario: user.email,
+          fecha: new Date().toISOString()
+        });
+      });
+    }
+  }, [user, navigate]);
+
   return (
     <div className="paneladmin-page container mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold mb-4">Panel de Administración Avanzada</h1>

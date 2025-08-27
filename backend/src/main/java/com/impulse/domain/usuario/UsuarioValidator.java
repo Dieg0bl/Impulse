@@ -3,7 +3,7 @@ package com.impulse.domain.usuario;
 
 // No es necesario el import, ya que está en el mismo paquete
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -40,11 +40,12 @@ public class UsuarioValidator {
             throw new IllegalArgumentException("La contraseña debe tener al menos 10 caracteres");
         if (dto.getNombre() == null || dto.getNombre().isBlank())
             throw new IllegalArgumentException("El nombre es obligatorio");
-        if (dto.getFechaNacimiento() != null && dto.getFechaNacimiento().isAfter(LocalDateTime.now()))
+    // DTO fechaNacimiento is Instant now; compare with Instant.now()
+    if (dto.getFechaNacimiento() != null && dto.getFechaNacimiento().isAfter(Instant.now()))
             throw new IllegalArgumentException("La fecha de nacimiento no puede ser futura");
-        if (dto.getEstado() == null || dto.getEstado().isBlank())
+    if (dto.getEstado() == null || dto.getEstado().isBlank())
             throw new IllegalArgumentException("El estado es obligatorio");
-        if (dto.getRoles() == null || dto.getRoles().isBlank())
+    if (dto.getRoles() == null || dto.getRoles().isBlank())
             throw new IllegalArgumentException("El rol es obligatorio");
     }
     
@@ -133,7 +134,7 @@ public class UsuarioValidator {
     private static void validarFechaNacimiento(Usuario usuario, boolean requiereConsentimientoFechaNacimiento) {
         if (usuario.getFechaNacimiento() != null && !requiereConsentimientoFechaNacimiento)
             throw new IllegalArgumentException("Consentimiento para fecha de nacimiento no otorgado");
-        if (usuario.getFechaNacimiento() != null && usuario.getFechaNacimiento().isAfter(LocalDateTime.now()))
+    if (usuario.getFechaNacimiento() != null && usuario.getFechaNacimiento().isAfter(Instant.now()))
             throw new IllegalArgumentException("La fecha de nacimiento no puede ser futura");
     }
     
@@ -141,10 +142,9 @@ public class UsuarioValidator {
      * Valida el estado del usuario.
      */
     private static void validarEstado(Usuario usuario) {
-        if (usuario.getEstado() == null || usuario.getEstado().isBlank())
+        if (usuario.getEstado() == null)
             throw new IllegalArgumentException("El estado es obligatorio");
-        if (!List.of("PENDIENTE", "ACTIVO", "BLOQUEADO", "ELIMINADO").contains(usuario.getEstado()))
-            throw new IllegalArgumentException("Estado de usuario inválido");
+        // Estado es un enum en la entidad; si se requiere validación adicional, añadirla aquí.
     }
     
     /**

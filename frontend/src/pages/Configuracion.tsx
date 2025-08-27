@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../contexts/AppContext.tsx';
-import FormField from '../components/FormField.tsx';
 import Button from '../components/Button.tsx';
 import { logger } from '../utils/logger.ts';
 
@@ -14,107 +13,70 @@ interface ConfiguracionForm {
 
 const Configuracion: React.FC = () => {
   const { navigate } = useAppContext();
+
   const [config, setConfig] = useState<ConfiguracionForm>({
     notificaciones: true,
     privacidad: 'PUBLICO',
     idioma: 'es',
     tema: 'claro',
-    frecuenciaRecordatorios: 'diario'
+    frecuenciaRecordatorios: 'diario',
   });
+
   const [guardando, setGuardando] = useState(false);
 
-  const handleToggle = (campo: keyof ConfiguracionForm) => {
-    setConfig(prev => ({
-      ...prev,
-      [campo]: campo === 'notificaciones' ? !prev[campo] : prev[campo]
-    }));
+  const handleToggle = (campo: 'notificaciones') => {
+    setConfig((prev) => ({ ...prev, [campo]: !prev[campo] }));
   };
 
-  const handleSelectChange = (campo: keyof ConfiguracionForm) => (value: string) => {
-    setConfig(prev => ({
-      ...prev,
-      [campo]: value
-    }));
-  };
+  const handleSelectChange =
+    <K extends keyof Omit<ConfiguracionForm, 'notificaciones'>>(campo: K) =>
+    (value: ConfiguracionForm[K]) => {
+      setConfig((prev) => ({ ...prev, [campo]: value }));
+    };
 
   const handleGuardar = async () => {
     setGuardando(true);
     try {
-      // Validar configuración antes de guardar
-      logger.info(
-        'Guardando configuración de usuario',
-        'Configuracion',
-        {
-          notificaciones: config.notificaciones,
-          privacidad: config.privacidad,
-          idioma: config.idioma,
-          tema: config.tema
-        }
-      );
-      
-      // Simular guardado
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Guardar en localStorage para persistencia
+      logger.info('Guardando configuración', 'Configuracion', config);
+
+      const res = await fetch('/api/user/preferences', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+        credentials: 'include',
+      });
+
+      if (!res.ok) throw new Error('Error guardando configuración');
+
       localStorage.setItem('userPreferences', JSON.stringify(config));
-      
-      logger.info('Configuración guardada exitosamente', 'Configuracion');
-      // Mostrar mensaje de éxito
+
+      alert('Configuración guardada con éxito');
     } catch (error) {
-      logger.error(
-        'Error al guardar configuración',
-        'Configuracion',
-        {
-          error: error instanceof Error ? error.message : String(error)
-        }
-      );
+      logger.error('Error al guardar configuración', 'Configuracion', error);
+      alert('Hubo un error al guardar.');
     } finally {
       setGuardando(false);
     }
   };
 
-  const handleEliminarCuenta = async () => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.')) {
-      try {
-        logger.warn('Usuario iniciando eliminación de cuenta', 'Configuracion');
-        // Lógica para eliminar cuenta
-        logger.warn('Cuenta eliminada exitosamente', 'Configuracion');
-      } catch (error) {
-        logger.error(
-          'Error al eliminar cuenta',
-          'Configuracion',
-          {
-            error: error instanceof Error ? error.message : String(error)
-          }
-        );
-      }
+  const handleExportarDatos = async () => {
+    try {
+      const service = await import('../services/privacyService');
+      await service.createPrivacyRequest('EXPORT');
+      alert('Solicitud de exportación enviada.');
+    } catch {
+      alert('Error al exportar datos.');
     }
   };
 
-  const handleExportarDatos = async () => {
+  const handleEliminarCuenta = async () => {
+    if (!window.confirm('¿Seguro que quieres eliminar tu cuenta?')) return;
     try {
-      // Simular exportación de datos
-      const datos = {
-        usuario: 'datos_usuario',
-        retos: 'datos_retos',
-        reportes: 'datos_reportes',
-        configuracion: config
-      };
-      const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'mis_datos_impulse.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    } catch (error) {
-      logger.error(
-        'Error al exportar datos',
-        'Configuracion',
-        {
-          error: error instanceof Error ? error.message : String(error)
-        }
-      );
+      const service = await import('../services/privacyService');
+      await service.createPrivacyRequest('DELETE');
+      alert('Solicitud de eliminación enviada.');
+    } catch {
+      alert('Error al eliminar cuenta.');
     }
   };
 
@@ -142,24 +104,20 @@ const Configuracion: React.FC = () => {
               Personaliza tu experiencia en Impulse
             </p>
           </div>
-        
+
           <div className="content-grid cols-1">
-            {/* Sección Notificaciones */}
+            {/* Notificaciones */}
             <div className="form-section">
               <h3>🔔 Notificaciones</h3>
-            
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <label htmlFor="notificaciones" className="font-medium">
-                      Recibir notificaciones
-                    </label>
+                    <label className="font-medium">Recibir notificaciones</label>
                     <p className="text-sm text-gray-600">
                       Activa para recibir alertas sobre tus retos
                     </p>
                   </div>
                   <input
-                    id="notificaciones"
                     type="checkbox"
                     checked={config.notificaciones}
                     onChange={() => handleToggle('notificaciones')}
@@ -167,116 +125,125 @@ const Configuracion: React.FC = () => {
                   />
                 </div>
 
-                <FormField
-                  id="frecuenciaRecordatorios"
-                  label="Frecuencia de recordatorios"
-                  type="text"
-                  value={config.frecuenciaRecordatorios}
-                  onChange={handleSelectChange('frecuenciaRecordatorios')}
-                />
+                <div>
+                  <label className="block font-medium mb-2">Frecuencia de recordatorios</label>
+                  <select
+                    value={config.frecuenciaRecordatorios}
+                    onChange={(e) =>
+                      handleSelectChange('frecuenciaRecordatorios')(
+                        e.target.value as ConfiguracionForm['frecuenciaRecordatorios']
+                      )
+                    }
+                    className="w-full p-3 border rounded-lg"
+                  >
+                    <option value="diario">Diario</option>
+                    <option value="semanal">Semanal</option>
+                    <option value="nunca">Nunca</option>
+                  </select>
+                </div>
               </div>
             </div>
 
-          {/* Sección Privacidad */}
-          <div className="bg-white p-6 rounded-lg border">
-            <h2 className="text-lg font-semibold mb-4">Privacidad</h2>
-            
-            <div>
-              <label htmlFor="privacidad" className="block font-medium mb-2">
-                Nivel de privacidad
-              </label>
+            {/* Privacidad */}
+            <div className="bg-white p-6 rounded-lg border">
+              <h2 className="text-lg font-semibold mb-4">Privacidad</h2>
+              <label className="block font-medium mb-2">Nivel de privacidad</label>
               <select
-                id="privacidad"
                 value={config.privacidad}
-                onChange={(e) => handleSelectChange('privacidad')(e.target.value)}
+                onChange={(e) =>
+                  handleSelectChange('privacidad')(
+                    e.target.value as ConfiguracionForm['privacidad']
+                  )
+                }
                 className="w-full p-3 border rounded-lg"
               >
-                <option value="PUBLICO">Público - Todos pueden ver mis retos</option>
-                <option value="SOLO_VALIDADORES">Solo validadores pueden ver mis retos</option>
-                <option value="PRIVADO">Privado - Solo yo puedo ver mis retos</option>
+                <option value="PUBLICO">Público</option>
+                <option value="SOLO_VALIDADORES">Solo validadores</option>
+                <option value="PRIVADO">Privado</option>
               </select>
             </div>
-          </div>
 
-          {/* Sección Apariencia */}
-          <div className="bg-white p-6 rounded-lg border">
-            <h2 className="text-lg font-semibold mb-4">Apariencia</h2>
-            
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="idioma" className="block font-medium mb-2">
-                  Idioma
-                </label>
-                <select
-                  id="idioma"
-                  value={config.idioma}
-                  onChange={(e) => handleSelectChange('idioma')(e.target.value)}
-                  className="w-full p-3 border rounded-lg"
-                >
-                  <option value="es">Español</option>
-                  <option value="en">English</option>
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="tema" className="block font-medium mb-2">
-                  Tema
-                </label>
-                <select
-                  id="tema"
-                  value={config.tema}
-                  onChange={(e) => handleSelectChange('tema')(e.target.value)}
-                  className="w-full p-3 border rounded-lg"
-                >
-                  <option value="claro">Claro</option>
-                  <option value="oscuro">Oscuro</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Sección Datos */}
-          <div className="bg-white p-6 rounded-lg border">
-            <h2 className="text-lg font-semibold mb-4">Mis Datos</h2>
-            
-            <div className="space-y-4">
-              <Button
-                variant="secondary"
-                onClick={handleExportarDatos}
+            {/* Derechos */}
+            <div className="bg-white p-6 rounded-lg border mt-6">
+              <h2 className="text-lg font-semibold mb-4">Tus derechos y privacidad</h2>
+              <a
+                href="/privacidad"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ fontSize: '0.9em' }}
               >
-                Exportar mis datos
-              </Button>
-              
-              <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
-                <h4 style={{ fontWeight: 500, color: '#dc2626', marginBottom: '0.5rem' }}>
-                  Zona de peligro
-                </h4>
-                <Button
-                  variant="danger"
+                Ver política de privacidad
+              </a>
+              <div className="flex flex-col gap-2 mt-4">
+                <button className="btn btn-outline" onClick={handleExportarDatos}>
+                  Solicitar exportación de mis datos
+                </button>
+                <button
+                  className="btn btn-outline btn-danger"
                   onClick={handleEliminarCuenta}
                 >
+                  Solicitar eliminación de mi cuenta
+                </button>
+              </div>
+            </div>
+
+            {/* Apariencia */}
+            <div className="bg-white p-6 rounded-lg border">
+              <h2 className="text-lg font-semibold mb-4">Apariencia</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block font-medium mb-2">Idioma</label>
+                  <select
+                    value={config.idioma}
+                    onChange={(e) =>
+                      handleSelectChange('idioma')(e.target.value as ConfiguracionForm['idioma'])
+                    }
+                    className="w-full p-3 border rounded-lg"
+                  >
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-medium mb-2">Tema</label>
+                  <select
+                    value={config.tema}
+                    onChange={(e) =>
+                      handleSelectChange('tema')(e.target.value as ConfiguracionForm['tema'])
+                    }
+                    className="w-full p-3 border rounded-lg"
+                  >
+                    <option value="claro">Claro</option>
+                    <option value="oscuro">Oscuro</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Datos */}
+            <div className="bg-white p-6 rounded-lg border">
+              <h2 className="text-lg font-semibold mb-4">Mis Datos</h2>
+              <Button variant="secondary" onClick={handleExportarDatos}>
+                Exportar mis datos
+              </Button>
+              <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: '1rem' }}>
+                <h4 style={{ fontWeight: 500, color: '#dc2626' }}>Zona de peligro</h4>
+                <Button variant="danger" onClick={handleEliminarCuenta}>
                   Eliminar cuenta permanentemente
                 </Button>
               </div>
             </div>
           </div>
 
-          {/* Botones de acción */}
+          {/* Acciones */}
           <div className="page-actions" style={{ justifyContent: 'space-between', marginTop: '2rem' }}>
-            <Button
-              variant="secondary"
-              onClick={() => navigate('dashboard')}
-            >
+            <Button variant="secondary" onClick={() => navigate('dashboard')}>
               Cancelar
             </Button>
-            <Button
-              onClick={handleGuardar}
-              disabled={guardando}
-            >
+            <Button onClick={handleGuardar} disabled={guardando}>
               {guardando ? 'Guardando...' : 'Guardar cambios'}
             </Button>
           </div>
-        </div>
         </main>
       </div>
     </div>

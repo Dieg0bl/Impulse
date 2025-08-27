@@ -1,0 +1,8 @@
+# Instrucciones para detectar ciclos de dependencias
+
+1. Instala dependencias si no están presentes:
+   npm install -g madge
+2. Ejecuta:
+   npx madge --circular src/
+
+Esto listará todos los ciclos de imports detectados en el frontend.
