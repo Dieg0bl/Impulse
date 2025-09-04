@@ -1,3 +1,40 @@
 # Impulse
 
-Proyecto inicial para la plataforma de accountability social Impulse.
+**Impulse** es una plataforma de accountability social diseñada para fomentar la responsabilidad y el compromiso en comunidades. Desarrollada con Java 17 y Spring Boot 3.1.5, ofrece una base sólida para construir aplicaciones web modernas y escalables.
+
+## 🚀 Tecnologías Principales
+
+- **Java 17** - Lenguaje de programación principal
+- **Spring Boot 3.1.5** - Framework para desarrollo de aplicaciones empresariales
+- **Maven** - Gestión de dependencias y construcción del proyecto
+- **Spring Web** - Para desarrollo de APIs REST y aplicaciones web
+
+## 📝 Descripción del Proyecto
+
+Impulse es una plataforma innovadora que busca crear espacios de accountability social, permitiendo a las comunidades establecer compromisos, dar seguimiento a objetivos y fomentar la responsabilidad mutua de manera efectiva y transparente.
+
+## 🛠️ Estado del Proyecto
+
+Este proyecto se encuentra en sus etapas iniciales de desarrollo. La estructura base está configurada y lista para el desarrollo de funcionalidades.
+
+## 🔧 Configuración del Entorno
+
+### Prerrequisitos
+- Java 17 o superior
+- Maven 3.6+
+
+### Instalación
+```bash
+git clone https://github.com/Dieg0bl/Impulse.git
+cd Impulse
+mvn clean install
+```
+
+### Ejecución
+```bash
+mvn spring-boot:run
+```
+
+## 📄 Licencia
+
+Este proyecto está en desarrollo. La información de licencia será añadida próximamente.
