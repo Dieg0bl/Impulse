@@ -1,65 +1,67 @@
-// Mock Auth Service para compilación exitosa
-import { logger } from '../utils/logger.ts';
+// Authentication service
+import api from './api';
 
-export const getToken = (): string | null => {
-  return localStorage.getItem('authToken');
-};
+export interface UserRegistrationDto {
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+}
 
-export const setToken = (token: string): void => {
-  localStorage.setItem('authToken', token);
-};
+export interface UserLoginDto {
+  emailOrUsername: string;
+  password: string;
+}
 
-export const removeToken = (): void => {
-  localStorage.removeItem('authToken');
-};
+export interface UserResponseDto {
+  id: string;
+  email: string;
+  username: string;
+  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+  createdAt: string;
+  lastLoginAt?: string;
+}
 
-export const logout = (): void => {
-  removeToken();
-  // Aquí se haría la llamada al backend para invalidar el token
-};
+export interface AuthResponseDto {
+  token: string;
+  tokenType: string;
+  user: UserResponseDto;
+}
 
-export const login = async (email: string, password: string) => {
-  // Mock login - en producción se haría llamada al backend
-  try {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+export const authService = {
+  async register(data: UserRegistrationDto): Promise<UserResponseDto> {
+    const response = await api.post('/auth/register', data);
+    return response.data;
+  },
+
+  async login(data: UserLoginDto): Promise<AuthResponseDto> {
+    const response = await api.post('/auth/login', data);
+    const authData = response.data;
     
-    if (response.ok) {
-      const data = await response.json();
-      setToken(data.token);
-      return data;
-    } else {
-      throw new Error('Login failed');
-    }
-  } catch (error) {
-    logger.error('Error en login', 'AUTH', error);
-    throw error;
+    // Store token and user data
+    localStorage.setItem('impulse_token', authData.token);
+    localStorage.setItem('impulse_user', JSON.stringify(authData.user));
+    
+    return authData;
+  },
+
+  logout() {
+    localStorage.removeItem('impulse_token');
+    localStorage.removeItem('impulse_user');
+  },
+
+  getCurrentUser(): UserResponseDto | null {
+    const userData = localStorage.getItem('impulse_user');
+    return userData ? JSON.parse(userData) : null;
+  },
+
+  getToken(): string | null {
+    return localStorage.getItem('impulse_token');
+  },
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
   }
 };
 
-export const validateToken = async (token: string) => {
-  // Mock token validation - en producción se haría llamada al backend
-  try {
-    const response = await fetch('/api/auth/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-    
-    if (response.ok) {
-      return await response.json();
-    } else {
-      throw new Error('Token validation failed');
-    }
-  } catch (error) {
-    logger.error('Error en validación de token', 'AUTH', error);
-    throw error;
-  }
-};
+export default authService;

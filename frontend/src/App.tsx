@@ -1,28 +1,32 @@
-﻿import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-import { AppProvider } from './contexts/AppContext.tsx';
-import { NavigationProvider } from './contexts/NavigationContext.tsx';
-import { FlagsProvider } from './contexts/FlagsContext';
-import AppRouter from './components/AppRouter.tsx';
-import './assets/styles.css';
+﻿import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
 
-/**
- * Componente principal de la aplicación con providers de contexto
- * y configuración de navegación empresarial.
- */
-
-const App: React.FC = () => {
+function App() {
   return (
-    <BrowserRouter>
-      <FlagsProvider>
-        <AppProvider>
-          <NavigationProvider>
-            <AppRouter />
-          </NavigationProvider>
-        </AppProvider>
-      </FlagsProvider>
-    </BrowserRouter>
-  );
-};
+    <Router>
+      <div className="app">
+        <header className="app-header">
+          <h1>IMPULSE</h1>
+          <p>Human Validation Platform</p>
+        </header>
+        
+        <main>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Routes>
+        </main>
+        
+        <footer>
+          <p>&copy; 2024 IMPULSE - Human Validation Platform</p>
+        </footer>
+      </div>
+    </Router>
+  )
+}
 
-export default App;
+export default App
