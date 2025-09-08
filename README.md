@@ -1,4 +1,67 @@
-#  IMPULSE
+# impulse
+
+App universal mínima (LEAN): Spring Boot + PostgreSQL + JWT + React + TS + PWA.
+
+## Requisitos
+- Java 17, Maven, Node 20 (para desarrollo local), Docker + Compose (para entorno contenedor).
+
+## Desarrollo local
+1. **BD**: levanta PostgreSQL (por ejemplo con Docker) o edita `application.properties`.
+2. **Backend**
+   ```bash
+   cd backend
+   mvn spring-boot:run
+   ```
+
+3. **Frontend**
+   ```bash
+   cd frontend
+   npm i
+   npm run dev
+   ```
+4. Accede a `http://localhost:3000`.
+
+Login demo (se hace automático desde el frontend):
+
+* Email: `admin@impulse.app`
+* Password: `password`
+
+## Docker Compose
+
+```bash
+cd infra/docker
+cp ../.env.example ../.env
+# edita ../.env con tus secretos
+docker compose --env-file ../.env up -d --build
+```
+
+## Endpoints
+
+* `POST /api/auth/login { email, password }` → `{ token }`
+* `GET /api/usuarios` (Bearer token)
+* `POST /api/usuarios` (Bearer token)
+
+## Tests
+
+```bash
+cd backend
+mvn test
+```
+
+## PWA
+
+* `manifest.json` + `service-worker.ts` simples.
+* Añade iconos en `public/icons/`.
+
+---
+
+## Notas de migración desde tu código previo
+- Se **elimina complejidad** (retos, evidencias, validaciones) y se **reduce** a entidad `User` para cumplir la **versión LEAN**.
+- Seguridad **JWT básica** incluida; el frontend inicia sesión demo y usa Bearer automáticamente.
+- Infra **compose** levanta **db + backend + frontend** en un comando.
+- Estructura alineada con tu baseline (**/api**, **/domain**, **/infrastructure**, PWA, cobertura con tests básicos**).
+
+> A partir de aquí puedes extender entidades y módulos sobre esta base sin romper el principio LEAN.
 
 > **Plataforma de Retos Personales y Validación Comunitaria**
 

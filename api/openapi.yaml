@@ -1,0 +1,46 @@
+openapi: 3.0.3
+info:
+  title: IMPULSE API
+  version: 0.0.1
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/auth/login:
+    post:
+      summary: Login demo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        '200': { description: OK }
+        '401': { description: Unauthorized }
+  /api/usuarios:
+    get:
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { description: Lista de usuarios }
+    post:
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre: { type: string }
+                email:  { type: string }
+      responses:
+        '201': { description: Creado }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
