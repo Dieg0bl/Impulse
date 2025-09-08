@@ -1,0 +1,19 @@
+{
+  "name": "impulse",
+  "version": "1.0.0",
+  "description": "IMPULSE Human Validation Platform",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "install": "make install",
+    "build": "make build",
+    "test": "make test",
+    "dev": "make run-all"
+  },
+  "keywords": ["validation", "platform", "human", "verification"],
+  "author": "IMPULSE Team",
+  "license": "MIT"
+}

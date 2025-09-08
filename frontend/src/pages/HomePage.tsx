@@ -1,14 +1,15 @@
-import React from 'react'
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-function HomePage() {
+export const HomePage: React.FC = () => {
   return (
     <div className="page">
       <h2>Welcome to IMPULSE</h2>
       <p>The minimalist platform for human validation and challenge completion.</p>
       
       <div className="actions">
-        <a href="/register" className="btn btn-primary">Get Started</a>
-        <a href="/login" className="btn btn-secondary">Login</a>
+        <Link to="/register" className="btn btn-primary">Get Started</Link>
+        <Link to="/login" className="btn btn-secondary">Login</Link>
       </div>
       
       <section className="features">
@@ -21,7 +22,5 @@ function HomePage() {
         </ul>
       </section>
     </div>
-  )
-}
-
-export default HomePage
+  );
+};

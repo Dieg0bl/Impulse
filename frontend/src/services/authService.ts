@@ -14,12 +14,13 @@ export interface UserLoginDto {
 }
 
 export interface UserResponseDto {
-  id: string;
+  id: number;
   email: string;
   username: string;
-  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+  firstName: string;
+  lastName: string;
   createdAt: string;
-  lastLoginAt?: string;
+  updatedAt: string;
 }
 
 export interface AuthResponseDto {

@@ -1,0 +1,43 @@
+pmf:
+  surveys: true
+activation:
+  quickwin: true
+  onboarding: true
+  habit: true
+experiments:
+  core: true
+growth:
+  viral_share: true
+  referrals: true
+lifecycle:
+  guardrails: true
+support:
+  csat: true
+  nps: true
+press:
+  live_counter: true
+economics:
+  nsm: true
+  counters: true
+  advanced: true
+anti_fraud:
+  referrals: true
+monetization:
+  paywall: true
+launch:
+  banner: false
+validators:
+  enabled: true
+  metrics: true
+privacy:
+  kill_switch: true
+dsa:
+  appeals: true
+cookies:
+  cmp_strict: true
+dac7:
+  enabled: false
+ai:
+  moderation_review_required: true
+communication:
+  email: true
