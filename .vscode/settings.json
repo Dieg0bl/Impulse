@@ -25,5 +25,6 @@
     "java.autobuild.enabled": false,
     "java.import.generatesMetadataFilesAtProjectRoot": false,
     "java.clean.workspace": true,
-    "java.configuration.updateBuildConfiguration": "automatic"
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "git.ignoreLimitWarning": true
 }
