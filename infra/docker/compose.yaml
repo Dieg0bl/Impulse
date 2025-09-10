@@ -1,0 +1,102 @@
+# =============================================================================
+# IMPULSE LEAN v1 - Docker Compose Development Environment
+# =============================================================================
+version: '3.8'
+
+services:
+  # MySQL 8 Database
+  mysql:
+    image: mysql:8.0
+    container_name: impulse-lean-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: impulse_lean
+      MYSQL_USER: impulse_user
+      MYSQL_PASSWORD: impulse_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - impulse-lean-network
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Redis for Caching & Sessions (Optional)
+  redis:
+    image: redis:7-alpine
+    container_name: impulse-lean-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - impulse-lean-network
+    restart: unless-stopped
+
+  # MinIO for File Storage (Development)
+  minio:
+    image: minio/minio:latest
+    container_name: impulse-lean-minio
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - impulse-lean-network
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+
+  # MailHog for Email Testing (Development)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: impulse-lean-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - impulse-lean-network
+    restart: unless-stopped
+
+  # Prometheus for Metrics (Optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: impulse-lean-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    networks:
+      - impulse-lean-network
+    restart: unless-stopped
+
+  # Grafana for Monitoring (Optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: impulse-lean-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - impulse-lean-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+  redis_data:
+  minio_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  impulse-lean-network:
+    driver: bridge
