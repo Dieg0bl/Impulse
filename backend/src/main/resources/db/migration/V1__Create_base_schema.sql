@@ -48,6 +48,7 @@ CREATE TABLE challenges (
     uuid VARCHAR(36) NOT NULL UNIQUE,
     creator_id BIGINT NOT NULL,
     title VARCHAR(200) NOT NULL,
+    slug VARCHAR(250) NOT NULL UNIQUE,
     description TEXT NOT NULL,
     category ENUM('FITNESS', 'NUTRITION', 'MINDFULNESS', 'PRODUCTIVITY', 'LEARNING', 'SOCIAL', 'CREATIVE', 'ENVIRONMENTAL') NOT NULL,
     difficulty ENUM('BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'EXPERT') NOT NULL,
@@ -69,6 +70,7 @@ CREATE TABLE challenges (
     
     FOREIGN KEY (creator_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_challenges_creator_id (creator_id),
+    INDEX idx_challenges_slug (slug),
     INDEX idx_challenges_category (category),
     INDEX idx_challenges_difficulty (difficulty),
     INDEX idx_challenges_status (status),
@@ -131,7 +133,7 @@ CREATE TABLE evidences (
 CREATE TABLE evidence_validations (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     evidence_id BIGINT NOT NULL,
-    validator_id BIGINT NOT NULL,
+    validator_id BIGINT,
     validation_type ENUM('PEER', 'MODERATOR', 'AUTOMATIC') NOT NULL,
     score DECIMAL(3,2) NOT NULL, -- 0.00 to 1.00
     feedback TEXT,

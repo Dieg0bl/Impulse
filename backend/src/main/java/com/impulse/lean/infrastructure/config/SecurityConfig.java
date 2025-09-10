@@ -80,15 +80,11 @@ public class SecurityConfig {
                 
                 // Validator+ endpoints
                 .requestMatchers("/api/validations/**").hasAnyRole("VALIDATOR", "MODERATOR", "ADMIN", "SUPER_ADMIN")
-                .requestMatchers("/api/v1/validations/**").hasAnyRole("VALIDATOR", "MODERATOR", "ADMIN", "SUPER_ADMIN")
                 
                 // Authenticated user endpoints
                 .requestMatchers("/api/user/**").hasAnyRole("USER", "VALIDATOR", "MODERATOR", "ADMIN", "SUPER_ADMIN")
-                .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "VALIDATOR", "MODERATOR", "ADMIN", "SUPER_ADMIN")
                 .requestMatchers("/api/challenges/**").hasAnyRole("USER", "VALIDATOR", "MODERATOR", "ADMIN", "SUPER_ADMIN")
-                .requestMatchers("/api/v1/challenges/**").hasAnyRole("USER", "VALIDATOR", "MODERATOR", "ADMIN", "SUPER_ADMIN")
                 .requestMatchers("/api/evidences/**").hasAnyRole("USER", "VALIDATOR", "MODERATOR", "ADMIN", "SUPER_ADMIN")
-                .requestMatchers("/api/v1/evidences/**").hasAnyRole("USER", "VALIDATOR", "MODERATOR", "ADMIN", "SUPER_ADMIN")
                 
                 // All other requests need authentication
                 .anyRequest().authenticated()

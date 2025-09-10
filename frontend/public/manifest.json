@@ -1,0 +1,16 @@
+{
+  "name": "Impulse",
+  "short_name": "Impulse",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#61dafb",
+  "description": "Impulse - Gestión de hábitos y retos personales",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

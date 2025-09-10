@@ -1,9 +1,9 @@
 package com.impulse.lean.domain.repository;
 
-import com.impulse.lean.domain.model.Challenge;
-import com.impulse.lean.domain.model.ChallengeParticipation;
-import com.impulse.lean.domain.model.ParticipationStatus;
-import com.impulse.lean.domain.model.User;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,9 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.impulse.lean.domain.model.Challenge;
+import com.impulse.lean.domain.model.ChallengeParticipation;
+import com.impulse.lean.domain.model.ParticipationStatus;
+import com.impulse.lean.domain.model.User;
 
 /**
  * IMPULSE LEAN v1 - Challenge Participation Repository Interface
@@ -115,10 +116,10 @@ public interface ChallengeParticipationRepository extends JpaRepository<Challeng
                                                                @Param("minEvidence") int minEvidence);
 
     // Business logic queries
-    @Query("SELECT p FROM ChallengeParticipation p WHERE p.user = :user " +
+    @Query("SELECT p FROM ChallengeParticipation p WHERE p.user = :participant " +
            "AND p.status = 'ACTIVE' " +
            "AND p.challenge.status = 'ACTIVE'")
-    List<ChallengeParticipation> findActiveParticipationsByUser(@Param("user") User user);
+    List<ChallengeParticipation> findActiveParticipationsByUser(@Param("participant") User participant);
 
     @Query("SELECT p FROM ChallengeParticipation p WHERE p.challenge = :challenge " +
            "AND p.status = 'ACTIVE' " +
@@ -135,9 +136,9 @@ public interface ChallengeParticipationRepository extends JpaRepository<Challeng
            "AND p.status IN ('ACTIVE', 'COMPLETED')")
     Double getAverageProgressByChallenge(@Param("challenge") Challenge challenge);
 
-    @Query("SELECT p FROM ChallengeParticipation p WHERE p.user = :user " +
+    @Query("SELECT p FROM ChallengeParticipation p WHERE p.user = :participant " +
            "AND p.status = 'COMPLETED' " +
            "ORDER BY p.completedAt DESC")
-    List<ChallengeParticipation> findRecentCompletionsByUser(@Param("user") User user, 
+    List<ChallengeParticipation> findRecentCompletionsByUser(@Param("participant") User participant, 
                                                             Pageable pageable);
 }
