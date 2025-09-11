@@ -51,8 +51,10 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
     });
   };
 
+  const contextValue = React.useMemo(() => ({ session, login, logout }), [session]);
+
   return (
-    <SessionContext.Provider value={{ session, login, logout }}>
+    <SessionContext.Provider value={contextValue}>
       {children}
     </SessionContext.Provider>
   );

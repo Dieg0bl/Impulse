@@ -10,7 +10,7 @@ public class StorageConfig {
     @Value("${impulse.storage.provider:filesystem}")
     private String provider;
 
-    @Value("${impulse.storage.bucket:impulse-media}")
+    @Value("${impulse.storage.bucket:impulse}")
     private String bucket;
 
     @Value("${impulse.storage.endpoint:}")

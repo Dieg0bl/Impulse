@@ -27,7 +27,17 @@ public enum ValidationType {
     /**
      * Self-assessment validation
      */
-    SELF_ASSESSMENT("Self assessment");
+    SELF_ASSESSMENT("Self assessment"),
+    
+    /**
+     * Manual validation by human reviewer
+     */
+    MANUAL("Manual validation"),
+    
+    /**
+     * Expert validation by domain specialist
+     */
+    EXPERT("Expert validation");
 
     private final String displayName;
 

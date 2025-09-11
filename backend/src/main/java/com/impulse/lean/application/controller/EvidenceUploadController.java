@@ -1,5 +1,7 @@
 package com.impulse.lean.application.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.impulse.lean.domain.model.Challenge;
 import com.impulse.lean.domain.model.ChallengeParticipation;
 import com.impulse.lean.domain.model.Evidence;
+import com.impulse.lean.domain.model.IdempotencyToken;
 import com.impulse.lean.domain.repository.ChallengeParticipationRepository;
 import com.impulse.lean.domain.repository.ChallengeRepository;
 import com.impulse.lean.domain.repository.EvidenceRepository;
+import com.impulse.lean.domain.repository.IdempotencyTokenRepository;
 import com.impulse.lean.infrastructure.storage.StorageService;
 import com.impulse.lean.infrastructure.storage.StorageUploadPresignResponse;
 
@@ -27,18 +31,23 @@ import com.impulse.lean.infrastructure.storage.StorageUploadPresignResponse;
 @RequestMapping("/api/v1/challenges")
 public class EvidenceUploadController {
 
+    private static final Logger logger = LoggerFactory.getLogger(EvidenceUploadController.class);
+
     private final ChallengeRepository challengeRepository;
     private final ChallengeParticipationRepository participationRepository;
     private final EvidenceRepository evidenceRepository;
+    private final IdempotencyTokenRepository idempotencyRepository;
     private final StorageService storageService;
 
     public EvidenceUploadController(ChallengeRepository challengeRepository,
                                     ChallengeParticipationRepository participationRepository,
                                     EvidenceRepository evidenceRepository,
-                                    StorageService storageService) {
+                                    StorageService storageService,
+                                    IdempotencyTokenRepository idempotencyRepository) {
         this.challengeRepository = challengeRepository;
         this.participationRepository = participationRepository;
         this.evidenceRepository = evidenceRepository;
+        this.idempotencyRepository = idempotencyRepository;
         this.storageService = storageService;
     }
 
@@ -85,9 +94,23 @@ public class EvidenceUploadController {
         // Basic validation
         if (body == null || body.objectKey == null) return ResponseEntity.badRequest().build();
 
+        // Idempotency: if provided and already seen, return 409
+        if (idempotency != null && !idempotency.isBlank()) {
+            var opt = idempotencyRepository.findByToken(idempotency);
+            if (opt.isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("duplicate");
+            }
+        }
+
         // Find participation
         ChallengeParticipation participation = participationRepository.findById(body.participationId).orElse(null);
         if (participation == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Participation not found");
+
+        // Verify object exists for S3-like providers
+        boolean exists = storageService.headObjectExists(body.objectKey);
+        if (!exists) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("uploaded object not found yet");
+        }
 
         // Create Evidence entity
         Evidence ev = new Evidence();
@@ -95,12 +118,33 @@ public class EvidenceUploadController {
         ev.setFilePath(body.objectKey);
         ev.setMimeType(body.mimeType);
         ev.setFileSize(body.fileSize);
-    ev.setDayNumber(body.getDayNumber() == null ? 0 : body.getDayNumber());
-    ev.setContent(body.getFilename());
-    ev.setSubmittedAt(java.time.LocalDateTime.now());
+        int dayNumber = body.getDayNumber() != null ? body.getDayNumber() : 0;
+        ev.setDayNumber(dayNumber);
+        ev.setContent(body.getFilename());
+        ev.setSubmittedAt(java.time.LocalDateTime.now());
 
         evidenceRepository.save(ev);
 
+        // persist idempotency token if provided
+        if (idempotency != null && !idempotency.isBlank()) {
+            saveIdempotencyToken(idempotency);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(ev);
+    }
+
+    private void saveIdempotencyToken(String idempotency) {
+        try {
+            // Create and save idempotency token
+            IdempotencyToken token = new IdempotencyToken();
+            token.setToken(idempotency);
+            token.setCreatedAt(java.time.LocalDateTime.now());
+            idempotencyRepository.save(token);
+            
+            logger.debug("Saved idempotency token: {}", idempotency);
+        } catch (Exception e) {
+            logger.warn("Failed to save idempotency token: {}", e.getMessage());
+            // Non-critical failure, don't throw
+        }
     }
 }

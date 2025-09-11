@@ -162,6 +162,23 @@
       <artifactId>commons-codec</artifactId>
     </dependency>
 
+    <!-- S3 / S3-compatible client (AWS SDK v2) for presigned URLs (Cloudflare R2 / MinIO) -->
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>s3</artifactId>
+      <version>2.20.134</version>
+    </dependency>
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>auth</artifactId>
+      <version>2.20.134</version>
+    </dependency>
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>apache-client</artifactId>
+      <version>2.20.134</version>
+    </dependency>
+
     <!-- TESTING -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -192,7 +209,7 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <scope>test</scope>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
 

@@ -46,7 +46,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const userResp = data?.data?.user || data?.user
     setToken(tokenResp)
     setUser(userResp)
-    return
   }
 
   const register = async (name: string, email: string, password: string = 'password') => {
@@ -59,7 +58,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const userResp = data?.data?.user || data?.user
     setToken(tokenResp)
     setUser(userResp)
-    return
   }
 
   const logout = () => {

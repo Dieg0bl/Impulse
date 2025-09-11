@@ -1,12 +1,21 @@
 package com.impulse.lean.application.service.interfaces;
 
-import com.impulse.lean.domain.model.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import com.impulse.lean.application.dto.challenge.ChallengeCreateRequestDto;
+import com.impulse.lean.application.dto.challenge.ChallengeJoinRequestDto;
+import com.impulse.lean.application.dto.challenge.ChallengeUpdateRequestDto;
+import com.impulse.lean.domain.model.Challenge;
+import com.impulse.lean.domain.model.ChallengeCategory;
+import com.impulse.lean.domain.model.ChallengeDifficulty;
+import com.impulse.lean.domain.model.ChallengeParticipation;
+import com.impulse.lean.domain.model.User;
+import com.impulse.lean.domain.model.ValidationMethod;
 
 /**
  * IMPULSE LEAN v1 - Challenge Service Interface
@@ -25,16 +34,14 @@ public interface ChallengeService {
     void deleteById(Long id);
 
     // Challenge lifecycle
-    Challenge createChallenge(User creator, String title, String description, 
-                             ChallengeCategory category, ChallengeDifficulty difficulty);
-    Challenge updateChallenge(String uuid, String title, String description, 
-                             ChallengeCategory category, ChallengeDifficulty difficulty);
+    Challenge createChallenge(User creator, ChallengeCreateRequestDto request);
+    Challenge updateChallenge(String uuid, ChallengeUpdateRequestDto request);
     Challenge publishChallenge(String uuid);
     Challenge archiveChallenge(String uuid);
     Challenge deleteChallenge(String uuid);
 
     // Participation management
-    ChallengeParticipation joinChallenge(String challengeUuid, String userUuid);
+    ChallengeParticipation joinChallenge(String challengeUuid, String userUuid, ChallengeJoinRequestDto request);
     ChallengeParticipation leaveChallenge(String challengeUuid, String userUuid);
     boolean canUserJoinChallenge(String challengeUuid, String userUuid);
     boolean isUserParticipating(String challengeUuid, String userUuid);

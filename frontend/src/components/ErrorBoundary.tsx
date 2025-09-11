@@ -1,6 +1,6 @@
 import React from 'react'
 
-type Props = { children: React.ReactNode; level?: string }
+type Props = { children: React.ReactNode }
 
 class ErrorBoundary extends React.Component<Props, { hasError: boolean }> {
 	constructor(props: Props) {

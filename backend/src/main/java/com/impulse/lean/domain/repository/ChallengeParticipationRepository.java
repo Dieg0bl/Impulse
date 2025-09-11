@@ -28,6 +28,7 @@ import com.impulse.lean.domain.model.User;
 public interface ChallengeParticipationRepository extends JpaRepository<ChallengeParticipation, Long> {
 
     // Basic lookups
+    @Override
     Optional<ChallengeParticipation> findById(Long id);
     Optional<ChallengeParticipation> findByChallengeAndUser(Challenge challenge, User user);
     

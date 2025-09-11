@@ -16,6 +16,11 @@ public enum EvidenceStatus {
     PENDING("Pending Validation"),
     
     /**
+     * Evidence initially submitted to system
+     */
+    SUBMITTED("Submitted"),
+    
+    /**
      * Evidence approved by validators
      */
     APPROVED("Approved"),

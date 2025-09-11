@@ -1,9 +1,10 @@
 package com.impulse.lean.domain.repository;
 
-import com.impulse.lean.domain.model.Evidence;
-import com.impulse.lean.domain.model.EvidenceValidation;
-import com.impulse.lean.domain.model.User;
-import com.impulse.lean.domain.model.ValidationType;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,10 +12,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.impulse.lean.domain.model.Evidence;
+import com.impulse.lean.domain.model.EvidenceValidation;
+import com.impulse.lean.domain.model.User;
+import com.impulse.lean.domain.model.ValidationType;
 
 /**
  * IMPULSE LEAN v1 - Evidence Validation Repository Interface
@@ -117,6 +118,25 @@ public interface EvidenceValidationRepository extends JpaRepository<EvidenceVali
 
     @Query("SELECT AVG(v.score) FROM EvidenceValidation v WHERE v.evidence = :evidence")
     Double getAverageScoreByEvidence(@Param("evidence") Evidence evidence);
+
+    // Additional methods for ValidationServiceImpl
+    @Query("SELECT v FROM EvidenceValidation v WHERE v.feedback LIKE %:feedback%")
+    Page<EvidenceValidation> findByFeedbackContainingIgnoreCase(@Param("feedback") String feedback, Pageable pageable);
+
+    @Query("SELECT AVG(v.score) FROM EvidenceValidation v")
+    Double getAverageScore();
+
+    @Query("SELECT AVG(v.score) FROM EvidenceValidation v WHERE v.validator = :validator")
+    Double getAverageScoreByValidator(@Param("validator") User validator);
+
+    @Query("SELECT v FROM EvidenceValidation v WHERE v.validatedAt BETWEEN :start AND :end")
+    List<EvidenceValidation> findByValidatedAtBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+
+    @Query("SELECT v FROM EvidenceValidation v WHERE v.score >= :score")
+    List<EvidenceValidation> findByScoreGreaterThanEqual(@Param("score") BigDecimal score);
+
+    @Query("SELECT v FROM EvidenceValidation v WHERE v.score <= :score")
+    List<EvidenceValidation> findByScoreLessThanEqual(@Param("score") BigDecimal score);
 
     @Query("SELECT AVG(v.confidenceLevel) FROM EvidenceValidation v WHERE v.confidenceLevel IS NOT NULL")
     Double getAverageConfidenceLevel();

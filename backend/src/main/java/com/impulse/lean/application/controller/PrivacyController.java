@@ -16,6 +16,8 @@ import com.impulse.lean.infrastructure.storage.StorageService;
 @RequestMapping("/api/v1/privacy")
 public class PrivacyController {
 
+    private static final String STATUS_KEY = "status";
+
     private final UserService userService;
     private final StorageService storageService;
 
@@ -37,7 +39,7 @@ public class PrivacyController {
         String key = storageService.generateKey("privacy/exports", username + "-export.json");
         var path = java.nio.file.Paths.get(storageService.storeFromBytes(key, payload.getBytes()));
         if (Files.exists(path)) {
-            return ResponseEntity.ok().body(java.util.Map.of("status", "ready", "path", path.toString()));
+            return ResponseEntity.ok().body(java.util.Map.of(STATUS_KEY, "ready", "path", path.toString()));
         }
         return ResponseEntity.status(500).body("export_failed");
     }
@@ -50,7 +52,7 @@ public class PrivacyController {
         if (userOpt.isEmpty()) return ResponseEntity.status(404).build();
 
         userService.deleteUserAccount(userOpt.get().getUuid());
-        return ResponseEntity.ok().body(java.util.Map.of("status", "scheduled"));
+        return ResponseEntity.ok().body(java.util.Map.of(STATUS_KEY, "scheduled"));
     }
 
     @PostMapping("/anonymize")
@@ -61,6 +63,6 @@ public class PrivacyController {
         if (userOpt.isEmpty()) return ResponseEntity.status(404).build();
 
         userService.anonymizeUserData(userOpt.get().getUuid());
-        return ResponseEntity.ok().body(java.util.Map.of("status", "anonymized"));
+        return ResponseEntity.ok().body(java.util.Map.of(STATUS_KEY, "anonymized"));
     }
 }

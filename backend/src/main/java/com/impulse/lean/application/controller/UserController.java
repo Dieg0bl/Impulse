@@ -1,19 +1,11 @@
 package com.impulse.lean.application.controller;
 
-import com.impulse.lean.application.dto.common.ApiResponse;
-import com.impulse.lean.application.dto.common.PaginationRequest;
-import com.impulse.lean.application.dto.common.PaginationResponse;
-import com.impulse.lean.application.dto.user.UserResponseDto;
-import com.impulse.lean.domain.model.User;
-import com.impulse.lean.domain.model.UserRole;
-import com.impulse.lean.domain.model.UserStatus;
-import com.impulse.lean.domain.repository.UserRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,11 +14,28 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.impulse.lean.application.dto.common.ApiResponse;
+import com.impulse.lean.application.dto.common.PaginationRequest;
+import com.impulse.lean.application.dto.common.PaginationResponse;
+import com.impulse.lean.application.dto.user.UserResponseDto;
+import com.impulse.lean.domain.model.User;
+import com.impulse.lean.domain.model.UserRole;
+import com.impulse.lean.domain.model.UserStatus;
+import com.impulse.lean.domain.repository.UserRepository;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 /**
  * IMPULSE LEAN v1 - User REST Controller
@@ -134,7 +143,7 @@ public class UserController {
 
             return ResponseEntity.ok(ApiResponse.success(response));
 
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             return ResponseEntity.badRequest()
                 .body(ApiResponse.error("Failed to retrieve users: " + e.getMessage()));
         }
@@ -152,7 +161,7 @@ public class UserController {
                 .collect(Collectors.toList());
 
             return ResponseEntity.ok(ApiResponse.success(userDtos));
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             return ResponseEntity.badRequest()
                 .body(ApiResponse.error("Failed to retrieve active users: " + e.getMessage()));
         }
@@ -170,7 +179,7 @@ public class UserController {
                 .collect(Collectors.toList());
 
             return ResponseEntity.ok(ApiResponse.success(userDtos));
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             return ResponseEntity.badRequest()
                 .body(ApiResponse.error("Failed to retrieve moderators: " + e.getMessage()));
         }
@@ -201,7 +210,7 @@ public class UserController {
             );
 
             return ResponseEntity.ok(ApiResponse.success(response));
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             return ResponseEntity.badRequest()
                 .body(ApiResponse.error("Failed to search users: " + e.getMessage()));
         }
@@ -225,7 +234,7 @@ public class UserController {
             };
 
             return ResponseEntity.ok(ApiResponse.success(stats));
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             return ResponseEntity.badRequest()
                 .body(ApiResponse.error("Failed to retrieve user statistics: " + e.getMessage()));
         }

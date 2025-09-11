@@ -13,7 +13,9 @@ async function ensureToken(): Promise<string> {
     if (!res.ok) throw new Error('No se pudo iniciar sesión demo')
     const data = await res.json()
     token = data.token
-    localStorage.setItem('token', token)
+    if (token) {
+      localStorage.setItem('token', token)
+    }
   }
   return token!
 }

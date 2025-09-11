@@ -1,3 +1,14 @@
+/// <reference lib="webworker" />
+
+// This is the "Offline page" service worker
+
+declare const self: ServiceWorkerGlobalScope & {
+  __WB_MANIFEST: any;
+};
+
+// Workbox manifest placeholder
+const manifest = self.__WB_MANIFEST;
+
 self.addEventListener('install', (event: any) => {
   event.waitUntil(
     caches.open('impulse-static-v1').then(cache => cache.addAll([
@@ -12,3 +23,5 @@ self.addEventListener('fetch', (event: any) => {
     caches.match(event.request).then(resp => resp || fetch(event.request))
   )
 })
+
+export {};

@@ -33,7 +33,17 @@ public enum EvidenceType {
     /**
      * Link evidence (external URLs)
      */
-    LINK("Link", "text/uri-list");
+    LINK("Link", "text/uri-list"),
+    
+    /**
+     * Research publication evidence
+     */
+    RESEARCH_PUBLICATION("Research Publication", "application/pdf"),
+    
+    /**
+     * Technical specification evidence
+     */
+    TECHNICAL_SPECIFICATION("Technical Specification", "application/pdf");
 
     private final String displayName;
     private final String defaultMimeType;

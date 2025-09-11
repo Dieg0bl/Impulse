@@ -10,6 +10,7 @@ import javax.crypto.SecretKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -22,17 +23,9 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 
-/**
- * IMPULSE LEAN v1 - JWT Token Provider
- * 
- * Handles JWT token generation, validation, and extraction of claims
- * Uses HMAC-SHA256 for token signing
- * 
- * @author IMPULSE Team
- * @version 1.0.0
- */
 @Component
-public class JwtTokenProvider {
+@Primary
+public class JwtTokenProvider implements JwtProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
@@ -48,6 +41,7 @@ public class JwtTokenProvider {
     /**
      * Generate JWT token for authenticated user
      */
+    @Override
     public String generateToken(Authentication authentication) {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
         return generateTokenFromUsername(userPrincipal.getUsername());
@@ -56,6 +50,7 @@ public class JwtTokenProvider {
     /**
      * Generate JWT token from username
      */
+    @Override
     public String generateTokenFromUsername(String username) {
         Instant now = Instant.now();
         Instant expiration = now.plus(jwtExpirationInMs, ChronoUnit.MILLIS);
