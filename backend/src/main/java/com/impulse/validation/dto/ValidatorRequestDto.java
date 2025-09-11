@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.impulse.lean.domain.model.CertificationLevel;
-import com.impulse.lean.domain.model.ValidatorSpecialty;
+import com.impulse.validation.model.ValidatorSpecialty;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

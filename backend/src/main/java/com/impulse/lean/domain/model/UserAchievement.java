@@ -1,5 +1,6 @@
 package com.impulse.lean.domain.model;
 
+import com.impulse.user.model.User;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;

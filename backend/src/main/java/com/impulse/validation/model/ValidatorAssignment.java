@@ -1,5 +1,7 @@
 package com.impulse.validation.model;
 
+import com.impulse.evidence.model.Evidence;
+import com.impulse.lean.domain.model.AssignmentStatus;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.UuidGenerator;

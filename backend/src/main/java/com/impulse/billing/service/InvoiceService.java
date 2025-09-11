@@ -36,11 +36,11 @@ public class InvoiceService {
     @Autowired
     private SubscriptionRepository subscriptionRepository;
 
-    @Autowired
-    private NotificationService notificationService;
+    // @Autowired
+    // private NotificationService notificationService;
 
-    @Autowired
-    private PdfGeneratorService pdfGeneratorService;
+    // @Autowired
+    // private PdfGeneratorService pdfGeneratorService;
 
     private static final BigDecimal TAX_RATE = new BigDecimal("0.21"); // 21% IVA por defecto
 
@@ -79,7 +79,7 @@ public class InvoiceService {
         generateInvoicePdf(savedInvoice);
 
         // Enviar notificación
-        notificationService.sendInvoiceGeneratedNotification(subscription.getUser(), savedInvoice);
+        // notificationService.sendInvoiceGeneratedNotification(subscription.getUser(), savedInvoice);
 
         return savedInvoice;
     }
@@ -102,7 +102,7 @@ public class InvoiceService {
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
         // Enviar notificación de pago
-        notificationService.sendInvoicePaidNotification(invoice.getUser(), savedInvoice);
+        // notificationService.sendInvoicePaidNotification(invoice.getUser(), savedInvoice);
 
         return savedInvoice;
     }
@@ -137,7 +137,7 @@ public class InvoiceService {
                 invoiceRepository.save(invoice);
 
                 // Enviar notificación de vencimiento
-                notificationService.sendInvoiceOverdueNotification(invoice.getUser(), invoice);
+                // notificationService.sendInvoiceOverdueNotification(invoice.getUser(), invoice);
 
                 // Suspender subscription si aplica
                 handleOverdueSubscription(invoice.getSubscription());
@@ -256,7 +256,7 @@ public class InvoiceService {
         }
 
         // Reenviar notificación
-        notificationService.sendInvoiceGeneratedNotification(invoice.getUser(), invoice);
+        // notificationService.sendInvoiceGeneratedNotification(invoice.getUser(), invoice);
     }
 
     /**
@@ -309,7 +309,7 @@ public class InvoiceService {
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
         // Notificar prórroga
-        notificationService.sendInvoiceExtensionNotification(invoice.getUser(), savedInvoice, reason);
+        // notificationService.sendInvoiceExtensionNotification(invoice.getUser(), savedInvoice, reason);
 
         return savedInvoice;
     }
@@ -330,7 +330,7 @@ public class InvoiceService {
      */
     private void generateInvoicePdf(Invoice invoice) {
         try {
-            String pdfPath = pdfGeneratorService.generateInvoicePdf(invoice);
+            // String pdfPath = pdfGeneratorService.generateInvoicePdf(invoice);
             invoice.setPdfPath(pdfPath);
             invoiceRepository.save(invoice);
         } catch (Exception e) {

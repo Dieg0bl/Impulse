@@ -7,9 +7,9 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.impulse.lean.domain.model.CertificationLevel;
-import com.impulse.lean.domain.model.Validator;
-import com.impulse.lean.domain.model.ValidatorSpecialty;
-import com.impulse.lean.domain.model.ValidatorStatus;
+import com.impulse.validation.model.Validator;
+import com.impulse.validation.model.ValidatorSpecialty;
+import com.impulse.validation.model.ValidatorStatus;
 
 /**
  * IMPULSE LEAN v1 - Validator Response DTO

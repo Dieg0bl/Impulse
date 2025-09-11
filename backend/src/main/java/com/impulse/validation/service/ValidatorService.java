@@ -1,14 +1,14 @@
 package com.impulse.validation.service;
 
-import com.impulse.lean.application.dto.validator.ValidatorAssignmentRequestDto;
-import com.impulse.lean.application.dto.validator.ValidatorAssignmentResponseDto;
-import com.impulse.lean.application.dto.validator.ValidatorRequestDto;
-import com.impulse.lean.application.dto.validator.ValidatorResponseDto;
-import com.impulse.lean.domain.model.Evidence;
+import com.impulse.validation.dto.ValidatorAssignmentRequestDto;
+import com.impulse.validation.dto.ValidatorAssignmentResponseDto;
+import com.impulse.validation.dto.ValidatorRequestDto;
+import com.impulse.validation.dto.ValidatorResponseDto;
+import com.impulse.evidence.model.Evidence;
 import com.impulse.user.model.User;
-import com.impulse.lean.domain.model.Validator;
-import com.impulse.lean.domain.model.ValidatorAssignment;
-import com.impulse.lean.domain.model.ValidatorSpecialty;
+import com.impulse.validation.model.Validator;
+import com.impulse.validation.model.ValidatorAssignment;
+import com.impulse.validation.model.ValidatorSpecialty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

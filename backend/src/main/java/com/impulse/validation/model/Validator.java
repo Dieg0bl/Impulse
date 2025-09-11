@@ -1,6 +1,8 @@
 package com.impulse.validation.model;
 
 import com.impulse.user.model.User;
+import com.impulse.lean.domain.model.CertificationLevel;
+import com.impulse.evidence.model.EvidenceValidation;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

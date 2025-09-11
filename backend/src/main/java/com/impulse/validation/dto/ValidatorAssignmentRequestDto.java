@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.impulse.lean.domain.model.ValidationPriority;
+import com.impulse.validation.model.ValidationPriority;
 
 import jakarta.validation.constraints.Size;
 

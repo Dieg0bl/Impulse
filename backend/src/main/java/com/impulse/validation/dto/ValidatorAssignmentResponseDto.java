@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.impulse.lean.domain.model.AssignmentStatus;
-import com.impulse.lean.domain.model.ValidationPriority;
-import com.impulse.lean.domain.model.ValidatorAssignment;
+import com.impulse.validation.model.ValidationPriority;
+import com.impulse.validation.model.ValidatorAssignment;
 
 /**
  * IMPULSE LEAN v1 - Validator Assignment Response DTO
