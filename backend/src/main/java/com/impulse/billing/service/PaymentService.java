@@ -1,11 +1,10 @@
-package com.impulse.lean.service;
+package com.impulse.billing.service;
 
-import com.impulse.lean.domain.Payment;
-import com.impulse.lean.domain.User;
-import com.impulse.lean.domain.Subscription;
-import com.impulse.lean.repository.PaymentRepository;
-import com.impulse.lean.repository.SubscriptionRepository;
-import com.impulse.lean.service.NotificationService;
+import com.impulse.billing.model.Payment;
+import com.impulse.user.model.User;
+import com.impulse.billing.model.Subscription;
+import com.impulse.billing.repository.PaymentRepository;
+import com.impulse.billing.repository.SubscriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

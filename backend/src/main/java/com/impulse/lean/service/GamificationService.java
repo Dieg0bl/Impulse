@@ -1,6 +1,8 @@
 package com.impulse.lean.service;
 
 import com.impulse.lean.domain.model.*;
+import com.impulse.user.model.User;
+import com.impulse.challenge.model.Challenge;
 import com.impulse.lean.repository.AchievementRepository;
 import com.impulse.lean.repository.UserAchievementRepository;
 import com.impulse.lean.repository.UserStatisticsRepository;

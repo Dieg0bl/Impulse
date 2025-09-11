@@ -2,7 +2,7 @@ package com.impulse.evidence.model;
 
 import com.impulse.user.model.User;
 import com.impulse.evidence.model.Evidence;
-import com.impulse.lean.domain.model.ValidationType;
+import com.impulse.validation.model.ValidationType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;

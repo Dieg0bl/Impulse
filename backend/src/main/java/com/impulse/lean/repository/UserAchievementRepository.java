@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.impulse.lean.domain.model.Achievement;
 import com.impulse.lean.domain.model.AchievementCategory;
-import com.impulse.lean.domain.model.User;
+import com.impulse.user.model.User;
 import com.impulse.lean.domain.model.UserAchievement;
 
 /**

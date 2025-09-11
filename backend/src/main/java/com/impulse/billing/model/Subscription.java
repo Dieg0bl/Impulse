@@ -1,5 +1,6 @@
-package com.impulse.lean.domain.model;
+package com.impulse.billing.model;
 
+import com.impulse.user.model.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;

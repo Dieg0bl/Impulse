@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.impulse.lean.domain.model.User;
+import com.impulse.user.model.User;
 import com.impulse.lean.domain.model.UserStatistics;
 
 /**

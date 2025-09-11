@@ -1,9 +1,8 @@
-package com.impulse.lean.controller;
+package com.impulse.billing.controller;
 
-import com.impulse.lean.service.SubscriptionService;
-import com.impulse.lean.service.PaymentService;
-import com.impulse.lean.service.InvoiceService;
-import com.impulse.lean.service.StripeService;
+import com.impulse.billing.service.SubscriptionService;
+import com.impulse.billing.service.PaymentService;
+import com.impulse.billing.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

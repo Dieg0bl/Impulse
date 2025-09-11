@@ -27,18 +27,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.impulse.lean.application.dto.common.ApiResponse;
 import com.impulse.lean.application.dto.common.PaginationResponse;
-import com.impulse.lean.application.dto.validator.ValidatorAssignmentRequestDto;
-import com.impulse.lean.application.dto.validator.ValidatorAssignmentResponseDto;
-import com.impulse.lean.application.dto.validator.ValidatorRequestDto;
-import com.impulse.lean.application.dto.validator.ValidatorResponseDto;
+import com.impulse.validation.dto.ValidatorAssignmentRequestDto;
+import com.impulse.validation.dto.ValidatorAssignmentResponseDto;
+import com.impulse.validation.dto.ValidatorRequestDto;
+import com.impulse.validation.dto.ValidatorResponseDto;
 import com.impulse.user.service.UserService;
-import com.impulse.lean.application.service.interfaces.ValidatorService;
+import com.impulse.validation.service.ValidatorService;
 import com.impulse.lean.domain.model.AssignmentStatus;
 import com.impulse.user.model.User;
-import com.impulse.lean.domain.model.Validator;
-import com.impulse.lean.domain.model.ValidatorAssignment;
-import com.impulse.lean.domain.model.ValidatorSpecialty;
-import com.impulse.lean.domain.model.ValidatorStatus;
+import com.impulse.validation.model.Validator;
+import com.impulse.validation.model.ValidatorAssignment;
+import com.impulse.validation.model.ValidatorSpecialty;
+import com.impulse.validation.model.ValidatorStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

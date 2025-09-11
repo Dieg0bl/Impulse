@@ -1,7 +1,7 @@
 package com.impulse.lean.controller;
 
 import com.impulse.lean.domain.model.AchievementCategory;
-import com.impulse.lean.domain.model.User;
+import com.impulse.user.model.User;
 import com.impulse.lean.dto.response.AchievementResponse;
 import com.impulse.lean.dto.response.LeaderboardResponse;
 import com.impulse.lean.dto.response.UserProgressResponse;

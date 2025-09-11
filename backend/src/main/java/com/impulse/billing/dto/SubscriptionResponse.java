@@ -1,4 +1,4 @@
-package com.impulse.lean.dto;
+package com.impulse.billing.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

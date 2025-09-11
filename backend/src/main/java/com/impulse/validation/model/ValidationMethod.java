@@ -1,5 +1,7 @@
 package com.impulse.validation.model;
 
+import com.impulse.user.model.UserRole;
+
 /**
  * IMPULSE LEAN v1 - Validation Method Enumeration
  * 

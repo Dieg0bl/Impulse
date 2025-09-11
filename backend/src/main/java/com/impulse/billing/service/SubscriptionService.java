@@ -1,8 +1,8 @@
-package com.impulse.lean.service;
+package com.impulse.billing.service;
 
-import com.impulse.lean.domain.model.Subscription;
-import com.impulse.lean.domain.model.User;
-import com.impulse.lean.repository.SubscriptionRepository;
+import com.impulse.billing.model.Subscription;
+import com.impulse.user.model.User;
+import com.impulse.billing.repository.SubscriptionRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

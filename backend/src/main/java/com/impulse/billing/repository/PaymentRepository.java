@@ -1,8 +1,8 @@
-package com.impulse.lean.repository;
+package com.impulse.billing.repository;
 
-import com.impulse.lean.domain.model.Payment;
-import com.impulse.lean.domain.model.Subscription;
-import com.impulse.lean.domain.model.User;
+import com.impulse.billing.model.Payment;
+import com.impulse.billing.model.Subscription;
+import com.impulse.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
