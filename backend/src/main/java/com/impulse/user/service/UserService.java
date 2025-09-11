@@ -1,4 +1,4 @@
-package com.impulse.lean.application.service.interfaces;
+package com.impulse.user.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,9 +6,9 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.impulse.lean.domain.model.User;
-import com.impulse.lean.domain.model.UserRole;
-import com.impulse.lean.domain.model.UserStatus;
+import com.impulse.user.model.User;
+import com.impulse.user.model.UserRole;
+import com.impulse.user.model.UserStatus;
 
 /**
  * IMPULSE LEAN v1 - User Service Interface

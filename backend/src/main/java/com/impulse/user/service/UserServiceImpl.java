@@ -1,10 +1,10 @@
-package com.impulse.lean.application.service.impl;
+package com.impulse.user.service;
 
-import com.impulse.lean.application.service.interfaces.UserService;
-import com.impulse.lean.domain.model.User;
-import com.impulse.lean.domain.model.UserRole;
-import com.impulse.lean.domain.model.UserStatus;
-import com.impulse.lean.domain.repository.UserRepository;
+import com.impulse.user.service.UserService;
+import com.impulse.user.model.User;
+import com.impulse.user.model.UserRole;
+import com.impulse.user.model.UserStatus;
+import com.impulse.user.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

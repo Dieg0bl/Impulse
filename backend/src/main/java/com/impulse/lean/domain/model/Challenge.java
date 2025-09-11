@@ -1,5 +1,6 @@
 package com.impulse.lean.domain.model;
 
+import com.impulse.user.model.User;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

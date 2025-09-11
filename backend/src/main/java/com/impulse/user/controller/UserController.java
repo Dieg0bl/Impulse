@@ -1,4 +1,4 @@
-package com.impulse.lean.application.controller;
+package com.impulse.user.controller;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.impulse.lean.application.dto.common.ApiResponse;
 import com.impulse.lean.application.dto.common.PaginationRequest;
 import com.impulse.lean.application.dto.common.PaginationResponse;
-import com.impulse.lean.application.dto.user.UserResponseDto;
-import com.impulse.lean.domain.model.User;
-import com.impulse.lean.domain.model.UserRole;
-import com.impulse.lean.domain.model.UserStatus;
-import com.impulse.lean.domain.repository.UserRepository;
+import com.impulse.user.dto.UserResponseDto;
+import com.impulse.user.model.User;
+import com.impulse.user.model.UserRole;
+import com.impulse.user.model.UserStatus;
+import com.impulse.user.repository.UserRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

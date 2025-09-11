@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.model;
+package com.impulse.user.model;
 
 /**
  * IMPULSE LEAN v1 - User Role Enumeration

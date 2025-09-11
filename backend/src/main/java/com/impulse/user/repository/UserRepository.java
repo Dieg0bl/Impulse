@@ -1,6 +1,6 @@
-package com.impulse.lean.domain.repository;
+package com.impulse.user.repository;
 
-import com.impulse.lean.domain.model.User;
+import com.impulse.user.model.User;
 import com.impulse.lean.domain.model.UserRole;
 import com.impulse.lean.domain.model.UserStatus;
 import org.springframework.data.domain.Page;

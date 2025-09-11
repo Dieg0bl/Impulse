@@ -5,7 +5,7 @@ import com.impulse.lean.application.dto.validator.ValidatorAssignmentResponseDto
 import com.impulse.lean.application.dto.validator.ValidatorRequestDto;
 import com.impulse.lean.application.dto.validator.ValidatorResponseDto;
 import com.impulse.lean.domain.model.Evidence;
-import com.impulse.lean.domain.model.User;
+import com.impulse.user.model.User;
 import com.impulse.lean.domain.model.Validator;
 import com.impulse.lean.domain.model.ValidatorAssignment;
 import com.impulse.lean.domain.model.ValidatorSpecialty;

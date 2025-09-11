@@ -17,6 +17,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
+import com.impulse.user.model.User;
+
 /**
  * IMPULSE LEAN v1 - Validator Assignment Domain Model
  * 

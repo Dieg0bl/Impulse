@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.model;
+package com.impulse.user.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

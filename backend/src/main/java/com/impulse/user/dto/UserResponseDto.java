@@ -1,10 +1,10 @@
-package com.impulse.lean.application.dto.user;
+package com.impulse.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.impulse.lean.domain.model.User;
-import com.impulse.lean.domain.model.UserRole;
-import com.impulse.lean.domain.model.UserStatus;
+import com.impulse.user.model.User;
+import com.impulse.user.model.UserRole;
+import com.impulse.user.model.UserStatus;
 
 import java.time.LocalDateTime;
 
