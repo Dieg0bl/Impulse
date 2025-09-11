@@ -1,6 +1,8 @@
-package com.impulse.lean.domain.model;
+package com.impulse.challenge.model;
 
 import com.impulse.user.model.User;
+import com.impulse.challenge.model.Challenge;
+import com.impulse.lean.domain.model.ParticipationStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

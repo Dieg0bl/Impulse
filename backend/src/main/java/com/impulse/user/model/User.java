@@ -31,6 +31,8 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import com.impulse.challenge.model.ChallengeParticipation;
+
 /**
  * IMPULSE LEAN v1 - User Domain Entity
  * 

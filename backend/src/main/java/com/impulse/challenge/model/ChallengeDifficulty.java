@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.model;
+package com.impulse.challenge.model;
 
 /**
  * IMPULSE LEAN v1 - Challenge Difficulty Enumeration

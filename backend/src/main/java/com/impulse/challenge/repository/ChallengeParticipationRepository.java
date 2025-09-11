@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.repository;
+package com.impulse.challenge.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,10 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.impulse.lean.domain.model.Challenge;
-import com.impulse.lean.domain.model.ChallengeParticipation;
+import com.impulse.challenge.model.Challenge;
+import com.impulse.challenge.model.ChallengeParticipation;
 import com.impulse.lean.domain.model.ParticipationStatus;
-import com.impulse.lean.domain.model.User;
+import com.impulse.user.model.User;
 
 /**
  * IMPULSE LEAN v1 - Challenge Participation Repository Interface

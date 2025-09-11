@@ -1,4 +1,4 @@
-package com.impulse.lean.application.service.impl;
+package com.impulse.challenge.service;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.impulse.lean.application.dto.challenge;
+package com.impulse.challenge.dto;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Size;

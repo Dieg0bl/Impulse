@@ -1,8 +1,10 @@
-package com.impulse.lean.application.dto.challenge;
+package com.impulse.challenge.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.impulse.lean.domain.model.*;
+import com.impulse.challenge.model.ChallengeCategory;
+import com.impulse.challenge.model.ChallengeDifficulty;
+import com.impulse.challenge.model.ChallengeStatus;
 
 import java.time.LocalDateTime;
 

@@ -1,4 +1,4 @@
-package com.impulse.lean.application.controller;
+package com.impulse.challenge.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,20 +25,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.impulse.lean.application.dto.challenge.ChallengeCreateRequestDto;
-import com.impulse.lean.application.dto.challenge.ChallengeJoinRequestDto;
-import com.impulse.lean.application.dto.challenge.ChallengeResponseDto;
-import com.impulse.lean.application.dto.challenge.ChallengeUpdateRequestDto;
+import com.impulse.challenge.dto.ChallengeCreateRequestDto;
+import com.impulse.challenge.dto.ChallengeJoinRequestDto;
+import com.impulse.challenge.dto.ChallengeResponseDto;
+import com.impulse.challenge.dto.ChallengeUpdateRequestDto;
 import com.impulse.lean.application.dto.common.ApiResponse;
 import com.impulse.lean.application.dto.common.PaginationRequest;
 import com.impulse.lean.application.dto.common.PaginationResponse;
-import com.impulse.lean.application.service.interfaces.ChallengeService;
-import com.impulse.lean.application.service.interfaces.UserService;
-import com.impulse.lean.domain.model.Challenge;
-import com.impulse.lean.domain.model.ChallengeCategory;
-import com.impulse.lean.domain.model.ChallengeDifficulty;
-import com.impulse.lean.domain.model.User;
-import com.impulse.lean.domain.repository.ChallengeRepository;
+import com.impulse.challenge.service.ChallengeService;
+import com.impulse.user.service.UserService;
+import com.impulse.challenge.model.Challenge;
+import com.impulse.challenge.model.ChallengeCategory;
+import com.impulse.challenge.model.ChallengeDifficulty;
+import com.impulse.user.model.User;
+import com.impulse.challenge.repository.ChallengeRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

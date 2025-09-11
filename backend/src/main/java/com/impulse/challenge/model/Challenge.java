@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.model;
+package com.impulse.challenge.model;
 
 import com.impulse.user.model.User;
 import java.time.LocalDateTime;
@@ -28,6 +28,12 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+// Challenge-specific imports
+import com.impulse.challenge.model.ChallengeCategory;
+import com.impulse.challenge.model.ChallengeDifficulty;
+import com.impulse.challenge.model.ChallengeStatus;
+import com.impulse.challenge.model.ChallengeParticipation;
 
 /**
  * IMPULSE LEAN v1 - Challenge Domain Entity

@@ -1,10 +1,10 @@
-package com.impulse.lean.domain.repository;
+package com.impulse.challenge.repository;
 
-import com.impulse.lean.domain.model.Challenge;
-import com.impulse.lean.domain.model.ChallengeCategory;
-import com.impulse.lean.domain.model.ChallengeDifficulty;
-import com.impulse.lean.domain.model.ChallengeStatus;
-import com.impulse.lean.domain.model.User;
+import com.impulse.challenge.model.Challenge;
+import com.impulse.challenge.model.ChallengeCategory;
+import com.impulse.challenge.model.ChallengeDifficulty;
+import com.impulse.challenge.model.ChallengeStatus;
+import com.impulse.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

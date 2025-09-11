@@ -1,4 +1,4 @@
-package com.impulse.lean.application.service.interfaces;
+package com.impulse.challenge.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -7,12 +7,12 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.impulse.lean.application.dto.challenge.ChallengeCreateRequestDto;
-import com.impulse.lean.application.dto.challenge.ChallengeJoinRequestDto;
-import com.impulse.lean.application.dto.challenge.ChallengeUpdateRequestDto;
-import com.impulse.lean.domain.model.Challenge;
-import com.impulse.lean.domain.model.ChallengeCategory;
-import com.impulse.lean.domain.model.ChallengeDifficulty;
+import com.impulse.challenge.dto.ChallengeCreateRequestDto;
+import com.impulse.challenge.dto.ChallengeJoinRequestDto;
+import com.impulse.challenge.dto.ChallengeUpdateRequestDto;
+import com.impulse.challenge.model.Challenge;
+import com.impulse.challenge.model.ChallengeCategory;
+import com.impulse.challenge.model.ChallengeDifficulty;
 import com.impulse.lean.domain.model.ChallengeParticipation;
 import com.impulse.lean.domain.model.User;
 import com.impulse.lean.domain.model.ValidationMethod;
