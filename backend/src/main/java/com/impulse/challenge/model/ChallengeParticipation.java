@@ -3,6 +3,7 @@ package com.impulse.challenge.model;
 import com.impulse.user.model.User;
 import com.impulse.challenge.model.Challenge;
 import com.impulse.lean.domain.model.ParticipationStatus;
+import com.impulse.lean.domain.model.Evidence;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

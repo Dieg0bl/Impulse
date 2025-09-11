@@ -1,8 +1,8 @@
 package com.impulse.user.repository;
 
 import com.impulse.user.model.User;
-import com.impulse.lean.domain.model.UserRole;
-import com.impulse.lean.domain.model.UserStatus;
+import com.impulse.user.model.UserRole;
+import com.impulse.user.model.UserStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

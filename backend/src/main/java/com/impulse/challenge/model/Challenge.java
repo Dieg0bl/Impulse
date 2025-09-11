@@ -1,6 +1,7 @@
 package com.impulse.challenge.model;
 
 import com.impulse.user.model.User;
+import com.impulse.validation.model.ValidationMethod;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

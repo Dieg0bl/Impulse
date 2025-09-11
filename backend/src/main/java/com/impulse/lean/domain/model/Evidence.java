@@ -1,7 +1,10 @@
 package com.impulse.lean.domain.model;
 
 import com.impulse.user.model.User;
+import com.impulse.challenge.model.ChallengeParticipation;
+import com.impulse.validation.model.ValidationMethod;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
