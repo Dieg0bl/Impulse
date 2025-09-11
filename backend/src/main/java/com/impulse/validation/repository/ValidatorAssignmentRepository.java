@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.repository;
+package com.impulse.validation.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;

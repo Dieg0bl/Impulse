@@ -1,4 +1,4 @@
-package com.impulse.lean.application.service.interfaces;
+package com.impulse.validation.service;
 
 import com.impulse.lean.application.dto.validator.ValidatorAssignmentRequestDto;
 import com.impulse.lean.application.dto.validator.ValidatorAssignmentResponseDto;

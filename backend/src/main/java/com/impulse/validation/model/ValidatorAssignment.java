@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.model;
+package com.impulse.validation.model;
 
 import java.time.LocalDateTime;
 

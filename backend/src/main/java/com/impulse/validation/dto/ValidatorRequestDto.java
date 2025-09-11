@@ -1,4 +1,4 @@
-package com.impulse.lean.application.dto.validator;
+package com.impulse.validation.dto;
 
 import java.util.Set;
 

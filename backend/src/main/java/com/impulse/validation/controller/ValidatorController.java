@@ -1,4 +1,4 @@
-package com.impulse.lean.application.controller;
+package com.impulse.validation.controller;
 
 import java.math.BigDecimal;
 import java.util.List;

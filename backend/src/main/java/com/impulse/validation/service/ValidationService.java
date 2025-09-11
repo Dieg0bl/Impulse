@@ -1,4 +1,4 @@
-package com.impulse.lean.application.service.interfaces;
+package com.impulse.validation.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

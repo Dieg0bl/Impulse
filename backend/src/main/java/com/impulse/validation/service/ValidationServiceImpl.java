@@ -1,4 +1,4 @@
-package com.impulse.lean.application.service.impl;
+package com.impulse.validation.service;
 
 import com.impulse.lean.application.dto.validation.EvidenceValidationRequestDto;
 import com.impulse.lean.application.service.interfaces.ValidationService;

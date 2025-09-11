@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.repository;
+package com.impulse.validation.repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.model;
+package com.impulse.validation.model;
 
 /**
  * IMPULSE LEAN v1 - Validation Type Enumeration

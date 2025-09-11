@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.model;
+package com.impulse.validation.model;
 
 import com.impulse.user.model.User;
 import java.math.BigDecimal;
@@ -11,7 +11,6 @@ import java.util.Set;
 import org.hibernate.annotations.UuidGenerator;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;

@@ -1,4 +1,4 @@
-package com.impulse.lean.application.controller;
+package com.impulse.validation.controller;
 
 import com.impulse.lean.application.dto.common.ApiResponse;
 import com.impulse.lean.application.dto.common.PaginationResponse;
