@@ -1,4 +1,4 @@
-package com.impulse.lean.application.dto.validation;
+package com.impulse.evidence.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.impulse.lean.domain.model.*;

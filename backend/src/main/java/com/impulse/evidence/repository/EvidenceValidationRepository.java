@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.repository;
+package com.impulse.evidence.repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -12,9 +12,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.impulse.lean.domain.model.Evidence;
-import com.impulse.lean.domain.model.EvidenceValidation;
-import com.impulse.lean.domain.model.User;
+import com.impulse.evidence.model.Evidence;
+import com.impulse.evidence.model.EvidenceValidation;
+import com.impulse.user.model.User;
 import com.impulse.lean.domain.model.ValidationType;
 
 /**

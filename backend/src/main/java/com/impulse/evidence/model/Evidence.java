@@ -1,8 +1,10 @@
-package com.impulse.lean.domain.model;
+package com.impulse.evidence.model;
 
 import com.impulse.user.model.User;
 import com.impulse.challenge.model.ChallengeParticipation;
 import com.impulse.validation.model.ValidationMethod;
+import com.impulse.evidence.model.EvidenceType;
+import com.impulse.evidence.model.EvidenceStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

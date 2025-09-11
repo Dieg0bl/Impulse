@@ -1,4 +1,4 @@
-package com.impulse.lean.application.dto.evidence;
+package com.impulse.evidence.dto;
 
 import java.math.BigDecimal;
 
@@ -6,31 +6,26 @@ import com.impulse.lean.domain.model.EvidenceType;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 /**
- * IMPULSE LEAN v1 - Evidence Create Request DTO
+ * IMPULSE LEAN v1 - Evidence Update Request DTO
  * 
- * Request DTO for creating evidence submissions
+ * Request DTO for updating evidence submissions
  * 
  * @author IMPULSE Team
  * @version 1.0.0
  */
-public class EvidenceCreateRequestDto {
+public class EvidenceUpdateRequestDto {
 
-    @NotNull(message = "Evidence type is required")
     private EvidenceType type;
 
-    @NotBlank(message = "Content is required")
     @Size(min = 10, max = 5000, message = "Content must be between 10 and 5000 characters")
     private String content;
 
     @Size(max = 1000, message = "Description cannot exceed 1000 characters")
     private String description;
 
-    @NotNull(message = "Day number is required")
     private Integer dayNumber;
 
     // File upload fields
@@ -45,35 +40,19 @@ public class EvidenceCreateRequestDto {
     private BigDecimal validationScore;
 
     // Constructor
-    public EvidenceCreateRequestDto() {}
-
-    public EvidenceCreateRequestDto(EvidenceType type, String content, Integer dayNumber) {
-        this.type = type;
-        this.content = content;
-        this.dayNumber = dayNumber;
-    }
+    public EvidenceUpdateRequestDto() {}
 
     // Validation methods
-    public boolean isValidForType() {
-        if (type == null) return false;
-        
-        switch (type) {
-            case TEXT:
-            case LINK:
-                return content != null && !content.trim().isEmpty();
-            case IMAGE:
-            case VIDEO:
-            case FILE:
-                return filePath != null && !filePath.trim().isEmpty();
-            default:
-                return true;
-        }
+    public boolean hasContent() {
+        return content != null && !content.trim().isEmpty();
+    }
+
+    public boolean hasFileUpdate() {
+        return filePath != null && !filePath.trim().isEmpty();
     }
 
     public boolean hasValidFileSize() {
-        if (fileSize == null) return true;
-        if (type == null) return true;
-        
+        if (fileSize == null || type == null) return true;
         return fileSize <= type.getMaxFileSize();
     }
 

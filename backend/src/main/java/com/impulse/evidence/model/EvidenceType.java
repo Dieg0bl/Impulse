@@ -1,4 +1,4 @@
-package com.impulse.lean.domain.model;
+package com.impulse.evidence.model;
 
 /**
  * IMPULSE LEAN v1 - Evidence Type Enumeration

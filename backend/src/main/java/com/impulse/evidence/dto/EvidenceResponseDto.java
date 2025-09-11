@@ -1,4 +1,4 @@
-package com.impulse.lean.application.dto.evidence;
+package com.impulse.evidence.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

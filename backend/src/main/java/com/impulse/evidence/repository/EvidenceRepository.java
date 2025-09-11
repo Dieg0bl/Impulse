@@ -1,10 +1,10 @@
-package com.impulse.lean.domain.repository;
+package com.impulse.evidence.repository;
 
-import com.impulse.lean.domain.model.Evidence;
-import com.impulse.lean.domain.model.EvidenceStatus;
-import com.impulse.lean.domain.model.EvidenceType;
-import com.impulse.lean.domain.model.ChallengeParticipation;
-import com.impulse.lean.domain.model.User;
+import com.impulse.evidence.model.Evidence;
+import com.impulse.evidence.model.EvidenceStatus;
+import com.impulse.evidence.model.EvidenceType;
+import com.impulse.challenge.model.ChallengeParticipation;
+import com.impulse.user.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
