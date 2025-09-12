@@ -1,289 +1,154 @@
-# Dependencies
-node_modules/
-backend/target/
-backend/pom.xml.tag
-backend/pom.xml.releaseBackup
-backend/pom.xml.versionsBackup
-backend/pom.xml.next
-backend/release.properties
-backend/dependency-reduced-pom.xml
-backend/buildNumber.properties
-backend/.flattened-pom.xml
+﻿# ================================
+# IMPULSE GITIGNORE - PRODUCTION READY
+# ================================
 
-# Build outputs
-frontend/build/
-frontend/dist/
-backend/src/main/resources/static/
+# ================================
+# BACKEND (Java/Spring Boot/Maven)
+# ================================
+
+# Maven
+backend/target/
+backend/.mvn/
 *.jar
 *.war
-*.ear
+*.class
 
 # IDE
-.vscode/settings.json.bak
 .idea/
+*.iws
 *.iml
 *.ipr
-*.iws
-*.log
+.vscode/
+.classpath
+.project
+.settings/
 
-# OS
-.DS_Store
-Thumbs.db
-*.swp
-*.swo
+# ================================
+# FRONTEND (React/TypeScript/Vite)
+# ================================
 
-# Environment
+# Dependencies
+frontend/node_modules/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# Environment variables
 .env
 .env.local
-.env.production
-.env.staging
-.env.development
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Database
+# Package managers
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ================================
+# DATABASE & DATA
+# ================================
+
+# Database files
 *.db
 *.sqlite
-backend/db/*.sql
-!backend/db/schema/impulse_master.sql
+*.sqlite3
+
+# Data directories
+data/
+logs/
+uploads/
+storage/
+
+# ================================
+# DOCKER & CONTAINERS
+# ================================
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Container volumes
+postgres-data/
+redis-data/
+mysql-data/
+
+# ================================
+# SECRETS & SECURITY
+# ================================
+
+# Certificates & Keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# JWT & API Keys
+jwt-secret.txt
+api-keys.txt
+secrets.yml
+secrets.yaml
+
+# ================================
+# DEVELOPMENT TOOLS
+# ================================
+
+# OS generated files
+.DS_Store
+Thumbs.db
 
 # Temporary files
 *.tmp
 *.temp
-.cache/
-.parcel-cache/
+*.swp
+*.swo
+*~
 
-# Logs
-*.log
-logs/
-backend/logs/
-frontend/logs/
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage directory used by tools like istanbul
+# Coverage reports
 coverage/
 *.lcov
+.nyc_output/
 
-# nyc test coverage
-.nyc_output
+# Test results
+test-results/
+junit.xml
 
-# Dependency directories
-jspm_packages/
+# ================================
+# CUSTOM IMPULSE SPECIFIC
+# ================================
 
-# Optional npm cache directory
-.npm
+# Media uploads
+uploads/challenges/
+uploads/evidence/
+uploads/profiles/
 
-# Optional REPL history
-.node_repl_history
+# Generated documentation
+docs/generated/
+api-docs/
 
-# Output of 'npm pack'
-*.tgz
+# Local development
+.local/
+.dev/
+dev-data/
 
-# Yarn Integrity file
-.yarn-integrity
+# ================================
+# IGNORE PATTERNS
+# ================================
 
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# next.js build output
-.next
-
-# nuxt.js build output
-.nuxt
-
-# vuepress build output
-.vuepress/dist
-
-# Serverless directories
-.serverless
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# Java
-*.class
-*.log
-*.ctxt
-.mtj.tmp/
-*.jar
-*.war
-*.nar
-*.ear
-*.zip
-*.tar.gz
-*.rar
-hs_err_pid*
-replay_pid*
-
-# Maven
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-
-# Gradle
-.gradle
-build/
-gradle-app.setting
-!gradle-wrapper.jar
-!gradle-wrapper.properties
-
-# Eclipse
-.metadata
-bin/
-tmp/
-*.tmp
-*.bak
-*.swp
-*~.nib
-local.properties
-.settings/
-.loadpath
-.recommenders
-.project
-.externalToolBuilders/
-*.launch
-.pydevproject
-.cproject
-.autotools
-.factorypath
-.buildpath
-.target
-
-# IntelliJ IDEA
-.idea/
-*.iws
-*.iml
-*.ipr
-
-# NetBeans
-nbproject/private/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
-
-# VS Code
-.vscode/settings.json
-!.vscode/launch.json
-!.vscode/tasks.json
-
-# Docker
-.dockerignore
-
-# Kubernetes
-*.yaml.bak
-*.yml.bak
-
-# Terraform
-.terraform/
-*.tfstate
-*.tfstate.backup
-terraform.tfvars
-
-# Secrets and keys
-secrets/
-*.key
-*.pem
-*.crt
-*.cer
-*.p12
-*.pfx
-*.jks
-*.keystore
-*.truststore
-
-# Backup files
-*.bak
-*.backup
-*.old
-*.orig
-*.rej
-
-# Archives
-*.7z
+# Large files
+*.iso
 *.dmg
 *.gz
-*.iso
-*.jar
-*.rar
-*.tar
 *.zip
+*.7z
 
-# Media files
-*.mp4
-*.avi
-*.mov
-*.wmv
-*.flv
-*.webm
-*.mkv
-*.mp3
-*.wav
-*.flac
-*.aac
-*.ogg
-*.wma
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.bmp
-*.tiff
-*.svg
-*.ico
-*.webp
-*.pdf
-*.doc
-*.docx
-*.xls
-*.xlsx
-*.ppt
-*.pptx
-
-# Documentation (keep only essential)
-docs/**/*.md
-!README.md
-!CHANGELOG.md
-!CONTRIBUTING.md
-!docs/LEGAL/*.md
-!docs/architecture/*.md
-!docs/decisions/*.md
-
-# Scripts (keep only essential)
-scripts/
-!simple-start.js
-!start-simple.bat
-
-# Test files
-test.js
-test-exec.js
-backend/src/test/resources/testdata/*.json
-!backend/src/test/resources/application-test.yml
-
-# CI/CD
-.github/workflows/*.yml
-!.github/workflows/ci.yml
-!.github/workflows/dependabot.yml
-
-# Scripts de limpieza temporal
-limpiar-vscode-historial.bat
+# Version control
+.svn/
+.hg/

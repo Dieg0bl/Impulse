@@ -1,0 +1,104 @@
+﻿# ================================
+# IMPULSE GITATTRIBUTES
+# ================================
+
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# ================================
+# TEXT FILES
+# ================================
+
+# Source code
+*.java text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.properties text eol=lf
+*.sql text eol=lf
+
+# Web files
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+
+# Documentation
+*.md text eol=lf
+*.txt text eol=lf
+
+# Configuration
+*.conf text eol=lf
+*.config text eol=lf
+*.ini text eol=lf
+
+# Scripts
+*.sh text eol=lf
+*.bash text eol=lf
+*.ps1 text eol=crlf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Docker
+Dockerfile text eol=lf
+docker-compose*.yml text eol=lf
+
+# ================================
+# BINARY FILES
+# ================================
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.svg binary
+*.ico binary
+
+# Media
+*.mp4 binary
+*.mp3 binary
+*.wav binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.rar binary
+
+# Java/JVM
+*.jar binary
+*.war binary
+*.class binary
+
+# ================================
+# LANGUAGE SPECIFIC
+# ================================
+
+# Java
+*.java diff=java
+
+# JavaScript/TypeScript
+*.js diff=javascript
+*.ts diff=typescript
+
+# JSON (pretty diff)
+*.json diff=json
+
+# ================================
+# MERGE STRATEGIES
+# ================================
+
+# Never merge these files
+package-lock.json merge=ours
+yarn.lock merge=ours
+
+# Binary files should not be merged
+*.jar merge=binary
+*.war merge=binary
+*.png merge=binary
+*.jpg merge=binary
