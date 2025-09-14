@@ -152,6 +152,26 @@
       <version>${bucket4j.version}</version>
     </dependency>
 
+    <!-- LOMBOK -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- REDIS -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+
+    <!-- STRIPE -->
+    <dependency>
+      <groupId>com.stripe</groupId>
+      <artifactId>stripe-java</artifactId>
+      <version>25.11.0</version>
+    </dependency>
+
     <!-- UTILITIES -->
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -220,7 +240,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring-boot.version}</version>
         <configuration>
-          <mainClass>com.impulse.lean.ImpulseLeanApplication</mainClass>
+          <mainClass>com.impulse.ImpulseApplication</mainClass>
           <excludes>
             <exclude>
               <groupId>org.projectlombok</groupId>
@@ -229,7 +249,7 @@
           </excludes>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -249,7 +269,7 @@
           </compilerArgs>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.flywaydb</groupId>
         <artifactId>flyway-maven-plugin</artifactId>
@@ -263,7 +283,7 @@
           </locations>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -275,7 +295,7 @@
           </includes>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
@@ -308,14 +328,14 @@
         <spring.profiles.active>dev</spring.profiles.active>
       </properties>
     </profile>
-    
+
     <profile>
       <id>test</id>
       <properties>
         <spring.profiles.active>test</spring.profiles.active>
       </properties>
     </profile>
-    
+
     <profile>
       <id>prod</id>
       <properties>

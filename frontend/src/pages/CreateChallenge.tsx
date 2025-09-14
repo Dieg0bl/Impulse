@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import mockStore from '../services/mockStore'
+import mockStore, { Challenge } from '../services/mockStore'
 import { useNavigate } from 'react-router-dom'
+import { ChallengeCategory, ChallengeDifficulty, ChallengeStatus } from '../types/enums'
 
 const CreateChallenge: React.FC = () => {
   const [title, setTitle] = useState('')
@@ -10,7 +11,27 @@ const CreateChallenge: React.FC = () => {
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!title) return alert('Título requerido')
-    const c = { id: 'c_' + Date.now(), title, description: desc }
+
+    const c: Challenge = {
+      id: Date.now(),
+      uuid: 'c_' + Date.now(),
+      title,
+      description: desc,
+      category: ChallengeCategory.FITNESS,
+      difficulty: ChallengeDifficulty.BEGINNER,
+      status: ChallengeStatus.ACTIVE,
+      rewardAmount: 0,
+      rewardCurrency: 'USD',
+      startDate: new Date().toISOString(),
+      endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      creatorId: 1,
+      creatorUsername: 'current_user',
+      participantCount: 0,
+      isPublic: true
+    }
+
     mockStore.addChallenge(c)
     navigate(`/challenges/${c.id}`)
   }

@@ -35,7 +35,7 @@ const ChallengeDetail: React.FC = () => {
       <h3>Evidencias</h3>
       <ul>
         {evidences.map(ev => (
-          <li key={ev.id}>{ev.filename} — {new Date(ev.uploadedAt).toLocaleString()}</li>
+          <li key={ev.id}>{ev.filename} — {new Date(ev.submittedAt).toLocaleString()}</li>
         ))}
       </ul>
     </div>

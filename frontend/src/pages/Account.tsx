@@ -10,7 +10,7 @@ const Account: React.FC = () => {
       <h2>Cuenta</h2>
       {user ? (
         <div>
-          <p>Nombre: {user.name}</p>
+          <p>Nombre: {user.firstName} {user.lastName}</p>
           <p>Email: {user.email}</p>
           <div style={{ marginTop: 8 }}>
             <button onClick={logout}>Cerrar sesión</button>

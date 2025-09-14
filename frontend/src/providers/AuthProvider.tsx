@@ -1,9 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-
-type User = { id: string; name: string; email: string }
+import { UserResponseDto, LoginRequestDto, RegisterRequestDto } from '../types/dtos'
 
 type AuthContextType = {
-  user: User | null
+  user: UserResponseDto | null
   token: string | null
   login: (email: string, password?: string) => Promise<void>
   logout: () => void
@@ -19,9 +18,9 @@ export const useAuth = () => {
 }
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
+  const [user, setUser] = useState<UserResponseDto | null>(() => {
     const raw = localStorage.getItem('impulse_user')
-    return raw ? JSON.parse(raw) as User : null
+    return raw ? JSON.parse(raw) as UserResponseDto : null
   })
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('token'))
 
@@ -37,7 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string = 'password') => {
     // call backend auth
-    const res = await fetch(`${process.env.REACT_APP_API_BASE || 'http://localhost:8080'}/api/auth/login`, {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE || 'http://localhost:8080'}/api/v1/auth/login`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password })
     })
     const data = await res.json()
@@ -49,8 +48,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   const register = async (name: string, email: string, password: string = 'password') => {
-    const res = await fetch(`${process.env.REACT_APP_API_BASE || 'http://localhost:8080'}/api/auth/register`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: name, email, password, firstName: name, lastName: '' })
+    const res = await fetch(`${import.meta.env.VITE_API_BASE || 'http://localhost:8080'}/api/v1/auth/register`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+        username: name,
+        email,
+        password,
+        firstName: name.split(' ')[0] || name,
+        lastName: name.split(' ').slice(1).join(' ') || ''
+      })
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data?.message || 'Registration failed')

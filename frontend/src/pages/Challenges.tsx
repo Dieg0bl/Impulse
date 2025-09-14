@@ -1,9 +1,9 @@
 import React from 'react'
-import mockStore from '../services/mockStore'
+import mockStore, { Challenge } from '../services/mockStore'
 import { Link } from 'react-router-dom'
 
 const Challenges: React.FC = () => {
-	const [challenges, setChallenges] = React.useState<{id:string,title:string,description:string}[]>([])
+	const [challenges, setChallenges] = React.useState<Challenge[]>([])
 
 	React.useEffect(() => {
 		mockStore.listChallenges().then(setChallenges)
