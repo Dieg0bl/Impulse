@@ -1,45 +1,113 @@
-import React from "react";
+import React from 'react';
+import { motion } from 'framer-motion';
+import { cn } from '../../utils/cn';
 
-interface ButtonProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-  disabled?: boolean;
+export interface ButtonProps {
   className?: string;
-  size?: "sm" | "md" | "lg";
-  variant?: "primary" | "secondary" | "outline";
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'ghost' | 'outline';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  loading?: boolean;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
+  fullWidth?: boolean;
+  animate?: boolean;
+  disabled?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: 'button' | 'submit' | 'reset';
+  children?: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  children,
-  onClick,
-  disabled = false,
-  className = "",
-  size = "md",
-  variant = "primary",
-}) => {
-  const baseClasses =
-    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
-
-  const sizeClasses = {
-    sm: "px-3 py-2 text-sm",
-    md: "px-4 py-2 text-sm",
-    lg: "px-6 py-3 text-base",
-  };
-
-  const variantClasses = {
-    primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-    secondary: "bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500",
-    outline:
-      "border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-50 focus:ring-gray-500",
-  };
-
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
-    >
-      {children}
-    </button>
-  );
+const buttonVariants = {
+  primary: 'btn-primary',
+  secondary: 'btn-secondary',
+  success: 'btn-success',
+  warning: 'btn-warning',
+  error: 'btn-error',
+  ghost: 'btn-ghost',
+  outline: 'btn-outline'
 };
+
+const buttonSizes = {
+  sm: 'btn-sm',
+  md: 'btn-md',
+  lg: 'btn-lg',
+  xl: 'btn-xl'
+};
+
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({
+    className,
+    variant = 'primary',
+    size = 'md',
+    loading = false,
+    icon,
+    iconPosition = 'left',
+    fullWidth = false,
+    animate = true,
+    children,
+    disabled,
+    onClick,
+    type = 'button'
+  }, ref) => {
+    const buttonClasses = cn(
+      'btn',
+      buttonVariants[variant],
+      buttonSizes[size],
+      fullWidth && 'w-full',
+      loading && 'cursor-wait',
+      className
+    );
+
+    const buttonContent = (
+      <>
+        {loading ? (
+          <div className="flex items-center gap-2">
+            <div className="spinner w-4 h-4"></div>
+            {children && <span>Loading...</span>}
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            {icon && iconPosition === 'left' && (
+              <span className="flex-shrink-0">{icon}</span>
+            )}
+            {children && <span>{children}</span>}
+            {icon && iconPosition === 'right' && (
+              <span className="flex-shrink-0">{icon}</span>
+            )}
+          </div>
+        )}
+      </>
+    );
+
+    if (animate) {
+      return (
+        <motion.button
+          className={buttonClasses}
+          ref={ref}
+          disabled={disabled || loading}
+          onClick={onClick}
+          type={type}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        >
+          {buttonContent}
+        </motion.button>
+      );
+    }
+
+    return (
+      <button
+        className={buttonClasses}
+        ref={ref}
+        disabled={disabled || loading}
+        onClick={onClick}
+        type={type}
+      >
+        {buttonContent}
+      </button>
+    );
+  }
+);
+
+Button.displayName = 'Button';

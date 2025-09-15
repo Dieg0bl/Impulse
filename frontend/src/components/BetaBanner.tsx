@@ -7,7 +7,7 @@ interface BetaBannerProps {
 }
 
 interface AlertConfig {
-  variant: "success" | "warning" | "danger";
+  variant: "success" | "warning" | "error";
   bgColor: string;
   borderColor: string;
   textColor: string;
@@ -24,7 +24,7 @@ const BetaBanner: React.FC<BetaBannerProps> = ({ daysRemaining }) => {
 
     if (effectiveDays <= 1) {
       return {
-        variant: "danger",
+        variant: "error",
         bgColor: "bg-red-50 dark:bg-red-900",
         borderColor: "border-red-400 dark:border-red-600",
         textColor: "text-red-800 dark:text-red-200",
