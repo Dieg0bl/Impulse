@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode } from "react";
 
 interface ComplianceContextType {
   gdprConsent: boolean;
@@ -7,7 +7,7 @@ interface ComplianceContextType {
 
 const ComplianceContext = createContext<ComplianceContextType>({
   gdprConsent: false,
-  setGdprConsent: () => {}
+  setGdprConsent: () => {},
 });
 
 export const useCompliance = () => useContext(ComplianceContext);
@@ -21,9 +21,5 @@ export const ComplianceProvider: React.FC<ComplianceProviderProps> = ({ children
 
   const value = React.useMemo(() => ({ gdprConsent, setGdprConsent }), [gdprConsent]);
 
-  return (
-    <ComplianceContext.Provider value={value}>
-      {children}
-    </ComplianceContext.Provider>
-  );
+  return <ComplianceContext.Provider value={value}>{children}</ComplianceContext.Provider>;
 };

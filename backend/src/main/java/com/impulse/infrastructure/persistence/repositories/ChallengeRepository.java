@@ -1,6 +1,7 @@
 package com.impulse.infrastructure.persistence.repositories;
 
-import com.impulse.domain.model.Challenge;
+import java.time.LocalDateTime;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,13 +9,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import com.impulse.domain.model.Challenge;
 
 @Repository
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     // Buscar challenges por creador
-    Page<Challenge> findByCreatedById(Long createdById, Pageable pageable);
+    Page<Challenge> findByUserId(Long userId, Pageable pageable);
 
     // Buscar challenges por estado
     Page<Challenge> findByStatus(String status, Pageable pageable);
@@ -48,7 +49,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     Page<Challenge> findFinished(@Param("now") LocalDateTime now, Pageable pageable);
 
     // Contar challenges por creador
-    long countByCreatedById(Long createdById);
+    long countByUserId(Long userId);
 
     // Contar challenges activos
     @Query("SELECT COUNT(c) FROM Challenge c WHERE c.status = 'ACTIVE'")

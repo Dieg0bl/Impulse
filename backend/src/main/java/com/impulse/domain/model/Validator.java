@@ -1,15 +1,29 @@
 package com.impulse.domain.model;
 
-import com.impulse.domain.enums.ValidatorStatus;
+import java.time.LocalDateTime;
+
 import com.impulse.domain.enums.ValidatorSpecialty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.impulse.domain.enums.ValidatorStatus;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import java.time.LocalDateTime;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "validators")
@@ -43,7 +57,7 @@ public class Validator {
     @Column(name = "validation_count")
     private Integer validationCount = 0;
 
-    @Column(name = "accuracy_score", precision = 5, scale = 2)
+    @Column(name = "accuracy_score")
     private Double accuracyScore = 0.0;
 
     @Column(name = "average_response_time_hours")

@@ -1,9 +1,9 @@
 /* Global styles for Impulse application */
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -47,7 +47,7 @@ body {
   border-radius: 12px;
   padding: 20px;
   margin: 16px 0;
-  box-shadow: 0 6px 18px rgba(18,34,63,0.06);
+  box-shadow: 0 6px 18px rgba(18, 34, 63, 0.06);
 }
 
 .form-group {
@@ -98,12 +98,16 @@ body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Layout & Sidebar */
-:root{
+:root {
   --bg: #f6f9fb;
   --bg-header: #ffffff;
   --text-primary: #0f1724;
@@ -114,23 +118,102 @@ body {
   --sidebar-border: #eef2f6;
 }
 
-.layout-root{display:flex;min-height:100vh;background:var(--bg)}
-.sidebar{width:260px;background:var(--sidebar-bg);border-right:1px solid var(--sidebar-border);padding:24px;box-sizing:border-box}
-.sidebar .brand{display:flex;align-items:center;gap:12px;margin-bottom:20px}
-.sidebar .nav{margin-top:12px}
-.sidebar .nav a{display:block;color:var(--muted);padding:10px 6px;border-radius:8px;text-decoration:none;margin-bottom:6px}
-.sidebar .nav a:hover{background:#f3f6fb;color:var(--text-primary)}
-.sidebar .profile{position:absolute;bottom:24px;left:24px;right:24px}
-.content-wrap{flex:1;padding:24px}
-.hero{background:linear-gradient(180deg, rgba(107,33,168,0.06), rgba(255,255,255,0));padding:28px;border-radius:12px;margin-bottom:20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-.plan-card{border:1px solid #eef2f6;border-radius:12px;padding:18px;background:linear-gradient(180deg,#fff,#fbfbff)}
-.kpi-row{display:flex;gap:12px}
-.kpi{flex:1;padding:16px;background:#fff;border-radius:10px;text-align:center}
-.small-muted{color:var(--muted);font-size:0.9rem}
-.hero-title{font-size:28px;margin:0 0 8px 0}
-.plan-cta{margin-top:16px}
+.layout-root {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+}
+.sidebar {
+  width: 260px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  padding: 24px;
+  box-sizing: border-box;
+}
+.sidebar .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.sidebar .nav {
+  margin-top: 12px;
+}
+.sidebar .nav a {
+  display: block;
+  color: var(--muted);
+  padding: 10px 6px;
+  border-radius: 8px;
+  text-decoration: none;
+  margin-bottom: 6px;
+}
+.sidebar .nav a:hover {
+  background: #f3f6fb;
+  color: var(--text-primary);
+}
+.sidebar .profile {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+}
+.content-wrap {
+  flex: 1;
+  padding: 24px;
+}
+.hero {
+  background: linear-gradient(
+    180deg,
+    rgba(107, 33, 168, 0.06),
+    rgba(255, 255, 255, 0)
+  );
+  padding: 28px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.plan-card {
+  border: 1px solid #eef2f6;
+  border-radius: 12px;
+  padding: 18px;
+  background: linear-gradient(180deg, #fff, #fbfbff);
+}
+.kpi-row {
+  display: flex;
+  gap: 12px;
+}
+.kpi {
+  flex: 1;
+  padding: 16px;
+  background: #fff;
+  border-radius: 10px;
+  text-align: center;
+}
+.small-muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.hero-title {
+  font-size: 28px;
+  margin: 0 0 8px 0;
+}
+.plan-cta {
+  margin-top: 16px;
+}
 
 /* responsive tweaks */
-@media (max-width:800px){.sidebar{display:none}.layout-root{flex-direction:column}.content-wrap{padding:12px}}
-
+@media (max-width: 800px) {
+  .sidebar {
+    display: none;
+  }
+  .layout-root {
+    flex-direction: column;
+  }
+  .content-wrap {
+    padding: 12px;
+  }
+}

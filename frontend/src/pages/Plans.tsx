@@ -1,5 +1,5 @@
-import React from 'react'
-import { FEATURE_FLAGS } from '../config'
+import React from "react";
+import { FEATURE_FLAGS } from "../config";
 
 const Plans: React.FC = () => {
   return (
@@ -9,10 +9,12 @@ const Plans: React.FC = () => {
       {FEATURE_FLAGS.BILLING_ON ? (
         <button className="btn">Suscribirme</button>
       ) : (
-        <button className="btn" disabled>Próximamente</button>
+        <button className="btn" disabled>
+          Próximamente
+        </button>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Plans
+export default Plans;

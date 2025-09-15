@@ -1,5 +1,5 @@
-import React, { createContext, useContext, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useContext, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface NavigationContextType {
   navigate: (path: string) => void;
@@ -11,7 +11,7 @@ const NavigationContext = createContext<NavigationContextType | undefined>(undef
 export const useNavigation = () => {
   const context = useContext(NavigationContext);
   if (!context) {
-    throw new Error('useNavigation must be used within a NavigationProvider');
+    throw new Error("useNavigation must be used within a NavigationProvider");
   }
   return context;
 };
@@ -29,14 +29,10 @@ export const NavigationProvider: React.FC<NavigationProviderProps> = ({ children
 
   const navigationValue = {
     navigate,
-    goBack
+    goBack,
   };
 
   const value = React.useMemo(() => navigationValue, [navigate]);
 
-  return (
-    <NavigationContext.Provider value={value}>
-      {children}
-    </NavigationContext.Provider>
-  );
+  return <NavigationContext.Provider value={value}>{children}</NavigationContext.Provider>;
 };

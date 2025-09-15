@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 
 interface CardProps {
   className?: string;
@@ -26,31 +25,25 @@ interface CardDescriptionProps {
   children: React.ReactNode;
 }
 
-export const Card: React.FC<CardProps> = ({ className = '', children }) => {
+export const Card: React.FC<CardProps> = ({ className = "", children }) => {
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 ${className}`}
+    >
       {children}
     </div>
   );
 };
 
-export const CardHeader: React.FC<CardHeaderProps> = ({ className = '', children }) => {
-  return (
-    <div className={`p-6 ${className}`}>
-      {children}
-    </div>
-  );
+export const CardHeader: React.FC<CardHeaderProps> = ({ className = "", children }) => {
+  return <div className={`p-6 ${className}`}>{children}</div>;
 };
 
-export const CardContent: React.FC<CardContentProps> = ({ className = '', children }) => {
-  return (
-    <div className={`p-6 pt-0 ${className}`}>
-      {children}
-    </div>
-  );
+export const CardContent: React.FC<CardContentProps> = ({ className = "", children }) => {
+  return <div className={`p-6 pt-0 ${className}`}>{children}</div>;
 };
 
-export const CardTitle: React.FC<CardTitleProps> = ({ className = '', children }) => {
+export const CardTitle: React.FC<CardTitleProps> = ({ className = "", children }) => {
   return (
     <h3 className={`text-lg font-semibold text-gray-900 dark:text-white ${className}`}>
       {children}
@@ -58,10 +51,6 @@ export const CardTitle: React.FC<CardTitleProps> = ({ className = '', children }
   );
 };
 
-export const CardDescription: React.FC<CardDescriptionProps> = ({ className = '', children }) => {
-  return (
-    <p className={`text-sm text-gray-600 dark:text-gray-400 ${className}`}>
-      {children}
-    </p>
-  );
+export const CardDescription: React.FC<CardDescriptionProps> = ({ className = "", children }) => {
+  return <p className={`text-sm text-gray-600 dark:text-gray-400 ${className}`}>{children}</p>;
 };

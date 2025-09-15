@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
 const A11yHelper: React.FC = () => {
   return (
-    <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px' }}>
+    <div aria-hidden="true" style={{ position: "absolute", left: "-10000px" }}>
       Accessibility helper component
     </div>
   );

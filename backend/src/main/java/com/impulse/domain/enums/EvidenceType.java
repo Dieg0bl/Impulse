@@ -7,17 +7,17 @@ public enum EvidenceType {
     /**
      * Imagen/fotografía
      */
-    IMAGE("Image", "image/*", 5 * 1024 * 1024), // 5MB
+        IMAGE("Image", "image/*", 5L * 1024 * 1024), // 5MB
 
     /**
      * Video
      */
-    VIDEO("Video", "video/*", 50 * 1024 * 1024), // 50MB
+        VIDEO("Video", "video/*", 50L * 1024 * 1024), // 50MB
 
     /**
      * Documento de texto
      */
-    DOCUMENT("Document", "application/pdf,application/msword", 10 * 1024 * 1024), // 10MB
+        DOCUMENT("Document", "application/pdf,application/msword", 10L * 1024 * 1024), // 10MB
 
     /**
      * Enlace web/URL

@@ -1,6 +1,8 @@
 package com.impulse.infrastructure.persistence.repositories;
 
-import com.impulse.domain.model.User;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,8 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import com.impulse.domain.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -17,14 +18,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // Buscar usuario por email
     Optional<User> findByEmail(String email);
 
-    // Buscar usuario por username
-    Optional<User> findByUsername(String username);
+    // Buscar usuario por username (usando email como username)
+    default Optional<User> findByUsername(String username) {
+        return findByEmail(username);
+    }
 
     // Verificar si existe email
     boolean existsByEmail(String email);
 
-    // Verificar si existe username
-    boolean existsByUsername(String username);
+    // Verificar si existe username (usando email como username)
+    default boolean existsByUsername(String username) {
+        return existsByEmail(username);
+    }
 
     // Buscar usuarios por rol
     Page<User> findByRole(String role, Pageable pageable);

@@ -1,6 +1,5 @@
 package com.impulse.infrastructure.persistence.repositories;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -12,10 +11,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.impulse.domain.model.User;
-import com.impulse.domain.model.Validator;
 import com.impulse.domain.enums.ValidatorSpecialty;
 import com.impulse.domain.enums.ValidatorStatus;
+import com.impulse.domain.model.User;
+import com.impulse.domain.model.Validator;
 
 /**
  * Repository interface for Validator entity operations
@@ -41,33 +40,32 @@ public interface ValidatorRepository extends JpaRepository<Validator, Long> {
     /**
      * Find active validators
      */
-    @Query("SELECT v FROM Validator v WHERE v.status = 'ACTIVE' AND v.isAvailable = true")
+    @Query("SELECT v FROM Validator v WHERE v.status = 'ACTIVE'")
     List<Validator> findActiveValidators();
 
     /**
      * Find validators by specialty
      */
-    @Query("SELECT v FROM Validator v WHERE :specialty MEMBER OF v.specialties AND v.status = 'ACTIVE'")
+    @Query("SELECT v FROM Validator v WHERE v.specialty = :specialty AND v.status = 'ACTIVE'")
     List<Validator> findBySpecialty(@Param("specialty") ValidatorSpecialty specialty);
 
     /**
-     * Find validators with minimum rating
+     * Find validators with minimum accuracy score
      */
-    @Query("SELECT v FROM Validator v WHERE v.averageRating >= :minRating AND v.status = 'ACTIVE'")
-    List<Validator> findByMinimumRating(@Param("minRating") BigDecimal minRating);
+    @Query("SELECT v FROM Validator v WHERE v.accuracyScore >= :minScore AND v.status = 'ACTIVE'")
+    List<Validator> findByMinimumRating(@Param("minScore") Double minScore);
 
     /**
      * Find available validators for assignment
      */
-    @Query("SELECT v FROM Validator v WHERE v.isAvailable = true AND v.status = 'ACTIVE' " +
-           "AND v.currentCapacity < v.maxCapacity")
+    @Query("SELECT v FROM Validator v WHERE v.status = 'ACTIVE' AND v.isCertified = true")
     List<Validator> findAvailableValidators();
 
     /**
-     * Find validators by certification level
+     * Find validators by certification status
      */
-    @Query("SELECT v FROM Validator v WHERE v.certificationLevel = :level AND v.status = 'ACTIVE'")
-    List<Validator> findByCertificationLevel(@Param("level") String level);
+    @Query("SELECT v FROM Validator v WHERE v.isCertified = :certified AND v.status = 'ACTIVE'")
+    List<Validator> findByCertificationLevel(@Param("certified") Boolean certified);
 
     /**
      * Count active validators
@@ -84,15 +82,16 @@ public interface ValidatorRepository extends JpaRepository<Validator, Long> {
      * Search validators by name or email
      */
     @Query("SELECT v FROM Validator v WHERE " +
-           "LOWER(v.user.username) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+           "LOWER(v.user.firstName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+           "LOWER(v.user.lastName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(v.user.email) LIKE LOWER(CONCAT('%', :query, '%'))")
     Page<Validator> searchValidators(@Param("query") String query, Pageable pageable);
 
     /**
-     * Find top rated validators
+     * Find top rated validators (by accuracy score)
      */
-    @Query("SELECT v FROM Validator v WHERE v.averageRating IS NOT NULL " +
-           "ORDER BY v.averageRating DESC")
+    @Query("SELECT v FROM Validator v WHERE v.accuracyScore IS NOT NULL " +
+           "ORDER BY v.accuracyScore DESC")
     List<Validator> findTopRatedValidators(Pageable pageable);
 
     /**
@@ -103,10 +102,10 @@ public interface ValidatorRepository extends JpaRepository<Validator, Long> {
                                            @Param("endDate") LocalDateTime endDate);
 
     /**
-     * Update validator availability
+     * Update validator certification status
      */
-    @Query("UPDATE Validator v SET v.isAvailable = :available WHERE v.id = :validatorId")
-    void updateAvailability(@Param("validatorId") Long validatorId, @Param("available") Boolean available);
+    @Query("UPDATE Validator v SET v.isCertified = :certified WHERE v.id = :validatorId")
+    void updateAvailability(@Param("validatorId") Long validatorId, @Param("certified") Boolean certified);
 
     /**
      * Get validator statistics

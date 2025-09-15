@@ -21,6 +21,9 @@ import java.util.HashMap;
 @Configuration
 public class BillingConfig {
 
+    // Constantes para evitar duplicación de literales
+    private static final String MONTHLY_INTERVAL = "month";
+
     @Value("${stripe.secret.key:sk_test_dummy}")
     private String stripeSecretKey;
 
@@ -72,7 +75,7 @@ public class BillingConfig {
                 "basic",
                 "Plan Básico",
                 new BigDecimal("9.99"),
-                "month",
+                    MONTHLY_INTERVAL,
                 "Acceso básico a la plataforma"
             ));
 
@@ -81,7 +84,7 @@ public class BillingConfig {
                 "premium",
                 "Plan Premium",
                 new BigDecimal("19.99"),
-                "month",
+                    MONTHLY_INTERVAL,
                 "Acceso completo con funciones avanzadas"
             ));
 
@@ -90,7 +93,7 @@ public class BillingConfig {
                 "coach",
                 "Plan Coach",
                 new BigDecimal("49.99"),
-                "month",
+                    MONTHLY_INTERVAL,
                 "Plan para coaches con herramientas profesionales"
             ));
         }

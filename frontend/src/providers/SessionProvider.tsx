@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface SessionData {
   user: any;
@@ -17,7 +17,7 @@ const SessionContext = createContext<SessionContextType | undefined>(undefined);
 export const useSession = () => {
   const context = useContext(SessionContext);
   if (!context) {
-    throw new Error('useSession must be used within a SessionProvider');
+    throw new Error("useSession must be used within a SessionProvider");
   }
   return context;
 };
@@ -29,33 +29,29 @@ interface SessionProviderProps {
 export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
   const [session, setSession] = useState<SessionData>({
     user: null,
-    token: localStorage.getItem('token'),
-    isAuthenticated: !!localStorage.getItem('token')
+    token: localStorage.getItem("token"),
+    isAuthenticated: !!localStorage.getItem("token"),
   });
 
   const login = (token: string, user: any) => {
-    localStorage.setItem('token', token);
+    localStorage.setItem("token", token);
     setSession({
       user,
       token,
-      isAuthenticated: true
+      isAuthenticated: true,
     });
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setSession({
       user: null,
       token: null,
-      isAuthenticated: false
+      isAuthenticated: false,
     });
   };
 
   const contextValue = React.useMemo(() => ({ session, login, logout }), [session]);
 
-  return (
-    <SessionContext.Provider value={contextValue}>
-      {children}
-    </SessionContext.Provider>
-  );
+  return <SessionContext.Provider value={contextValue}>{children}</SessionContext.Provider>;
 };

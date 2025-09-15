@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const Evidences: React.FC = () => {
   return (
@@ -6,7 +6,7 @@ const Evidences: React.FC = () => {
       <h2>Evidencias</h2>
       <p>Subir evidencia (texto + 1 imagen)</p>
     </div>
-  )
-}
+  );
+};
 
-export default Evidences
+export default Evidences;

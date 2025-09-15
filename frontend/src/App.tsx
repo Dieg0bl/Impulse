@@ -1,12 +1,12 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Layout from './components/Layout';
-import UserList from './components/UserList';
-import BookingForm from './components/BookingForm';
-import Challenges from './pages/Challenges';
-import Pricing from './pages/Pricing';
-import ErrorBoundary from './components/ErrorBoundary';
-import './assets/styles.css';
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import UserList from "./components/UserList";
+import BookingForm from "./components/BookingForm";
+import Challenges from "./pages/Challenges";
+import Pricing from "./pages/Pricing";
+import ErrorBoundary from "./components/ErrorBoundary";
+import "./assets/styles.css";
 
 const App: React.FC = () => {
   return (

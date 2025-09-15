@@ -2,7 +2,6 @@ package com.impulse.infrastructure.persistence.repositories;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,10 +10,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.impulse.domain.model.ValidatorAssignment;
-import com.impulse.domain.model.Validator;
-import com.impulse.domain.model.Evidence;
+import com.impulse.domain.enums.ValidationPriority;
 import com.impulse.domain.model.AssignmentStatus;
+import com.impulse.domain.model.Evidence;
+import com.impulse.domain.model.Validator;
+import com.impulse.domain.model.ValidatorAssignment;
 
 /**
  * Repository interface for ValidatorAssignment entity operations
@@ -69,15 +69,14 @@ public interface ValidatorAssignmentRepository extends JpaRepository<ValidatorAs
     /**
      * Find assignments by priority range
      */
-    @Query("SELECT va FROM ValidatorAssignment va WHERE va.priority BETWEEN :minPriority AND :maxPriority " +
+    @Query("SELECT va FROM ValidatorAssignment va WHERE va.priority IN :priorities " +
            "ORDER BY va.priority DESC, va.deadline ASC")
-    List<ValidatorAssignment> findByPriorityRange(@Param("minPriority") Integer minPriority,
-                                                  @Param("maxPriority") Integer maxPriority);
+    List<ValidatorAssignment> findByPriorityRange(@Param("priorities") List<ValidationPriority> priorities);
 
     /**
      * Find high priority assignments
      */
-    @Query("SELECT va FROM ValidatorAssignment va WHERE va.priority >= 8 " +
+    @Query("SELECT va FROM ValidatorAssignment va WHERE va.priority IN ('HIGH', 'CRITICAL', 'URGENT') " +
            "AND va.status IN ('PENDING', 'IN_PROGRESS') ORDER BY va.priority DESC")
     List<ValidatorAssignment> findHighPriorityAssignments();
 

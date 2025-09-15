@@ -107,10 +107,10 @@ public interface IdempotencyTokenRepository extends JpaRepository<IdempotencyTok
                                 @Param("currentTime") LocalDateTime currentTime);
 
     /**
-     * Find tokens by resource ID
+     * Find tokens by operation data (alternative to resourceId)
      */
-    @Query("SELECT it FROM IdempotencyToken it WHERE it.resourceId = :resourceId")
-    List<IdempotencyToken> findByResourceId(@Param("resourceId") String resourceId);
+    @Query("SELECT it FROM IdempotencyToken it WHERE it.operationData = :operationData")
+    List<IdempotencyToken> findByOperationData(@Param("operationData") String operationData);
 
     /**
      * Find latest token for user and operation

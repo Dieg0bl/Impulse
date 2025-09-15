@@ -23,8 +23,8 @@ import {
   ReportReason,
   ReportPriority,
   ActionTaken,
-  ContentType
-} from './enums';// User DTOs
+  ContentType,
+} from "./enums"; // User DTOs
 export interface UserResponseDto {
   id: number;
   uuid: string;
@@ -303,7 +303,7 @@ export interface PageRequestDto {
   page: number;
   size: number;
   sort?: string;
-  direction?: 'ASC' | 'DESC';
+  direction?: "ASC" | "DESC";
 }
 
 export interface PageResponseDto<T> {

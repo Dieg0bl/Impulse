@@ -1,13 +1,21 @@
 package com.impulse.application.dto.challenge;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import com.impulse.domain.enums.ChallengeCategory;
 import com.impulse.domain.enums.ChallengeDifficulty;
 import com.impulse.domain.enums.ValidationType;
-import jakarta.validation.constraints.*;
 
-import java.time.LocalDateTime;
-import java.math.BigDecimal;
-import java.util.List;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class ChallengeCreateRequestDto {
 
@@ -65,6 +73,9 @@ public class ChallengeCreateRequestDto {
     private Integer maxTeamSize;
 
     // Constructors
+    /**
+     * Empty constructor required for frameworks and serialization.
+     */
     public ChallengeCreateRequestDto() {}
 
     // Getters and Setters
