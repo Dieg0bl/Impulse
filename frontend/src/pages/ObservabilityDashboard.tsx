@@ -1,33 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Card } from "../components/ui/Card";
-import { Badge } from "../components/ui/Badge";
 import AdminConfigPanel from "../components/AdminConfigPanel";
+import PageHeader from "../components/PageHeader";
 import {
 	Activity,
 	AlertTriangle,
 	CheckCircle,
 	Clock,
-	Monitor,
-	Server,
-	TrendingUp,
-	Settings,
-	BarChart3,
-	LineChart,
-	Users,
-	Download
-} from "lucide-react";
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Card } from "../components/ui/Card";
-import { Badge } from "../components/ui/Badge";
-import AdminConfigPanel from "../components/AdminConfigPanel";
-import {
-	Activity,
-	AlertTriangle,
-	CheckCircle,
-	Clock,
-	Monitor,
 	Server,
 	TrendingUp,
 	Settings,
@@ -189,311 +168,397 @@ const ObservabilityDashboard: React.FC = () => {
 
 	const healthStatus = getHealthStatus();
 
+	// Derived UI constants (avoid nested ternaries in JSX for readability & lint compliance)
+	let healthBadgeLabel = 'Crítico';
+	let healthBadgeClasses = 'bg-red-100 text-red-800 border border-red-200';
+
+	if (healthStatus === 'healthy') {
+		healthBadgeLabel = 'Saludable';
+		healthBadgeClasses = 'bg-green-100 text-green-800 border border-green-200';
+	} else if (healthStatus === 'warning') {
+		healthBadgeLabel = 'Advertencia';
+		healthBadgeClasses = 'bg-yellow-100 text-yellow-800 border border-yellow-200';
+	}
+
+	const getResponseTimeColor = () => {
+		const color = getMetricColor(metrics.responseTime, 'response');
+		if (color.includes('red')) return 'text-red-600';
+		if (color.includes('yellow')) return 'text-yellow-600';
+		return 'text-blue-900';
+	};
+
+	const getErrorRateColor = () => {
+		const color = getMetricColor(metrics.errorRate, 'error');
+		if (color.includes('red')) return 'text-red-600';
+		if (color.includes('yellow')) return 'text-yellow-600';
+		return 'text-yellow-900';
+	};
+
+	const tabs = [
+		{ id: 'overview', label: 'Resumen', icon: BarChart3 },
+		{ id: 'errors', label: 'Errores', icon: AlertTriangle },
+		{ id: 'performance', label: 'Rendimiento', icon: TrendingUp },
+		{ id: 'config', label: 'Configuración', icon: Settings }
+	] as const;
+
 	return (
-		<div className="min-h-screen bg-gray-900 text-white p-6">
-			<div className="max-w-7xl mx-auto space-y-6">
-				{/* Header */}
-				<motion.div
-					initial={{ opacity: 0, y: -20 }}
-					animate={{ opacity: 1, y: 0 }}
-					className="flex items-center justify-between"
-				>
-					<div className="flex items-center space-x-4">
-						<div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-							<Monitor className="w-5 h-5 text-white" />
+		<div className="bg-gradient-to-br from-gray-50 via-white to-blue-50 min-h-screen">
+			<div className="container-app pt-10 pb-24 space-y-8 max-w-7xl mx-auto">
+				<PageHeader
+					title={
+						<span className="font-extrabold text-primary-700 tracking-tight">
+							Observabilidad del Sistema
+						</span>
+					}
+					subtitle="Monitoreo en tiempo real, métricas de rendimiento y configuración avanzada de la plataforma"
+					actions={
+						<div className="flex items-center gap-4">
+							<div className="flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 shadow-sm text-sm font-medium text-gray-700" aria-live="polite">
+								<span className={`inline-flex w-2 h-2 rounded-full ${isLive ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
+								{isLive ? 'En vivo' : 'Pausado'} • {lastUpdate.toLocaleTimeString()}
+							</div>
+							<button
+								onClick={() => setIsLive(!isLive)}
+								className={`px-6 py-2 rounded-xl font-semibold transition-all duration-200 ${
+									isLive
+										? 'bg-white/80 border border-primary-200 text-primary-700 hover:bg-white shadow-sm backdrop-blur-sm'
+										: 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+								}`}
+							>
+								{isLive ? 'Pausar' : 'Activar'}
+							</button>
 						</div>
-						<div>
-							<h1 className="text-2xl font-bold text-white">Panel de Observabilidad</h1>
-							<p className="text-gray-400">Monitoreo del sistema en tiempo real</p>
-						</div>
-					</div>
+					}
+				/>
 
-					<div className="flex items-center space-x-4">
-						<div className="flex items-center space-x-2">
-							<div className={`w-2 h-2 rounded-full ${isLive ? "bg-green-400" : "bg-gray-400"}`}></div>
-							<span className="text-sm text-gray-400">
-								{isLive ? "En vivo" : "Pausado"} • {lastUpdate.toLocaleTimeString()}
-							</span>
+				<section aria-labelledby="health-heading" className="space-y-6">
+					<h2 id="health-heading" className="sr-only">Estado del sistema</h2>
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.5 }}
+					>
+						<div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200">
+							<div className="p-8">
+								<div className="flex items-center justify-between mb-6 flex-wrap gap-4">
+									<h3 className="text-2xl font-bold text-gray-900">Estado del Sistema</h3>
+									<div className={`px-4 py-2 rounded-xl font-semibold text-sm ${healthBadgeClasses}`}>
+										{healthBadgeLabel}
+									</div>
+								</div>
+								<div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+									<div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-xl border border-green-200">
+										<Activity className="w-8 h-8 mx-auto mb-3 text-green-600" />
+										<div className="text-2xl font-bold text-green-900 mb-1">{formatUptime(metrics.uptime)}</div>
+										<p className="text-sm font-medium text-green-700">Disponibilidad</p>
+									</div>
+									<div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+										<Clock className="w-8 h-8 mx-auto mb-3 text-blue-600" />
+										<div className={`text-2xl font-bold mb-1 ${getResponseTimeColor()}`}>
+											{Math.round(metrics.responseTime)}ms
+										</div>
+										<p className="text-sm font-medium text-blue-700">Tiempo Respuesta</p>
+									</div>
+									<div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-xl border border-yellow-200">
+										<AlertTriangle className="w-8 h-8 mx-auto mb-3 text-yellow-600" />
+										<div className={`text-2xl font-bold mb-1 ${getErrorRateColor()}`}>
+											{metrics.errorRate.toFixed(1)}%
+										</div>
+										<p className="text-sm font-medium text-yellow-700">Tasa de Error</p>
+									</div>
+									<div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+										<Users className="w-8 h-8 mx-auto mb-3 text-purple-600" />
+										<div className="text-2xl font-bold text-purple-900 mb-1">{metrics.activeUsers}</div>
+										<p className="text-sm font-medium text-purple-700">Usuarios Activos</p>
+									</div>
+								</div>
+							</div>
 						</div>
-						<button
-							onClick={() => setIsLive(!isLive)}
-							className={`px-3 py-1 rounded text-sm transition-colors ${
-								isLive ? "bg-green-600 hover:bg-green-500" : "bg-gray-600 hover:bg-gray-500"
-							}`}
-						>
-							{isLive ? "Pausar" : "Activar"}
-						</button>
-					</div>
-				</motion.div>
+					</motion.div>
+				</section>
 
-				{/* System Health Status */}
-				<motion.div
-					initial={{ opacity: 0, scale: 0.95 }}
-					animate={{ opacity: 1, scale: 1 }}
-					transition={{ delay: 0.1 }}
-				>
-					<Card>
-						<div className="p-6">
-							<div className="flex items-center justify-between mb-4">
-								<h2 className="text-lg font-semibold text-white">Estado del Sistema</h2>
-								<Badge
-									variant={healthStatus === "healthy" ? "success" : healthStatus === "warning" ? "warning" : "error"}
-									size="lg"
+				<nav aria-label="Secciones de observabilidad" className="pt-2">
+					<div role="tablist" aria-orientation="horizontal" className="flex gap-2 bg-white/80 backdrop-blur-sm rounded-2xl p-2 shadow-lg border border-gray-200 overflow-x-auto">
+						{tabs.map(tab => {
+							const selected = activeTab === tab.id;
+							return (
+								<button
+									key={tab.id}
+									role="tab"
+									aria-selected={selected}
+									aria-controls={`panel-${tab.id}`}
+									id={`tab-${tab.id}`}
+									onClick={() => setActiveTab(tab.id)}
+									className={`flex items-center gap-3 px-6 py-3 rounded-xl text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 transition-all duration-200 whitespace-nowrap ${
+										selected
+											? 'bg-primary-600 text-white shadow-lg transform scale-105'
+											: 'text-gray-600 hover:text-gray-900 hover:bg-white/60 hover:shadow-md'
+									}`}
 								>
-									{healthStatus === "healthy" ? "Saludable" : healthStatus === "warning" ? "Advertencia" : "Crítico"}
-								</Badge>
-							</div>
+									<tab.icon className="w-5 h-5" />
+									<span>{tab.label}</span>
+								</button>
+							);
+						})}
+					</div>
+				</nav>
 
-							<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-								<div className="text-center p-4 bg-gray-800/50 rounded-lg">
-									<Activity className="w-6 h-6 mx-auto mb-2 text-green-400" />
-									<div className="text-2xl font-bold text-white">{formatUptime(metrics.uptime)}</div>
-									<div className="text-sm text-gray-400">Uptime</div>
-								</div>
-								<div className="text-center p-4 bg-gray-800/50 rounded-lg">
-									<Clock className="w-6 h-6 mx-auto mb-2 text-blue-400" />
-									<div className={`text-2xl font-bold ${getMetricColor(metrics.responseTime, "response")}`}>
-										{Math.round(metrics.responseTime)}ms
-									</div>
-									<div className="text-sm text-gray-400">Tiempo Respuesta</div>
-								</div>
-								<div className="text-center p-4 bg-gray-800/50 rounded-lg">
-									<AlertTriangle className="w-6 h-6 mx-auto mb-2 text-yellow-400" />
-									<div className={`text-2xl font-bold ${getMetricColor(metrics.errorRate, "error")}`}>
-										{metrics.errorRate.toFixed(1)}%
-									</div>
-									<div className="text-sm text-gray-400">Tasa de Error</div>
-								</div>
-								<div className="text-center p-4 bg-gray-800/50 rounded-lg">
-									<Users className="w-6 h-6 mx-auto mb-2 text-purple-400" />
-									<div className="text-2xl font-bold text-white">{metrics.activeUsers}</div>
-									<div className="text-sm text-gray-400">Usuarios Activos</div>
-								</div>
-							</div>
-						</div>
-					</Card>
-				</motion.div>
+				<div role="tabpanel" id={`panel-${activeTab}`} aria-labelledby={`tab-${activeTab}`} className="mt-8">
+					{activeTab === 'overview' && (
+						<div className="space-y-8">
+							<motion.div
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.5, delay: 0.1 }}
+							>
+								<div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200">
+									<div className="p-8 space-y-6">
+										<h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+											<Server className="w-6 h-6 text-blue-500" />
+											Uso de Recursos del Servidor
+										</h3>
+										<div className="grid gap-8 md:grid-cols-3">
+											{[
+												{ label: 'CPU', value: metrics.cpuUsage, type: 'cpu' as const, color: 'blue', icon: '🔥' },
+												{ label: 'Memoria', value: metrics.memoryUsage, type: 'memory' as const, color: 'purple', icon: '💾' },
+												{ label: 'Disco', value: metrics.diskUsage, type: 'disk' as const, color: 'indigo', icon: '💿' }
+											].map(m => {
+												let barColor = 'bg-green-500';
+												let textColor = 'text-green-600';
+												let bgGradient = 'from-green-50 to-green-100';
+												let borderColor = 'border-green-200';
 
-				{/* Tab Navigation */}
-				<div className="flex space-x-1 bg-gray-800 rounded-lg p-1">
-					{[
-						{ id: "overview", label: "Resumen", icon: BarChart3 },
-						{ id: "errors", label: "Errores", icon: AlertTriangle },
-						{ id: "performance", label: "Rendimiento", icon: TrendingUp },
-						{ id: "config", label: "Configuración", icon: Settings }
-					].map((tab) => (
-						<button
-							key={tab.id}
-							onClick={() => setActiveTab(tab.id as any)}
-							className={`flex items-center space-x-2 px-4 py-2 rounded-md transition-colors ${
-								activeTab === tab.id
-									? "bg-blue-600 text-white"
-									: "text-gray-400 hover:text-white hover:bg-gray-700"
-							}`}
-						>
-							<tab.icon className="w-4 h-4" />
-							<span>{tab.label}</span>
-						</button>
-					))}
-				</div>
+												if (m.type === 'disk') {
+													barColor = 'bg-indigo-500';
+													textColor = 'text-indigo-600';
+													bgGradient = 'from-indigo-50 to-indigo-100';
+													borderColor = 'border-indigo-200';
+												} else if (m.value > 80) {
+													barColor = 'bg-red-500';
+													textColor = 'text-red-600';
+													bgGradient = 'from-red-50 to-red-100';
+													borderColor = 'border-red-200';
+												} else if (m.value > 60) {
+													barColor = 'bg-yellow-500';
+													textColor = 'text-yellow-600';
+													bgGradient = 'from-yellow-50 to-yellow-100';
+													borderColor = 'border-yellow-200';
+												}
 
-				{/* Tab Content */}
-				<motion.div
-					key={activeTab}
-					initial={{ opacity: 0, x: 20 }}
-					animate={{ opacity: 1, x: 0 }}
-					transition={{ duration: 0.3 }}
-				>
-					{activeTab === "overview" && (
-						<div className="space-y-6">
-							{/* Resource Usage */}
-							<Card>
-								<div className="p-6">
-									<h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-										<Server className="w-5 h-5 mr-2 text-blue-400" />
-										Uso de Recursos
-									</h3>
-
-									<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-										<div>
-											<div className="flex justify-between text-sm mb-2">
-												<span className="text-gray-400">CPU</span>
-												<span className={getMetricColor(metrics.cpuUsage, "cpu")}>
-													{metrics.cpuUsage.toFixed(1)}%
-												</span>
-											</div>
-											<div className="w-full bg-gray-700 rounded-full h-2">
-												<div
-													className={`h-2 rounded-full transition-all duration-500 ${
-														metrics.cpuUsage > 80 ? "bg-red-500" :
-														metrics.cpuUsage > 60 ? "bg-yellow-500" : "bg-green-500"
-													}`}
-													style={{ width: `${Math.min(metrics.cpuUsage, 100)}%` }}
-												></div>
-											</div>
-										</div>
-										<div>
-											<div className="flex justify-between text-sm mb-2">
-												<span className="text-gray-400">Memoria</span>
-												<span className={getMetricColor(metrics.memoryUsage, "memory")}>
-													{metrics.memoryUsage.toFixed(1)}%
-												</span>
-											</div>
-											<div className="w-full bg-gray-700 rounded-full h-2">
-												<div
-													className={`h-2 rounded-full transition-all duration-500 ${
-														metrics.memoryUsage > 80 ? "bg-red-500" :
-														metrics.memoryUsage > 60 ? "bg-yellow-500" : "bg-green-500"
-													}`}
-													style={{ width: `${Math.min(metrics.memoryUsage, 100)}%` }}
-												></div>
-											</div>
-										</div>
-										<div>
-											<div className="flex justify-between text-sm mb-2">
-												<span className="text-gray-400">Disco</span>
-												<span className="text-blue-400">{metrics.diskUsage.toFixed(1)}%</span>
-											</div>
-											<div className="w-full bg-gray-700 rounded-full h-2">
-												<div
-													className="h-2 bg-blue-500 rounded-full transition-all duration-500"
-													style={{ width: `${Math.min(metrics.diskUsage, 100)}%` }}
-												></div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</Card>
-
-							{/* Performance Chart */}
-							<Card>
-								<div className="p-6">
-									<h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-										<LineChart className="w-5 h-5 mr-2 text-green-400" />
-										Rendimiento (Últimas 24h)
-									</h3>
-
-									<div className="h-64">
-										<ResponsiveContainer width="100%" height="100%">
-											<RechartsLine data={performanceData}>
-												<CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-												<XAxis dataKey="time" stroke="#9CA3AF" />
-												<YAxis stroke="#9CA3AF" />
-												<Tooltip
-													contentStyle={{
-														backgroundColor: '#1F2937',
-														border: '1px solid #374151',
-														borderRadius: '8px'
-													}}
-												/>
-												<Line
-													type="monotone"
-													dataKey="responseTime"
-													stroke="#3B82F6"
-													strokeWidth={2}
-													name="Tiempo Respuesta (ms)"
-												/>
-												<Line
-													type="monotone"
-													dataKey="requests"
-													stroke="#10B981"
-													strokeWidth={2}
-													name="Peticiones/min"
-												/>
-											</RechartsLine>
-										</ResponsiveContainer>
-									</div>
-								</div>
-							</Card>
-						</div>
-					)}
-
-					{activeTab === "errors" && (
-						<Card>
-							<div className="p-6">
-								<div className="flex items-center justify-between mb-4">
-									<h3 className="text-lg font-semibold text-white flex items-center">
-										<AlertTriangle className="w-5 h-5 mr-2 text-red-400" />
-										Logs de Errores Recientes
-									</h3>
-									<button className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-500 transition-colors text-sm">
-										<Download className="w-4 h-4 inline mr-1" />
-										Exportar
-									</button>
-								</div>
-
-								<div className="space-y-3">
-									{errorLogs.map((log) => (
-										<div key={log.id} className="p-4 bg-gray-800/50 rounded-lg border-l-4 border-red-500">
-											<div className="flex items-start justify-between">
-												<div className="flex items-start space-x-3">
-													{getLevelIcon(log.level)}
-													<div className="flex-1">
-														<div className="flex items-center space-x-2 mb-1">
-															<span className="font-medium text-white">{log.message}</span>
-															<Badge variant="error" size="sm">
-																{log.statusCode}
-															</Badge>
+												return (
+													<div key={m.label} className={`p-6 bg-gradient-to-br ${bgGradient} rounded-xl border ${borderColor}`}>
+														<div className="space-y-4">
+															<div className="flex items-center justify-between">
+																<span className="text-lg font-semibold text-gray-900">{m.icon} {m.label}</span>
+																<span className={`text-2xl font-bold ${textColor}`}>{m.value.toFixed(1)}%</span>
+															</div>
+															<div className="space-y-2">
+																<div className="h-3 rounded-full bg-white/80 border border-gray-200 overflow-hidden shadow-inner">
+																	<div
+																		className={`h-3 rounded-full transition-all duration-1000 ease-out ${barColor}`}
+																		style={{ width: `${Math.min(m.value, 100)}%` }}
+																	/>
+																</div>
+																<p className="text-sm text-gray-600 font-medium">
+																	{(() => {
+																		if (m.value > 80) return 'Uso Alto';
+																		if (m.value > 60) return 'Uso Moderado';
+																		return 'Uso Normal';
+																	})()}
+																</p>
+															</div>
 														</div>
-														<div className="text-sm text-gray-400">
-															{log.method} {log.path} • {formatDuration(log.duration)}
-														</div>
-														{log.userAgent && (
-															<div className="text-xs text-gray-500 mt-1">{log.userAgent}</div>
-														)}
 													</div>
-												</div>
-												<div className="text-xs text-gray-400">
-													{log.timestamp.toLocaleTimeString()}
-												</div>
-											</div>
+												);
+											})}
 										</div>
-									))}
+									</div>
 								</div>
-							</div>
-						</Card>
+							</motion.div>
+
+							<motion.div
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.5, delay: 0.2 }}
+							>
+								<div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200">
+									<div className="p-8 space-y-6">
+										<h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+											<LineChart className="w-6 h-6 text-green-500" />
+											Rendimiento en Tiempo Real
+											<span className="text-sm font-normal text-gray-500">(Últimas 24 horas)</span>
+										</h3>
+										<div className="h-80 bg-gradient-to-br from-gray-50 to-white rounded-xl p-4 border border-gray-100">
+											<ResponsiveContainer width="100%" height="100%">
+												<RechartsLine data={performanceData}>
+													<CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+													<XAxis dataKey="time" stroke="#6B7280" fontSize={12} />
+													<YAxis stroke="#6B7280" fontSize={12} />
+													<Tooltip
+														contentStyle={{
+															backgroundColor: 'white',
+															border: '1px solid #D1D5DB',
+															borderRadius: '12px',
+															boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+														}}
+													/>
+													<Line
+														type="monotone"
+														dataKey="responseTime"
+														stroke="#3B82F6"
+														strokeWidth={3}
+														name="Tiempo Respuesta (ms)"
+														dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
+													/>
+													<Line
+														type="monotone"
+														dataKey="requests"
+														stroke="#10B981"
+														strokeWidth={3}
+														name="Peticiones/min"
+														dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+													/>
+												</RechartsLine>
+											</ResponsiveContainer>
+										</div>
+									</div>
+								</div>
+							</motion.div>
+						</div>
 					)}
 
-					{activeTab === "performance" && (
-						<div className="space-y-6">
-							<Card>
-								<div className="p-6">
-									<h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-										<BarChart3 className="w-5 h-5 mr-2 text-purple-400" />
-										Métricas de Rendimiento
-									</h3>
+					{activeTab === 'errors' && (
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.5 }}
+						>
+							<div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200">
+								<div className="p-8 space-y-6">
+									<div className="flex items-center justify-between flex-wrap gap-4">
+										<h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+											<AlertTriangle className="w-6 h-6 text-red-500" />
+											Registro de Errores Recientes
+										</h3>
+										<button className="px-6 py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 inline-flex items-center gap-2">
+											<Download className="w-5 h-5" />
+											Exportar Logs
+										</button>
+									</div>
+									<ul className="space-y-4" aria-label="Lista de errores recientes">
+										{errorLogs.map(log => {
+											const getStatusCodeClasses = () => {
+												if (log.statusCode >= 500) return 'bg-red-100 text-red-800';
+												if (log.statusCode >= 400) return 'bg-yellow-100 text-yellow-800';
+												return 'bg-green-100 text-green-800';
+											};
 
-									<div className="h-64">
+											return (
+												<li key={log.id} className="group">
+													<div className="p-6 bg-gradient-to-r from-red-50 via-white to-red-50 rounded-xl border-l-4 border-red-500 hover:shadow-lg transition-all duration-200 hover:border-red-600">
+														<div className="flex items-start justify-between gap-4">
+															<div className="flex items-start gap-4">
+																<div className="p-2 bg-red-100 rounded-lg">
+																	{getLevelIcon(log.level)}
+																</div>
+																<div className="space-y-2">
+																	<div className="flex items-center gap-3 flex-wrap">
+																		<p className="text-lg font-semibold text-gray-900">{log.message}</p>
+																		<div className={`px-3 py-1 rounded-lg text-xs font-bold ${getStatusCodeClasses()}`}>
+																			{log.statusCode}
+																		</div>
+																	</div>
+																	<div className="space-y-1">
+																		<p className="text-sm text-gray-600 font-medium">
+																			<span className="font-semibold text-gray-900">{log.method}</span> {log.path}
+																		</p>
+																		<p className="text-sm text-gray-500">
+																			Duración: <span className="font-semibold">{formatDuration(log.duration)}</span>
+																		</p>
+																		{log.userAgent && (
+																			<p className="text-xs text-gray-400 max-w-md truncate" title={log.userAgent}>
+																				User Agent: {log.userAgent}
+																			</p>
+																		)}
+																	</div>
+																</div>
+															</div>
+															<div className="text-right">
+																<time className="text-sm font-medium text-gray-500" dateTime={log.timestamp.toISOString()}>
+																	{log.timestamp.toLocaleTimeString()}
+																</time>
+																<p className="text-xs text-gray-400 mt-1">
+																	{log.timestamp.toLocaleDateString()}
+																</p>
+															</div>
+														</div>
+													</div>
+												</li>
+											);
+										})}
+									</ul>
+								</div>
+							</div>
+						</motion.div>
+					)}
+
+					{activeTab === 'performance' && (
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.5 }}
+						>
+							<div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200">
+								<div className="p-8 space-y-6">
+									<h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+										<BarChart3 className="w-6 h-6 text-purple-500" />
+										Análisis de Rendimiento Detallado
+									</h3>
+									<div className="h-80 bg-gradient-to-br from-purple-50 to-white rounded-xl p-4 border border-purple-100">
 										<ResponsiveContainer width="100%" height="100%">
 											<BarChart data={performanceData}>
-												<CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-												<XAxis dataKey="time" stroke="#9CA3AF" />
-												<YAxis stroke="#9CA3AF" />
+												<CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+												<XAxis dataKey="time" stroke="#6B7280" fontSize={12} />
+												<YAxis stroke="#6B7280" fontSize={12} />
 												<Tooltip
 													contentStyle={{
-														backgroundColor: '#1F2937',
-														border: '1px solid #374151',
-														borderRadius: '8px'
+														backgroundColor: 'white',
+														border: '1px solid #D1D5DB',
+														borderRadius: '12px',
+														boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
 													}}
 												/>
-												<Bar dataKey="requests" fill="#8B5CF6" name="Peticiones" />
-												<Bar dataKey="errors" fill="#EF4444" name="Errores" />
+												<Bar dataKey="requests" fill="#8B5CF6" name="Peticiones" radius={[4, 4, 0, 0]} />
+												<Bar dataKey="errors" fill="#EF4444" name="Errores" radius={[4, 4, 0, 0]} />
 											</BarChart>
 										</ResponsiveContainer>
 									</div>
 								</div>
-							</Card>
-						</div>
+							</div>
+						</motion.div>
 					)}
 
-					{activeTab === "config" && (
-						<AdminConfigPanel variant="full" />
+					{activeTab === 'config' && (
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.5 }}
+						>
+							<div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200">
+								<div className="p-8">
+									<h3 className="text-2xl font-bold text-gray-900 flex items-center gap-3 mb-6">
+										<Settings className="w-6 h-6 text-indigo-500" />
+										Configuración del Sistema
+									</h3>
+									<AdminConfigPanel variant="full" />
+								</div>
+							</div>
+						</motion.div>
 					)}
-				</motion.div>
+				</div>
 			</div>
 		</div>
 	);
 };
 
 export default ObservabilityDashboard;
-interface SystemMetrics {

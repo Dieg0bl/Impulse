@@ -1,0 +1,255 @@
+/* Design Tokens 2025-2026 - Sistema moderno con soporte para temas y preferencias */
+
+:root {
+    /* === IMPULSE Identity Gradient === */
+  --grad-start: 102 126 234; /* #667eea */
+  --grad-end: 118 75 162;    /* #764ba2 */
+  --glass-alpha-strong: 0.85; /* for modals with text */
+
+  /* === Semantic Colors === */
+  --color-primary: 60 99 246;        /* #3C63F6 - Azul vibrante Material 3 */
+  --color-primary-light: 96 165 250; /* #60A5FA */
+  --color-primary-dark: 37 99 235;   /* #2563EB */
+
+  --color-secondary: 232 70 108;     /* #E8466C - Rosa expresivo */
+  --color-secondary-light: 251 113 133; /* #FB7185 */
+  --color-secondary-dark: 190 18 60; /* #BE123C */
+
+  --color-success: 16 185 129;       /* #10B981 - Verde confiable */
+  --color-warning: 245 158 11;       /* #F59E0B - Ámbar atención */
+  --color-error: 239 68 68;          /* #EF4444 - Rojo accesible */
+  --color-info: 59 130 246;          /* #3B82F6 - Azul información */
+
+  /* ===== SUPERFICIES TEMA CLARO ===== */
+  --surface-0: 255 255 255;          /* Fondo principal */
+  --surface-1: 248 250 252;          /* Sutil elevación */
+  --surface-2: 241 245 249;          /* Cards, componentes */
+  --surface-3: 226 232 240;          /* Bordes, divisores */
+
+  --text-1: 17 24 39;                /* #111827 - Texto principal */
+  --text-2: 75 85 99;                /* #4B5563 - Texto secundario */
+  --text-3: 156 163 175;             /* #9CA3AF - Texto deshabilitado */
+  --text-inverse: 255 255 255;       /* Texto sobre fondos oscuros */
+
+  /* ===== GLASS MORPHISM ACCESIBLE ===== */
+  --glass-bg: 255 255 255;           /* Base del vidrio */
+  --glass-alpha: 0.85;               /* Opacidad para contraste AA */
+  --glass-border: 255 255 255;       /* Color del borde */
+  --glass-border-alpha: 0.2;         /* Transparencia del borde */
+  --glass-blur: 12px;                /* Desenfoque backdrop */
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+
+  /* ===== TIPOGRAFÍA RESPONSIVA ===== */
+  --font-family-base: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+
+  --text-xs: clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);    /* 12-14px */
+  --text-sm: clamp(0.875rem, 0.8rem + 0.3vw, 1rem);       /* 14-16px */
+  --text-base: clamp(1rem, 0.9rem + 0.4vw, 1.125rem);     /* 16-18px */
+  --text-lg: clamp(1.125rem, 1rem + 0.5vw, 1.25rem);      /* 18-20px */
+  --text-xl: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);      /* 20-24px */
+  --text-2xl: clamp(1.5rem, 1.3rem + 0.8vw, 2rem);        /* 24-32px */
+  --text-3xl: clamp(1.875rem, 1.6rem + 1.2vw, 2.5rem);    /* 30-40px */
+  --text-4xl: clamp(2.25rem, 1.9rem + 1.5vw, 3rem);       /* 36-48px */
+
+  /* ===== ESPACIADO Y GEOMETRÍA ===== */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  --radius-none: 0;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
+
+  /* ===== ELEVACIÓN Y SOMBRAS ===== */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.15);
+
+  /* ===== ANIMACIONES Y MOTION ===== */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-standard: cubic-bezier(0.2, 0, 0.2, 1);         /* Material 3 */
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);         /* Salidas expresivas */
+  --ease-decelerated: cubic-bezier(0.05, 0.7, 0.1, 1);   /* Entradas naturales */
+
+  --duration-instant: 80ms;
+  --duration-fast: 120ms;
+  --duration-medium: 200ms;
+  --duration-slow: 280ms;
+  --duration-extra-slow: 400ms;
+
+  /* ===== CONTROLES Y COMPONENTES ===== */
+  --control-height-compact: 32px;      /* Modo compacto */
+  --control-height-normal: 40px;       /* Estándar */
+  --control-height-large: 48px;        /* Confortable */
+
+  --focus-ring: 0 0 0 2px rgba(var(--color-primary), 0.5);
+  --focus-ring-offset: 2px;
+
+  /* ===== Z-INDEX ESCALA ===== */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+}
+
+/* ===== TEMA OSCURO ===== */
+:root[data-theme="dark"] {
+  --surface-0: 15 23 42;              /* #0F172A - Slate 900 */
+  --surface-1: 30 41 59;              /* #1E293B - Slate 800 */
+  --surface-2: 51 65 85;              /* #334155 - Slate 700 */
+  --surface-3: 71 85 105;             /* #475569 - Slate 600 */
+
+  --text-1: 248 250 252;              /* #F8FAFC - Texto principal claro */
+  --text-2: 203 213 225;              /* #CBD5E1 - Texto secundario */
+  --text-3: 148 163 184;              /* #94A3B8 - Texto deshabilitado */
+  --text-inverse: 15 23 42;           /* Texto sobre fondos claros */
+
+  --glass-bg: 30 41 59;               /* Base vidrio oscuro */
+  --glass-alpha: 0.8;                 /* Más opaco en oscuro */
+  --glass-border: 71 85 105;          /* Borde más visible */
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+  /* Ajustar colores primarios para mejor contraste en oscuro */
+  --color-primary: 96 165 250;        /* Más claro para contraste */
+  --color-secondary: 251 113 133;     /* Rosa más claro */
+}
+
+/* ===== MODO FOCUS (reducir distracciones) ===== */
+:root[data-focus-mode="on"] {
+  --color-secondary: 99 102 241;       /* Violeta más sobrio */
+  --text-2: 107 114 128;              /* Texto más neutro */
+
+  /* Reducir intensidad de glass */
+  --glass-alpha: 0.95;
+  --glass-blur: 8px;
+
+  /* Duraciones más rápidas */
+  --duration-fast: 100ms;
+  --duration-medium: 160ms;
+  --duration-slow: 220ms;
+
+  /* Espaciado más generoso */
+  --control-height-normal: 44px;
+  --control-height-large: 52px;
+}
+
+/* ===== MODO ECO (sostenibilidad y rendimiento) ===== */
+:root[data-eco-mode="on"] {
+  /* Reducir efectos costosos */
+  --glass-alpha: 0.9;
+  --glass-blur: 6px;
+
+  /* Animaciones más rápidas */
+  --duration-instant: 60ms;
+  --duration-fast: 80ms;
+  --duration-medium: 120ms;
+  --duration-slow: 160ms;
+
+  /* Sombras más simples */
+  --shadow-lg: var(--shadow-md);
+  --shadow-xl: var(--shadow-lg);
+  --shadow-2xl: var(--shadow-xl);
+}
+
+/* ===== PREFERENCIAS DE USUARIO ===== */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-instant: 0ms;
+    --duration-fast: 0ms;
+    --duration-medium: 0ms;
+    --duration-slow: 0ms;
+    --duration-extra-slow: 0ms;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-alpha: 1;
+    --glass-blur: 0px;
+    --glass-border-alpha: 1;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --text-2: var(--text-1);           /* Más contraste en texto secundario */
+    --surface-3: var(--text-3);        /* Bordes más visibles */
+  }
+}
+
+/* ===== CLASES UTILITARIAS ===== */
+.surface-glass {
+  background: rgba(var(--glass-bg), var(--glass-alpha));
+  backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid rgba(var(--glass-border), var(--glass-border-alpha));
+  box-shadow: var(--glass-shadow);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .surface-glass {
+    background: rgb(var(--surface-1));
+    border: 1px solid rgb(var(--surface-3));
+  }
+}
+
+.focus-ring {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.focus-ring:focus-visible {
+  box-shadow: var(--focus-ring);
+}
+
+/* ===== MOTION HELPERS ===== */
+.motion-safe {
+  transition-duration: var(--duration-medium);
+  transition-timing-function: var(--ease-standard);
+}
+
+.motion-reduce {
+  transition: none;
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ===== IMPULSE GRADIENT UTILITY ===== */
+.bg-impulse-gradient {
+  background-image: linear-gradient(135deg,
+    rgb(var(--grad-start)) 0%,
+    rgb(var(--grad-end)) 100%);
+}

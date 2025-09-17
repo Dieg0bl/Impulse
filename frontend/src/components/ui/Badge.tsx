@@ -47,43 +47,73 @@ export const Badge = React.forwardRef<HTMLSpanElement, BadgeProps>(
     onClick
   }, ref) => {
     const badgeClasses = cn(
-      'inline-flex items-center font-medium border',
-      variantClasses[variant],
-      sizeClasses[size],
-      roundedClasses[rounded],
-      onClick && 'cursor-pointer hover:opacity-80 transition-opacity',
-      className
+  'inline-flex items-center font-semibold border',
+  'shadow-sm',
+  'tracking-tight',
+  variantClasses[variant],
+  sizeClasses[size],
+  roundedClasses[rounded],
+  onClick && 'cursor-pointer hover:opacity-80 transition-opacity',
+  className
     );
 
     const content = (
       <>
-        {icon && <span className="mr-1">{icon}</span>}
+  {icon && <span className="mr-1 text-base">{icon}</span>}
         {children}
       </>
     );
 
+    if (onClick) {
+      // Interactivo: usar <button>
+      if (animate) {
+        return (
+          <motion.button
+            ref={ref as any}
+            className={badgeClasses + ' focus:outline-none focus:ring-2 focus:ring-primary-500'}
+            onClick={onClick}
+            type="button"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            aria-pressed="false"
+          >
+            {content}
+          </motion.button>
+        );
+      }
+      return (
+        <button
+          ref={ref as any}
+          className={badgeClasses + ' focus:outline-none focus:ring-2 focus:ring-primary-500'}
+          onClick={onClick}
+          type="button"
+          aria-pressed="false"
+        >
+          {content}
+        </button>
+      );
+    }
+    // No interactivo: usar <span>
     if (animate) {
       return (
         <motion.span
           ref={ref}
           className={badgeClasses}
-          onClick={onClick}
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-          whileHover={onClick ? { scale: 1.05 } : undefined}
-          whileTap={onClick ? { scale: 0.95 } : undefined}
         >
           {content}
         </motion.span>
       );
     }
-
     return (
       <span
         ref={ref}
         className={badgeClasses}
-        onClick={onClick}
       >
         {content}
       </span>

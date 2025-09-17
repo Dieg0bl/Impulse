@@ -3,197 +3,137 @@ import { useConfig } from "../services/configService";
 
 const Footer: React.FC = () => {
   const config = useConfig();
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-16">
-      <div className="container mx-auto px-4 py-8">
-        {/* Main Footer Content */}
-        <div className="grid md:grid-cols-4 gap-8">
-          {/* Company Info */}
+    <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-auto" role="contentinfo">
+      <div className="container-app py-10 md:py-12">
+        {/* Desktop Grid */}
+        <div className="hidden md:grid md:grid-cols-4 gap-10">
           <div>
-            <h3 className="font-bold text-gray-900 dark:text-white mb-4">{config.companyName}</h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+            <h3 className="font-bold text-gray-900 dark:text-white mb-3">{config.companyName}</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 measure-narrow">
               Invierte en ti. Haz que cada meta cuente.
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-500">{config.address}</p>
           </div>
 
-          {/* Legal Links */}
-          <div>
-            <h4 className="font-medium text-gray-900 dark:text-white mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a
-                  href="/terms"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  Términos de Uso
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/privacy"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  Política de Privacidad
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/cookies"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  Política de Cookies
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/dsa"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  DSA Compliance
-                </a>
-              </li>
-            </ul>
-          </div>
+            <FooterColumn title="Legal" links={[
+              { href: '/terms', label: 'Términos de Uso' },
+              { href: '/privacy', label: 'Política de Privacidad' },
+              { href: '/cookies', label: 'Política de Cookies' },
+              { href: '/dsa', label: 'DSA Compliance' }
+            ]} />
 
-          {/* Product */}
-          <div>
-            <h4 className="font-medium text-gray-900 dark:text-white mb-4">Producto</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a
-                  href="/pricing"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  Planes y Precios
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/features"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  Características
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/security"
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  Seguridad
-                </a>
-              </li>
-              {config.isCoachMarketEnabled && (
-                <li>
-                  <a
-                    href="/coach-marketplace"
-                    className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Marketplace Coach
-                  </a>
-                </li>
-              )}
-            </ul>
-          </div>
+            <FooterColumn title="Producto" links={[
+              { href: '/pricing', label: 'Planes y Precios' },
+              { href: '/features', label: 'Características' },
+              { href: '/security', label: 'Seguridad' },
+              ...(config.isCoachMarketEnabled ? [{ href: '/coach-marketplace', label: 'Marketplace Coach' }] : [])
+            ]} />
 
-          {/* Contact & Support */}
-          <div>
-            <h4 className="font-medium text-gray-900 dark:text-white mb-4">Contacto</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a
-                  href={`mailto:${config.supportEmail}`}
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  📧 Soporte
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${config.legalEmail}`}
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  ⚖️ RGPD/Legal
-                </a>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${config.abuseEmail}`}
-                  className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                >
-                  🚫 Reportar Abuso
-                </a>
-              </li>
-            </ul>
-          </div>
+            <FooterColumn title="Contacto" links={[
+              { href: `mailto:${config.supportEmail}`, label: '📧 Soporte' },
+              { href: `mailto:${config.legalEmail}`, label: '⚖️ RGPD/Legal' },
+              { href: `mailto:${config.abuseEmail}`, label: '🚫 Reportar Abuso' }
+            ]} />
         </div>
 
-        {/* Beta Notice */}
+        {/* Mobile Accordions */}
+        <div className="md:hidden space-y-4">
+          <FooterAccordion title={config.companyName}>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              Invierte en ti. Haz que cada meta cuente.
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-500">{config.address}</p>
+          </FooterAccordion>
+          <FooterAccordion title="Legal">
+            <FooterLinkList links={[
+              { href: '/terms', label: 'Términos de Uso' },
+              { href: '/privacy', label: 'Política de Privacidad' },
+              { href: '/cookies', label: 'Política de Cookies' },
+              { href: '/dsa', label: 'DSA Compliance' }
+            ]} />
+          </FooterAccordion>
+          <FooterAccordion title="Producto">
+            <FooterLinkList links={[
+              { href: '/pricing', label: 'Planes y Precios' },
+              { href: '/features', label: 'Características' },
+              { href: '/security', label: 'Seguridad' },
+              ...(config.isCoachMarketEnabled ? [{ href: '/coach-marketplace', label: 'Marketplace Coach' }] : [])
+            ]} />
+          </FooterAccordion>
+          <FooterAccordion title="Contacto">
+            <FooterLinkList links={[
+              { href: `mailto:${config.supportEmail}`, label: '📧 Soporte' },
+              { href: `mailto:${config.legalEmail}`, label: '⚖️ RGPD/Legal' },
+              { href: `mailto:${config.abuseEmail}`, label: '🚫 Reportar Abuso' }
+            ]} />
+          </FooterAccordion>
+        </div>
+
+        {/* Beta Notice (singular) */}
         {config.betaDaysRemaining > 0 && (
           <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <div className="bg-blue-50 dark:bg-blue-900 rounded-lg p-4">
-              <p className="text-sm text-blue-800 dark:text-blue-200 text-center">
-                <strong>Beta Abierta:</strong> Sin tarjeta, sin cobros, sin renovación automática
-                durante {config.betaDaysRemaining} días. Al finalizar, podrás elegir plan o
-                continuar en Basic gratis.
-              </p>
-            </div>
+            <p className="text-xs text-center text-gray-600 dark:text-gray-400">
+              <strong>Beta Abierta:</strong> {config.betaDaysRemaining} días restantes sin tarjeta ni cobros. Luego podrás elegir plan o continuar gratis en Basic.
+            </p>
           </div>
         )}
 
-        {/* Copyright & Legal Notice */}
-        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-xs text-gray-500 dark:text-gray-400 text-center md:text-left">
-              <p>
-                <strong>{config.companyName}</strong> – nombre comercial de {config.ownerName}
-              </p>
-              <p>{config.address}</p>
-            </div>
-
-            <div className="text-xs text-gray-500 dark:text-gray-400 text-center md:text-right">
-              <p>
-                © {new Date().getFullYear()} {config.ownerName}
-              </p>
-              {config.isBillingEnabled && (
-                <p className="mt-1">
-                  <a
-                    href="/billing-portal"
-                    className="hover:text-blue-600 dark:hover:text-blue-400"
-                  >
-                    Portal de Facturación
-                  </a>
-                </p>
-              )}
-            </div>
+        {/* Bottom Meta */}
+        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
+            <p><strong>{config.companyName}</strong> – nombre comercial de {config.ownerName}</p>
+            <p>{config.address}</p>
+          </div>
+          <div className="text-xs text-gray-500 dark:text-gray-400 md:text-right">
+            <p>© {year} {config.ownerName}</p>
+            {config.isBillingEnabled && (
+              <p className="mt-1"><a href="/billing-portal" className="hover:text-blue-600 dark:hover:text-blue-400">Portal de Facturación</a></p>
+            )}
           </div>
         </div>
 
-        {/* RGPD Compliance Notice */}
         <div className="mt-4 text-center">
           <p className="text-xs text-gray-400 dark:text-gray-500">
-            Al continuar usando IMPULSE, aceptas nuestros{" "}
-            <a href="/terms" className="text-blue-600 dark:text-blue-400 hover:underline">
-              Términos
-            </a>
-            ,{" "}
-            <a href="/privacy" className="text-blue-600 dark:text-blue-400 hover:underline">
-              Privacidad
-            </a>{" "}
-            y{" "}
-            <a href="/cookies" className="text-blue-600 dark:text-blue-400 hover:underline">
-              Cookies
-            </a>
-            .
-            {config.isBillingEnabled &&
-              " Cuando actives un plan de pago, podrás cancelar en 1 clic desde tu Portal."}
+            Al continuar usando IMPULSE, aceptas nuestros <a href="/terms" className="text-blue-600 dark:text-blue-400 hover:underline">Términos</a>, <a href="/privacy" className="text-blue-600 dark:text-blue-400 hover:underline">Privacidad</a> y <a href="/cookies" className="text-blue-600 dark:text-blue-400 hover:underline">Cookies</a>.
+            {config.isBillingEnabled && ' Podrás cancelar en 1 clic desde tu Portal.'}
           </p>
         </div>
       </div>
     </footer>
   );
 };
+
+interface FooterColumnProps { title: string; links: { href: string; label: string }[]; }
+const FooterColumn: React.FC<FooterColumnProps> = ({ title, links }) => (
+  <div>
+    <h4 className="font-medium text-gray-900 dark:text-white mb-3">{title}</h4>
+    <FooterLinkList links={links} />
+  </div>
+);
+
+const FooterLinkList: React.FC<{ links: { href: string; label: string }[] }> = ({ links }) => (
+  <ul className="space-y-2 text-sm">
+    {links.map(l => (
+      <li key={l.href}>
+        <a href={l.href} className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 focus-outline">
+          {l.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+);
+
+const FooterAccordion: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+  <details className="group border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 bg-white dark:bg-gray-800">
+    <summary className="flex justify-between items-center cursor-pointer list-none focus-outline">
+      <span className="font-medium text-gray-900 dark:text-white">{title}</span>
+      <span aria-hidden className="transition-transform group-open:rotate-180 text-gray-500">▼</span>
+    </summary>
+    <div className="mt-3 text-sm">{children}</div>
+  </details>
+);
 
 export default Footer;

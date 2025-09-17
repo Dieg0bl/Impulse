@@ -1,9 +1,9 @@
-import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/Card";
-import { Button } from "../components/ui/Button";
-import { Badge } from "../components/ui/Badge";
-import { Check, Zap, Users, Crown } from "lucide-react";
-import { useConfig } from "../services/configService";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Check, Zap, Users, Crown, ChevronDown, ChevronUp } from "lucide-react";
+import PageHeader from "../components/PageHeader";
+import { AppButton } from "../ui/AppButton";
+import { GlassSurface } from "../ui/GlassSurface";
 
 interface PlanFeature {
   text: string;
@@ -21,6 +21,11 @@ interface Plan {
   popular?: boolean;
   disabled?: boolean;
   buttonText?: string;
+}
+
+interface FAQItem {
+  question: string;
+  answer: string;
 }
 
 const plans: Plan[] = [
@@ -46,238 +51,276 @@ const plans: Plan[] = [
   {
     id: "pro",
     name: "Pro",
-    price: "12,99 €/mes",
-    period: "99 €/año",
-    description: "Para usuarios serios que quieren maximizar su potencial",
-    icon: <Crown className="h-6 w-6" />,
-    features: [
-      { text: "Retos activos ilimitados", included: true },
-      { text: "Validadores ilimitados", included: true },
-      { text: "Multimedia completa (vídeo, audio)", included: true },
-      { text: "Retos privados y de equipo", included: true },
-      { text: "Estadísticas avanzadas", included: true },
-      { text: "Exportación de datos", included: true },
-      { text: "Soporte prioritario", included: true },
-      { text: "Sin anuncios (cuando estén disponibles)", included: true },
-    ],
+    price: "9.99€",
+    period: "mes",
+    description: "Para usuarios que quieren maximizar su potencial",
+    icon: <Users className="h-6 w-6" />,
     popular: true,
-    disabled: true,
-    buttonText: "Próximamente",
+    features: [
+      { text: "Retos ilimitados activos", included: true },
+      { text: "10 validadores por reto", included: true },
+      { text: "Multimedia completa (video, audio)", included: true },
+      { text: "Retos privados y de equipo", included: true },
+      { text: "Analytics avanzado", included: true },
+      { text: "Prioridad en soporte", included: true },
+      { text: "Insignias y logros", included: true },
+      { text: "Exportar progreso", included: true },
+    ],
+    buttonText: "Obtener Pro",
   },
   {
-    id: "teams",
-    name: "Teams",
-    price: "39,99 €/mes",
-    period: "incluye 10 miembros (+4€/extra)",
-    description: "Ideal para equipos y organizaciones que crecen juntos",
-    icon: <Users className="h-6 w-6" />,
+    id: "premium",
+    name: "Premium",
+    price: "19.99€",
+    period: "mes",
+    description: "La experiencia definitiva para líderes y equipos",
+    icon: <Crown className="h-6 w-6" />,
     features: [
-      { text: "Todo lo de Pro para cada miembro", included: true },
-      { text: "Dashboard de equipo", included: true },
-      { text: "Retos colaborativos", included: true },
-      { text: "Competiciones internas", included: true },
-      { text: "Reportes de progreso grupal", included: true },
-      { text: "Roles y permisos", included: true },
-      { text: "Onboarding personalizado", included: true },
-      { text: "Gestión centralizada", included: true },
+      { text: "Todo lo de Pro", included: true },
+      { text: "Validadores ilimitados", included: true },
+      { text: "Coach personal asignado", included: true },
+      { text: "Retos corporativos", included: true },
+      { text: "API y integraciones", included: true },
+      { text: "Reportes personalizados", included: true },
+      { text: "Soporte 24/7", included: true },
+      { text: "White-label disponible", included: true },
     ],
-    disabled: true,
-    buttonText: "Próximamente",
+    buttonText: "Contactar Ventas",
   },
 ];
 
-const PricingPage: React.FC = () => {
-  const config = useConfig();
+const faqItems: FAQItem[] = [
+  {
+    question: "¿Puedo cambiar de plan en cualquier momento?",
+    answer: "Sí, puedes actualizar o degradar tu plan en cualquier momento. Los cambios se aplicarán inmediatamente y se facturarán de forma proporcional.",
+  },
+  {
+    question: "¿Hay compromiso de permanencia?",
+    answer: "No, todos nuestros planes son sin compromiso. Puedes cancelar tu suscripción en cualquier momento desde tu panel de control.",
+  },
+  {
+    question: "¿Qué métodos de pago aceptan?",
+    answer: "Aceptamos todas las tarjetas de crédito principales (Visa, Mastercard, American Express), PayPal y transferencias bancarias para planes empresariales.",
+  },
+  {
+    question: "¿Ofrecen descuentos para equipos?",
+    answer: "Sí, ofrecemos descuentos especiales para equipos de 10+ usuarios y planes corporativos. Contacta con nuestro equipo de ventas para más información.",
+  },
+];
 
-  const handlePlanSelect = (planId: string) => {
-    if (planId === "basic") {
-      // Ya está en el plan básico
-      return;
-    }
+const Pricing: React.FC = () => {
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
-    if (!config.shouldShowPaymentButton(planId)) {
-      alert(config.getBillingDisabledMessage());
-      return;
-    }
-
-    // Aquí iría la lógica de Stripe cuando BILLING_ON = true
-    alert("Redirigiendo a Stripe Checkout...");
-  };
-
-  const getButtonClassName = (plan: Plan) => {
-    if (plan.popular && config.shouldShowPaymentButton(plan.id)) {
-      return "bg-blue-600 hover:bg-blue-700 text-white";
-    }
-    if (plan.id === "basic") {
-      return "bg-gray-200 text-gray-700 hover:bg-gray-300";
-    }
-    return "bg-gray-100 text-gray-500 cursor-not-allowed";
+  const handleSelectPlan = (planId: string) => {
+    // Aquí iría la lógica de navegación al checkout
+    console.log(`Selected plan: ${planId}`);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-16">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            Planes y Precios
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Elige el plan que mejor se adapte a tus objetivos
-          </p>
-
-          {/* Beta Notice */}
-          <div className="bg-green-100 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded-lg p-4 max-w-3xl mx-auto">
-            <div className="flex items-center justify-center space-x-2">
-              <Badge
-                variant="secondary"
-                className="bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200"
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary-50">
+      <PageHeader
+        title="Elige tu plan"
+      />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Pricing Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          {plans.map((plan, index) => (
+            <motion.div
+              key={plan.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className="relative"
+            >
+              <GlassSurface
+                elevation={plan.popular ? 2 : 1}
+                variant={plan.popular ? "prominent" : "default"}
+                sx={{
+                  p: 4,
+                  transform: plan.popular ? "scale(1.05)" : "scale(1)",
+                  border: plan.popular ? "2px solid rgb(var(--color-primary))" : undefined,
+                  transition: "all var(--duration-medium) var(--ease-standard)",
+                  "&:hover": {
+                    transform: plan.popular ? "scale(1.06)" : "scale(1.02)",
+                  }
+                }}
               >
-                BETA ABIERTA
-              </Badge>
-              <span className="text-green-800 dark:text-green-200 font-medium">
-                90 días gratis sin tarjeta, sin cobros, sin renovación automática
-              </span>
-            </div>
-            <p className="text-sm text-green-700 dark:text-green-300 mt-2">
-              Al finalizar la beta, podrás elegir tu plan o continuar en Basic gratis para siempre
-            </p>
-          </div>
-        </div>
+              {plan.popular && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-gradient-to-r from-primary-600 to-primary-700 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    Más Popular
+                  </span>
+                </div>
+              )}
 
-        {/* Plans Grid */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {plans.map((plan) => {
-            const dynamicPlan = {
-              ...plan,
-              buttonText: config.getCheckoutButtonText(plan.id),
-              disabled: !config.shouldShowPaymentButton(plan.id) && plan.id !== "basic",
-            };
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-100 to-primary-200 rounded-2xl mb-4">
+                  <div className="text-primary-600">
+                    {plan.icon}
+                  </div>
+                </div>
 
-            return (
-              <Card
-                key={dynamicPlan.id}
-                className={`relative ${dynamicPlan.popular ? "ring-2 ring-blue-500 shadow-xl scale-105" : "shadow-lg"} transition-all duration-300 hover:shadow-xl`}
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                <p className="text-gray-600 mb-4">{plan.description}</p>
+
+                <div className="flex items-baseline justify-center mb-4">
+                  <span className="text-4xl font-extrabold text-gray-900">{plan.price}</span>
+                  {plan.period && (
+                    <span className="text-gray-500 ml-2">/{plan.period}</span>
+                  )}
+                </div>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {plan.features.map((feature) => (
+                  <li key={`${plan.id}-feature-${feature.text.slice(0, 10)}`} className="flex items-start">
+                    <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mr-3 mt-0.5 ${
+                      feature.included
+                        ? 'bg-green-100 text-green-600'
+                        : 'bg-gray-100 text-gray-400'
+                    }`}>
+                      <Check className="w-3 h-3" />
+                    </div>
+                    <span className={`text-sm ${
+                      feature.included ? 'text-gray-700' : 'text-gray-400'
+                    }`}>
+                      {feature.text}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <AppButton
+                onClick={() => handleSelectPlan(plan.id)}
+                variant={plan.popular ? "contained" : "outlined"}
+                color={plan.popular ? "primary" : "secondary"}
+                size="large"
+                disabled={plan.disabled}
+                fullWidth
+                sx={{ mt: 2 }}
               >
-                {dynamicPlan.popular && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-blue-500 text-white px-3 py-1">Más Popular</Badge>
-                  </div>
-                )}
-
-                <CardHeader className="text-center pb-4">
-                  <div className="flex justify-center mb-4">
-                    <div
-                      className={`p-3 rounded-full ${dynamicPlan.popular ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"}`}
-                    >
-                      {dynamicPlan.icon}
-                    </div>
-                  </div>
-                  <CardTitle className="text-2xl font-bold">{dynamicPlan.name}</CardTitle>
-                  <div className="mt-4">
-                    <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                      {dynamicPlan.price}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {dynamicPlan.period}
-                    </div>
-                  </div>
-                  <CardDescription className="mt-4 text-base">
-                    {dynamicPlan.description}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent>
-                  <ul className="space-y-3 mb-8">
-                    {dynamicPlan.features.map((feature, index) => (
-                      <li
-                        key={`${dynamicPlan.id}-feature-${index}`}
-                        className="flex items-start space-x-3"
-                      >
-                        <Check
-                          className={`h-5 w-5 mt-0.5 flex-shrink-0 ${
-                            feature.included ? "text-green-500" : "text-gray-300 dark:text-gray-600"
-                          }`}
-                        />
-                        <span
-                          className={`text-sm ${
-                            feature.included
-                              ? "text-gray-700 dark:text-gray-300"
-                              : "text-gray-400 dark:text-gray-500 line-through"
-                          }`}
-                        >
-                          {feature.text}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    onClick={() => handlePlanSelect(dynamicPlan.id)}
-                    disabled={dynamicPlan.disabled}
-                    className={`w-full ${getButtonClassName(dynamicPlan)}`}
-                    size="lg"
-                  >
-                    {dynamicPlan.buttonText || "Seleccionar Plan"}
-                  </Button>
-                </CardContent>
-              </Card>
-            );
-          })}
+                {plan.buttonText || `Seleccionar ${plan.name}`}
+              </AppButton>
+              </GlassSurface>
+            </motion.div>
+          ))}
         </div>
 
         {/* FAQ Section */}
-        <div className="mt-20 max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-8 text-gray-900 dark:text-white">
-            Preguntas Frecuentes
-          </h2>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="max-w-4xl mx-auto"
+        >
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-4">
+              Preguntas Frecuentes
+            </h2>
+            <p className="text-xl text-gray-600">
+              Resolvemos las dudas más comunes sobre nuestros planes
+            </p>
+          </div>
 
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
-                ¿Qué pasa después de los 90 días de beta?
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Podrás elegir el plan que prefieras o continuar en Basic gratis para siempre. No hay
-                renovación automática ni sorpresas en tu tarjeta.
-              </p>
-            </div>
+            {faqItems.map((item, index) => (
+              <motion.div
+                key={`faq-${item.question.slice(0, 20).replace(/\s+/g, '-')}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 + index * 0.1 }}
+              >
+                <GlassSurface
+                  elevation={1}
+                  sx={{
+                    overflow: 'hidden',
+                    '&:hover': {
+                      elevation: 2,
+                      transform: 'translateY(-2px)',
+                      transition: 'all var(--duration-fast) var(--ease-standard)'
+                    }
+                  }}
+                >
+                  <AppButton
+                    onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+                    variant="text"
+                    size="large"
+                    fullWidth
+                    sx={{
+                      justifyContent: 'space-between',
+                      px: 4,
+                      py: 3,
+                      textAlign: 'left',
+                      '&:hover': {
+                        backgroundColor: 'rgba(var(--color-surface-2), 0.5)'
+                      }
+                    }}
+                    iconPosition="end"
+                    icon={openFAQ === index ?
+                      <ChevronUp className="w-5 h-5 text-gray-500" /> :
+                      <ChevronDown className="w-5 h-5 text-gray-500" />
+                    }
+                  >
+                    <span className="text-lg font-semibold text-gray-900">
+                      {item.question}
+                    </span>
+                  </AppButton>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
-                ¿Hay garantía de devolución?
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Sí, cuando comencemos a cobrar, ofreceremos 30 días de garantía en tu primera compra
-                (no aplicable a renovaciones).
-              </p>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <h3 className="font-semibold mb-2 text-gray-900 dark:text-white">
-                ¿Puedo cambiar de plan en cualquier momento?
-              </h3>
-              <p className="text-gray-600 dark:text-gray-300">
-                Absolutamente. Podrás cambiar, pausar o cancelar tu suscripción con 1 clic desde tu
-                portal de usuario.
-              </p>
-            </div>
+                  {openFAQ === index && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="px-8 pb-6"
+                    >
+                      <p className="text-gray-600 leading-relaxed">
+                        {item.answer}
+                      </p>
+                    </motion.div>
+                  )}
+                </GlassSurface>
+              </motion.div>
+            ))}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Contact Footer */}
-        <div className="text-center mt-16 text-gray-600 dark:text-gray-400">
-          <p className="mb-2">¿Tienes dudas sobre los planes?</p>
-          <p className="text-sm">
-            Escríbenos a{" "}
-            <a href="mailto:impulse.soporte@gmail.com" className="text-blue-600 hover:underline">
-              impulse.soporte@gmail.com
-            </a>
+        {/* CTA Section */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.6 }}
+          className="text-center mt-16 bg-gradient-to-r from-primary-600 to-primary-700 rounded-3xl p-12 text-white"
+        >
+          <h2 className="text-3xl font-extrabold mb-4">
+            ¿Listo para transformar tu vida?
+          </h2>
+          <p className="text-xl mb-8 opacity-90">
+            Únete a miles de usuarios que ya están alcanzando sus objetivos
           </p>
-        </div>
+          <AppButton
+            onClick={() => handleSelectPlan("pro")}
+            variant="contained"
+            size="large"
+            sx={{
+              backgroundColor: 'white',
+              color: 'rgb(var(--color-primary))',
+              fontWeight: 600,
+              py: 2,
+              px: 4,
+              '&:hover': {
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                transform: 'translateY(-2px) scale(1.02)',
+                boxShadow: 'var(--shadow-lg)'
+              }
+            }}
+          >
+            Comenzar ahora
+          </AppButton>
+        </motion.div>
       </div>
     </div>
   );
 };
 
-export default PricingPage;
+export default Pricing;

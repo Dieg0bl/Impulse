@@ -66,13 +66,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             {children && <span>Loading...</span>}
           </div>
         ) : (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 font-medium tracking-tight">
             {icon && iconPosition === 'left' && (
-              <span className="flex-shrink-0">{icon}</span>
+              <span className="flex-shrink-0 text-lg">{icon}</span>
             )}
-            {children && <span>{children}</span>}
+            {children && <span className="font-semibold text-base leading-tight">{children}</span>}
             {icon && iconPosition === 'right' && (
-              <span className="flex-shrink-0">{icon}</span>
+              <span className="flex-shrink-0 text-lg">{icon}</span>
             )}
           </div>
         )}

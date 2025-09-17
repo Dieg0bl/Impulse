@@ -45,15 +45,17 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
     const inputClasses = cn(
-      'transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1',
-      sizeVariants[size],
-      variantClasses[variant],
-      leftIcon && 'pl-10',
-      rightIcon && 'pr-10',
-      fullWidth && 'w-full',
-      error && 'border-error-500 focus:border-error-500 focus:ring-error-500',
-      disabled && 'opacity-50 cursor-not-allowed bg-gray-50',
-      className
+  'transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1',
+  'font-medium text-gray-900 placeholder:text-gray-400',
+  'rounded-lg',
+  sizeVariants[size],
+  variantClasses[variant],
+  leftIcon && 'pl-10',
+  rightIcon && 'pr-10',
+  fullWidth && 'w-full',
+  error && 'border-error-500 focus:border-error-500 focus:ring-error-500',
+  disabled && 'opacity-50 cursor-not-allowed bg-gray-50',
+  className
     );
 
     const containerClasses = cn(
@@ -66,7 +68,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-gray-700"
+            className="block text-base font-semibold text-gray-700 tracking-tight mb-1"
           >
             {label}
           </label>

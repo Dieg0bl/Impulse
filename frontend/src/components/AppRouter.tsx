@@ -16,6 +16,8 @@ import Evidences from "../pages/Evidences";
 import EvidenceUpload from "../pages/EvidenceUpload";
 import NotFound from "../pages/NotFound";
 import PrivateRoute from "./PrivateRoute";
+import AdminUserDashboard from "../pages/AdminUserDashboard";
+import AdminAdsDashboard from "../pages/AdminAdsDashboard";
 
 // Wrapper component for EvidenceUpload that gets challengeId from route params
 const EvidenceUploadWrapper: React.FC = () => {
@@ -82,6 +84,22 @@ const AppRouter: React.FC = () => {
           element={
             <PrivateRoute>
               <EvidenceUploadWrapper />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <PrivateRoute>
+              <AdminUserDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/admin/ads"
+          element={
+            <PrivateRoute>
+              <AdminAdsDashboard />
             </PrivateRoute>
           }
         />

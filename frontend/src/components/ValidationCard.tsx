@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Card } from "./ui/Card";
 import { Badge } from "./ui/Badge";
-import { Button } from "./ui/Button";
+import { AppCard } from "../ui/AppCard";
+import { AppButton } from "../ui/AppButton";
 import { ValidationResponseDto } from "../types/dtos";
 import {
   ValidationStatus,
@@ -22,7 +22,6 @@ import {
   ThumbsUp,
   ThumbsDown
 } from "lucide-react";
-
 interface ValidationCardProps {
   validation: ValidationResponseDto;
   onDecision?: (decision: ValidationDecision, feedback?: string) => void;
@@ -49,10 +48,8 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
       [ValidationStatus.REJECTED]: <XCircle className="w-4 h-4" />,
       [ValidationStatus.EXPIRED]: <XCircle className="w-4 h-4" />
     };
-
-    return icons[status] || <Clock className="w-4 h-4" />;
+    return icons[status] || <Info className="w-4 h-4" />;
   };
-
   const getStatusColor = (status: ValidationStatus): "primary" | "secondary" | "success" | "warning" | "error" | "info" => {
     const colors = {
       [ValidationStatus.PENDING]: "warning" as const,
@@ -61,7 +58,6 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
       [ValidationStatus.REJECTED]: "error" as const,
       [ValidationStatus.EXPIRED]: "secondary" as const
     };
-
     return colors[status] || "secondary";
   };
 
@@ -101,13 +97,20 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
     if (onDecision) {
       onDecision(decision, feedback);
       setFeedback("");
-      setShowFeedback(false);
     }
   };
-
   if (variant === "compact") {
     return (
-      <div className="flex items-center justify-between p-4 bg-gray-800/30 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+      <AppCard
+        style={{
+          padding: "var(--space-4)",
+          background: "rgba(var(--glass-bg), 0.3)",
+          borderRadius: "var(--radius-lg)",
+          border: "1px solid var(--border-1)",
+          boxShadow: "var(--glass-shadow)"
+        }}
+        className="flex items-center justify-between hover:border-gray-600 transition-colors"
+      >
         <div className="flex items-center space-x-3 flex-1">
           <div className="flex items-center space-x-2">
             {getStatusIcon(validation.status)}
@@ -135,36 +138,43 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
 
         <div className="flex items-center space-x-2">
           {onView && (
-            <Button variant="secondary" size="sm" onClick={onView}>
+            <AppButton color="secondary" size="compact" onClick={onView}>
               <Eye className="w-4 h-4" />
-            </Button>
+            </AppButton>
           )}
           {showActions && validation.status === ValidationStatus.PENDING && (
             <>
-              <Button
-                variant="primary"
-                size="sm"
+              <AppButton
+                color="primary"
+                size="compact"
                 onClick={() => handleDecision(ValidationDecision.APPROVED)}
               >
                 <ThumbsUp className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="error"
-                size="sm"
+              </AppButton>
+              <AppButton
+                color="error"
+                size="compact"
                 onClick={() => handleDecision(ValidationDecision.REJECTED)}
               >
                 <ThumbsDown className="w-4 h-4" />
-              </Button>
+              </AppButton>
             </>
           )}
         </div>
-      </div>
+      </AppCard>
     );
   }
 
   // Full variant
   return (
-    <Card className="p-6">
+    <AppCard
+      style={{
+        padding: "var(--space-6)",
+        borderRadius: "var(--radius-lg)",
+        boxShadow: "var(--glass-shadow)",
+        background: "rgba(var(--glass-bg), var(--glass-alpha))"
+      }}
+    >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
           <div className={`w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white`}>
@@ -187,15 +197,15 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
 
         <div className="flex space-x-2">
           {onView && (
-            <Button variant="secondary" size="sm" onClick={onView}>
+            <AppButton color="secondary" size="compact" onClick={onView}>
               <Eye className="w-4 h-4 mr-2" />
               Ver Evidencia
-            </Button>
+            </AppButton>
           )}
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4">
+    <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
           <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
             Evidencia ID
@@ -215,8 +225,7 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
           <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
             Creado
           </span>
-          <p className="text-sm text-white mt-1">{formatDate(validation.startedAt)}</p>
-        </div>
+    </div>
         {validation.completedAt && (
           <div>
             <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
@@ -240,14 +249,14 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
         <div className="pt-4 border-t border-gray-700">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-sm font-medium text-white">Decisión de Validación</h4>
-            <Button
-              variant="secondary"
-              size="sm"
+            <AppButton
+              color="secondary"
+              size="compact"
               onClick={() => setShowFeedback(!showFeedback)}
             >
               <MessageSquare className="w-4 h-4 mr-2" />
               {showFeedback ? "Ocultar" : "Agregar"} Feedback
-            </Button>
+            </AppButton>
           </div>
 
           {showFeedback && (
@@ -263,30 +272,30 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
           )}
 
           <div className="flex space-x-3">
-            <Button
-              variant="primary"
+            <AppButton
+              color="primary"
               onClick={() => handleDecision(ValidationDecision.APPROVED)}
-              className="flex-1"
+              style={{ flex: 1 }}
             >
               <ThumbsUp className="w-4 h-4 mr-2" />
               Aprobar
-            </Button>
-            <Button
-              variant="error"
+            </AppButton>
+            <AppButton
+              color="error"
               onClick={() => handleDecision(ValidationDecision.REJECTED)}
-              className="flex-1"
+              style={{ flex: 1 }}
             >
               <ThumbsDown className="w-4 h-4 mr-2" />
               Rechazar
-            </Button>
-            <Button
-              variant="secondary"
+            </AppButton>
+            <AppButton
+              color="secondary"
               onClick={() => handleDecision(ValidationDecision.NEEDS_MORE_INFO)}
-              className="flex-1"
+              style={{ flex: 1 }}
             >
               <Info className="w-4 h-4 mr-2" />
               Más Info
-            </Button>
+            </AppButton>
           </div>
         </div>
       )}
@@ -301,7 +310,7 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
           </div>
         </div>
       )}
-    </Card>
+  </AppCard>
   );
 };
 
