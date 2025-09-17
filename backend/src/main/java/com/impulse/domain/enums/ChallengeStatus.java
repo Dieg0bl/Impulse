@@ -12,7 +12,8 @@ public enum ChallengeStatus {
     CANCELLED("Cancelado"),
     ARCHIVED("Archivado"),
     UNDER_REVIEW("En revisión"),
-    REJECTED("Rechazado");
+    REJECTED("Rechazado"),
+    DELETED("Eliminado");
 
     private final String descripcion;
 

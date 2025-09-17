@@ -1,6 +1,6 @@
 ﻿// ModerationReportButton - Botón de reporte DSA según addenda IMPULSE
 import React, { useState } from 'react'
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, InputLabel, Select, MenuItem, Typography, Alert } from '@mui/material'
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, FormControl, InputLabel, Select, MenuItem, Typography, Alert, Box } from '@mui/material'
 import { AppButton } from './AppButton'
 import { Flag, AlertTriangle, Shield } from 'lucide-react'
 
@@ -88,6 +88,14 @@ export const ModerationReportButton: React.FC<ModerationReportButtonProps> = ({
   const [details, setDetails] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const mapSize = (size: 'small' | 'medium' | 'large'): 'compact' | 'normal' | 'large' => {
+    switch (size) {
+      case 'small': return 'compact'
+      case 'large': return 'large'
+      default: return 'normal'
+    }
+  }
+
   const handleOpen = () => {
     setOpen(true)
   }
@@ -129,23 +137,23 @@ export const ModerationReportButton: React.FC<ModerationReportButtonProps> = ({
     <>
       <AppButton
         variant={variant}
-        size={size}
+        size={mapSize(size)}
         onClick={handleOpen}
         icon={showIcon ? <Flag size={16} /> : undefined}
         className={className}
-        sx={{ 
+        sx={{
           color: 'text.secondary',
-          '&:hover': { 
+          '&:hover': {
             color: 'warning.main',
-            backgroundColor: 'rgba(var(--color-warning), 0.1)' 
+            backgroundColor: 'rgba(var(--color-warning), 0.1)'
           }
         }}
       >
         Reportar {variant === 'text' ? '' : 'contenido'}
       </AppButton>
 
-      <Dialog 
-        open={open} 
+      <Dialog
+        open={open}
         onClose={handleClose}
         maxWidth="md"
         fullWidth
@@ -154,12 +162,12 @@ export const ModerationReportButton: React.FC<ModerationReportButtonProps> = ({
           <Flag size={20} className="text-warning" />
           Reportar {getContentTypeLabel()}
         </DialogTitle>
-        
+
         <DialogContent sx={{ py: 2 }}>
           <Alert severity="info" sx={{ mb: 3 }}>
             <Typography variant="body2">
               <strong>Digital Services Act (DSA) - Derecho a reportar:</strong><br />
-              Tienes derecho a reportar contenido que consideres ilegal o dañino. 
+              Tienes derecho a reportar contenido que consideres ilegal o dañino.
               Tu reporte será revisado y recibirás una respuesta sobre las medidas tomadas.
             </Typography>
           </Alert>
@@ -194,11 +202,11 @@ export const ModerationReportButton: React.FC<ModerationReportButtonProps> = ({
           </FormControl>
 
           {selectedReasonData && (
-            <Alert 
+            <Alert
               severity={
                 selectedReasonData.category === 'illegal' ? 'error' :
                 selectedReasonData.category === 'harmful' ? 'warning' : 'info'
-              } 
+              }
               sx={{ mb: 3 }}
               icon={selectedReasonData.category === 'illegal' ? <AlertTriangle /> : undefined}
             >

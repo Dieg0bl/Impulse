@@ -1,6 +1,6 @@
 package com.impulse.infrastructure.persistence.repositories;
 
-import com.impulse.domain.model.Evidence;
+import com.impulse.domain.evidence.Evidence;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -42,7 +42,7 @@ public interface EvidenceRepository extends JpaRepository<Evidence, Long> {
     // Contar evidencias por challenge
     long countByChallengeId(Long challengeId);
 
-    // Buscar evidencias pendientes de validación
+    // Buscar evidencias pendientes de validaciÃ³n
     @Query("SELECT e FROM Evidence e WHERE e.status = 'PENDING_VALIDATION'")
     Page<Evidence> findPendingValidation(Pageable pageable);
 
@@ -54,3 +54,4 @@ public interface EvidenceRepository extends JpaRepository<Evidence, Long> {
     @Query("SELECT e FROM Evidence e WHERE e.status = 'REJECTED'")
     Page<Evidence> findRejected(Pageable pageable);
 }
+

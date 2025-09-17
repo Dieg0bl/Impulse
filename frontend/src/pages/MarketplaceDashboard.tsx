@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { Card, CardContent, CardActions } from "@mui/material";
 import { coachApi, statsApi } from "../services/api";
 import { CoachResponseDto, PlatformStatsDto } from "../types/dtos";
 import { CoachStatus } from "../types/enums";
@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import PageHeader from "../components/PageHeader";
 import DataState from "../components/DataState";
+import { AppButton } from "../ui/AppButton";
 
 const MarketplaceDashboard: React.FC = () => {
   const [coaches, setCoaches] = useState<CoachResponseDto[]>([]);
@@ -168,7 +169,7 @@ const MarketplaceDashboard: React.FC = () => {
         <section aria-labelledby="featured-coaches-heading" className="space-y-6 pt-2">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <h2 id="featured-coaches-heading" className="heading-2">Coaches destacados</h2>
-            <Button variant="secondary" size="sm">Ver todos</Button>
+            <AppButton variant="text" size="compact">Ver todos</AppButton>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {coaches.slice(0, 4).map((coach) => (
@@ -197,13 +198,13 @@ const MarketplaceDashboard: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex gap-2 pt-1">
-                    <Button variant="primary" size="sm" className="flex-1">
+                    <AppButton variant="contained" size="compact" className="flex-1">
                       <MessageCircle className="w-4 h-4 mr-1" />
                       Contactar
-                    </Button>
-                    <Button variant="secondary" size="sm" aria-label="Ver calendario">
+                    </AppButton>
+                    <AppButton variant="outlined" size="compact" aria-label="Ver calendario">
                       <Calendar className="w-4 h-4" />
-                    </Button>
+                    </AppButton>
                   </div>
                 </div>
               </Card>
@@ -219,7 +220,7 @@ const MarketplaceDashboard: React.FC = () => {
                 <Award className="w-10 h-10 text-blue-500 mx-auto" />
                 <h3 className="heading-4">Gestionar Coaches</h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400">Revisar aplicaciones y gestionar el estado de los coaches</p>
-                <Button variant="primary" className="w-full">Ir a Gestión</Button>
+                <AppButton variant="contained" className="w-full">Ir a Gestión</AppButton>
               </div>
             </Card>
             <Card className="surface rounded-xl">
@@ -227,7 +228,7 @@ const MarketplaceDashboard: React.FC = () => {
                 <BarChart3 className="w-10 h-10 text-purple-500 mx-auto" />
                 <h3 className="heading-4">Analytics</h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400">Ver métricas detalladas del marketplace</p>
-                <Button variant="secondary" className="w-full">Ver Reportes</Button>
+                <AppButton variant="outlined" className="w-full">Ver Reportes</AppButton>
               </div>
             </Card>
             <Card className="surface rounded-xl">
@@ -235,7 +236,7 @@ const MarketplaceDashboard: React.FC = () => {
                 <DollarSign className="w-10 h-10 text-green-500 mx-auto" />
                 <h3 className="heading-4">Pagos</h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400">Gestionar pagos y comisiones</p>
-                <Button variant="secondary" className="w-full">Ver Finanzas</Button>
+                <AppButton variant="outlined" className="w-full">Ver Finanzas</AppButton>
               </div>
             </Card>
           </div>

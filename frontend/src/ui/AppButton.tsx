@@ -9,6 +9,8 @@ export interface AppButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEle
   iconPosition?: 'start' | 'end'
   color?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info'
   variant?: 'contained' | 'outlined' | 'text'
+  fullWidth?: boolean
+  sx?: object
 }
 
 export const AppButton = forwardRef<HTMLButtonElement, AppButtonProps>(
@@ -23,6 +25,8 @@ export const AppButton = forwardRef<HTMLButtonElement, AppButtonProps>(
     color = 'primary',
     variant = 'contained',
     style,
+    fullWidth = false,
+    sx,
     ...buttonProps
   }, ref) => {
 
@@ -88,8 +92,10 @@ export const AppButton = forwardRef<HTMLButtonElement, AppButtonProps>(
       outline: 'none',
       transition: 'all 0.2s ease',
       opacity: disabled || loading ? 0.6 : 1,
+      width: fullWidth ? '100%' : 'auto',
       ...variantStyles,
       ...style,
+      ...(sx ?? {}),
     }
 
     const renderSpinner = () => (

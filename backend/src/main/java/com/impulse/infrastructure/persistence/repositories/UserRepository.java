@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.impulse.domain.model.User;
+import com.impulse.domain.user.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -66,3 +66,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.emailVerified = true")
     Page<User> findVerifiedUsers(Pageable pageable);
 }
+

@@ -2,8 +2,8 @@ package com.impulse.application.service.interfaces;
 
 import com.impulse.application.dto.validator.ValidatorRequestDto;
 import com.impulse.application.dto.validator.ValidatorAssignmentRequestDto;
-import com.impulse.domain.model.Validator;
-import com.impulse.domain.model.ValidatorAssignment;
+import com.impulse.domain.validator.Validator;
+import com.impulse.domain.validatorassignment.ValidatorAssignment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -157,3 +157,4 @@ public interface ValidatorService {
         public void setCompletionRate(Double completionRate) { this.completionRate = completionRate; }
     }
 }
+

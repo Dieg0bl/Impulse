@@ -1,0 +1,37 @@
+package com.impulse.adapters.auth;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+
+import io.github.bucket4j.Bucket;
+import io.github.bucket4j.ConsumptionProbe;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+/**
+ * Interceptor para implementar rate limiting usando Bucket4j
+ */
+@Component
+public class RateLimitInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    private Bucket bucket;
+
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
+
+        if (probe.isConsumed()) {
+            response.addHeader("X-Rate-Limit-Remaining", String.valueOf(probe.getRemainingTokens()));
+            return true;
+        } else {
+            response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
+            response.addHeader("X-Rate-Limit-Retry-After-Seconds", String.valueOf(probe.getNanosToWaitForRefill() / 1_000_000_000));
+            response.getWriter().write("Too many requests - Rate limit exceeded");
+            return false;
+        }
+    }
+}

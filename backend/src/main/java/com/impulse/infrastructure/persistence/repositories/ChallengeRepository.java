@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.impulse.domain.model.Challenge;
+import com.impulse.domain.challenge.Challenge;
 
 @Repository
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
@@ -24,11 +24,11 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     @Query("SELECT c FROM Challenge c WHERE c.status = 'ACTIVE' AND c.startDate <= :now AND c.endDate >= :now")
     Page<Challenge> findActiveChallengess(@Param("now") LocalDateTime now, Pageable pageable);
 
-    // Buscar challenges por título que contenga texto
+    // Buscar challenges por tÃ­tulo que contenga texto
     @Query("SELECT c FROM Challenge c WHERE LOWER(c.title) LIKE LOWER(CONCAT('%', :title, '%'))")
     Page<Challenge> findByTitleContainingIgnoreCase(@Param("title") String title, Pageable pageable);
 
-    // Buscar challenges por descripción que contenga texto
+    // Buscar challenges por descripciÃ³n que contenga texto
     @Query("SELECT c FROM Challenge c WHERE LOWER(c.description) LIKE LOWER(CONCAT('%', :description, '%'))")
     Page<Challenge> findByDescriptionContainingIgnoreCase(@Param("description") String description, Pageable pageable);
 
@@ -38,7 +38,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
                                     @Param("endDate") LocalDateTime endDate,
                                     Pageable pageable);
 
-    // Buscar challenges próximos a empezar
+    // Buscar challenges prÃ³ximos a empezar
     @Query("SELECT c FROM Challenge c WHERE c.startDate > :now AND c.startDate <= :futureDate")
     Page<Challenge> findUpcoming(@Param("now") LocalDateTime now,
                                  @Param("futureDate") LocalDateTime futureDate,
@@ -55,3 +55,4 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     @Query("SELECT COUNT(c) FROM Challenge c WHERE c.status = 'ACTIVE'")
     long countActive();
 }
+
