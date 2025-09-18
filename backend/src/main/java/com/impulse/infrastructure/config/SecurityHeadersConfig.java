@@ -16,6 +16,7 @@ import java.io.IOException;
 /**
  * Configuración de headers de seguridad para la aplicación
  * Implementa headers importantes como CSP, HSTS, X-Frame-Options, etc.
+ * Según especificación IMPULSE v1.0 §6: "Cabeceras: CSP, HSTS, X-Content-Type-Options, X-Frame-Options: DENY"
  */
 @Configuration
 public class SecurityHeadersConfig implements WebMvcConfigurer {

@@ -346,6 +346,20 @@ export interface RegisterRequestDto {
   lastName: string;
 }
 
+// Forgot/Reset/Verify AUTH DTOs
+export interface ForgotPasswordRequestDto {
+  email: string;
+}
+
+export interface ResetPasswordRequestDto {
+  token: string;
+  newPassword: string;
+}
+
+export interface VerifyEmailRequestDto {
+  token: string;
+}
+
 export interface RefreshTokenRequestDto {
   refreshToken: string;
 }

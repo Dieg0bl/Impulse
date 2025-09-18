@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import PageHeader from "../components/PageHeader";
 import { Button } from "../components/ui/Button";
 
+import { Link } from "react-router-dom";
+
 const Login: React.FC = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState("demo@impulse.test");
@@ -66,6 +68,11 @@ const Login: React.FC = () => {
             </Button>
           </form>
         </div>
+          <div className="flex flex-col gap-2 mt-6 text-center">
+            <Link to="/forgot-password" className="text-blue-600 hover:underline text-sm">¿Olvidaste tu contraseña?</Link>
+            <Link to="/reset-password" className="text-blue-600 hover:underline text-sm">¿Tienes un token de reseteo?</Link>
+            <Link to="/verify-email" className="text-blue-600 hover:underline text-sm">Verificar email</Link>
+          </div>
       </div>
     </div>
   );

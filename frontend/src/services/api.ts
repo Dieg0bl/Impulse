@@ -91,6 +91,21 @@ export const authApi = {
   logout: async (): Promise<void> => {
     await http.post("/api/v1/auth/logout");
   },
+
+  forgotPassword: async (data: ForgotPasswordRequestDto): Promise<string> => {
+    const response = await http.post<ApiResponseDto<any>>("/api/v1/auth/forgot-password", data);
+    return response.data.message || "Solicitud enviada";
+  },
+
+  resetPassword: async (data: ResetPasswordRequestDto): Promise<string> => {
+    const response = await http.post<ApiResponseDto<any>>("/api/v1/auth/reset-password", data);
+    return response.data.message || "Contraseña actualizada";
+  },
+
+  verifyEmail: async (data: VerifyEmailRequestDto): Promise<string> => {
+    const response = await http.post<ApiResponseDto<any>>("/api/v1/auth/verify-email", data);
+    return response.data.message || "Email verificado";
+  },
 };
 
 // User API

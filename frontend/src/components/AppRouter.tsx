@@ -18,6 +18,9 @@ import NotFound from "../pages/NotFound";
 import PrivateRoute from "./PrivateRoute";
 import AdminUserDashboard from "../pages/AdminUserDashboard";
 import AdminAdsDashboard from "../pages/AdminAdsDashboard";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
+import VerifyEmail from "../pages/VerifyEmail";
 
 // Wrapper component for EvidenceUpload that gets challengeId from route params
 const EvidenceUploadWrapper: React.FC = () => {
@@ -35,6 +38,9 @@ const AppRouter: React.FC = () => {
         <Route path="/" element={<Dashboard />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+  <Route path="/forgot-password" element={<ForgotPassword />} />
+  <Route path="/reset-password" element={<ResetPassword />} />
+  <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/challenges" element={<Challenges />} />
         <Route path="/challenges/:id" element={<ChallengeDetail />} />
         <Route
