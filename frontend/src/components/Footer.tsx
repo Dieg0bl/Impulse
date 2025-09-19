@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 mt-auto" role="contentinfo">
+  <footer style={{ background: 'rgb(var(--surface-2))', borderTop: '1px solid rgb(var(--surface-3))', color: 'rgb(var(--text-2))' }} className="mt-auto" role="contentinfo">
       <div className="container-app py-10 md:py-12">
         {/* Desktop Grid */}
         <div className="hidden md:grid md:grid-cols-4 gap-10">

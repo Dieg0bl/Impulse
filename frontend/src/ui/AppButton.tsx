@@ -8,7 +8,8 @@ export interface AppButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEle
   icon?: React.ReactNode
   iconPosition?: 'start' | 'end'
   color?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info'
-  variant?: 'contained' | 'outlined' | 'text'
+  // legacy variants in the codebase include 'outline', 'danger', 'default' — accept them and map internally
+  variant?: 'contained' | 'outlined' | 'text' | 'outline' | 'danger' | 'default'
   fullWidth?: boolean
   sx?: object
 }
@@ -54,7 +55,11 @@ export const AppButton = forwardRef<HTMLButtonElement, AppButtonProps>(
     const colorConfig = getColorConfig()
 
     const getVariantStyles = (): React.CSSProperties => {
-      switch (variant) {
+      // normalize legacy tokens
+  let normalized = variant
+  if (variant === 'outline') normalized = 'outlined'
+  else if (variant === 'danger') normalized = 'contained'
+      switch (normalized) {
         case 'outlined':
           return {
             backgroundColor: 'transparent',

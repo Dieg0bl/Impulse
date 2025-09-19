@@ -737,7 +737,7 @@ export class DigitalStoreService {
     const inventory = await this.getUserInventory(userId)
     const ownedProduct = inventory.ownedProducts.find(p => p.productId === productId)
 
-    if (!ownedProduct || !ownedProduct.isActive) {
+    if (!ownedProduct?.isActive) {
       return false
     }
 

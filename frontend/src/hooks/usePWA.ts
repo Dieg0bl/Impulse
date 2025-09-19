@@ -130,8 +130,8 @@ export const usePWA = (): UsePWAReturn => {
     showInstallPrompt,
 
     // Updates
-    needRefresh: needRefresh || false,
-    updateAvailable: needRefresh || false,
+    needRefresh: Boolean(needRefresh),
+    updateAvailable: Boolean(needRefresh),
     updateSW,
 
     // State

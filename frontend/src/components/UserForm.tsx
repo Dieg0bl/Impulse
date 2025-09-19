@@ -40,7 +40,7 @@ export default function UserForm({ onCreate }: UserFormProps) {
   };
 
   return (
-    <form onSubmit={submit} style={{ marginTop: "1rem", maxWidth: 420, marginLeft: "auto", marginRight: "auto", background: "rgba(var(--glass-bg), var(--glass-alpha))", borderRadius: "var(--radius-lg)", boxShadow: "var(--glass-shadow)", padding: "var(--space-8)" }} aria-label="Formulario de usuario">
+    <form onSubmit={submit} style={{ marginTop: "1rem", maxWidth: 420, marginLeft: "auto", marginRight: "auto", background: "rgb(var(--surface-2))", borderRadius: "var(--radius-lg)", boxShadow: "0 2px 8px rgba(0,0,0,0.04)", border: "1px solid rgb(var(--surface-3))", padding: "var(--space-8)" }} aria-label="Formulario de usuario">
       <h3 style={{ marginTop: 0, marginBottom: 24, fontWeight: 700, fontSize: "1.25rem", color: "var(--text-1)" }}>Añadir usuario</h3>
       <AppTextField
         id="username"

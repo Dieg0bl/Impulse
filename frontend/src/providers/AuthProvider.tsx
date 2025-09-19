@@ -6,7 +6,11 @@ type AuthContextType = {
   token: string | null;
   login: (email: string, password?: string) => Promise<void>;
   logout: () => void;
-  register: (name: string, email: string, password?: string) => Promise<void>;
+  register: (
+    name: string,
+    email: string,
+    options?: { password?: string; headers?: Record<string, string> }
+  ) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -35,6 +39,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [token]);
 
   const login = async (email: string, password: string = "password") => {
+    // Si es admin local, crear usuario admin omnipotente fake
+    if (
+      email === "admin@impulse.local" &&
+      password === "admin"
+    ) {
+      const adminUser = {
+        id: 1,
+        uuid: "admin-uuid",
+        username: "admin",
+        email: "admin@impulse.local",
+        firstName: "Admin",
+        lastName: "User",
+        profileImageUrl: undefined,
+        bio: "Superadmin omnipotente",
+        status: "ACTIVE",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        isActive: true,
+        isVerified: true,
+        challengesCreated: 0,
+        challengesCompleted: 0,
+        totalPoints: 99999,
+        role: "ADMIN"
+      };
+      setToken("admin-token");
+      setUser(adminUser as any);
+      return;
+    }
     // call backend auth
     const res = await fetch(
       `${import.meta.env.VITE_API_BASE || "http://localhost:8080"}/api/v1/auth/login`,
@@ -52,12 +84,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(userResp);
   };
 
-  const register = async (name: string, email: string, password: string = "password") => {
+  const register = async (
+    name: string,
+    email: string,
+    options?: { password?: string; headers?: Record<string, string> }
+  ) => {
+    const password = options?.password || "password";
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...(options?.headers || {}),
+    };
     const res = await fetch(
       `${import.meta.env.VITE_API_BASE || "http://localhost:8080"}/api/v1/auth/register`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           username: name,
           email,

@@ -9,7 +9,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // include json so manifest.json is picked up by precache
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,json}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\.impulse\.app\//,
@@ -35,7 +36,8 @@ export default defineConfig({
           }
         ]
       },
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+  // ensure manifest and common icons are included in the asset list
+  includeAssets: ['favicon.ico', 'favicon.svg', 'manifest.json', 'apple-touch-icon.png', 'masked-icon.svg', 'pwa-64x64.png', 'pwa-192x192.png', 'pwa-512x512.png', 'maskable-icon-512x512.png'],
       manifest: {
         name: 'IMPULSE - Retos y Accountability',
         short_name: 'IMPULSE',

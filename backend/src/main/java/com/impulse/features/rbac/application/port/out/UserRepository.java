@@ -8,4 +8,8 @@ import com.impulse.shared.annotations.Generated;
 @Generated
 public interface UserRepository {
     // TODO: Define repository operations - no JPA specifics
+
+    com.impulse.features.rbac.domain.User save(com.impulse.features.rbac.domain.User user);
+
+    java.util.Optional<com.impulse.features.rbac.domain.User> findByEmail(String email);
 }

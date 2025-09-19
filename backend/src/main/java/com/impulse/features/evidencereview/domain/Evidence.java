@@ -26,9 +26,12 @@ public class Evidence {
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
+    // Flag demo
+    private final boolean isDemo;
+
     // Constructor for creation
     public Evidence(EvidenceId id, Long challengeId, Long participantUserId,
-                   EvidenceType type, String content, String metadata, LocalDateTime submittedAt) {
+                   EvidenceType type, String content, String metadata, LocalDateTime submittedAt, boolean isDemo) {
         this.id = Objects.requireNonNull(id, "Evidence ID cannot be null");
         this.challengeId = Objects.requireNonNull(challengeId, "Challenge ID cannot be null");
         this.participantUserId = Objects.requireNonNull(participantUserId, "Participant user ID cannot be null");
@@ -38,13 +41,14 @@ public class Evidence {
         this.status = EvidenceStatus.PENDING;
         this.submittedAt = Objects.requireNonNull(submittedAt, "Submitted at cannot be null");
         this.updatedAt = submittedAt;
+        this.isDemo = isDemo;
     }
 
     // Constructor for reconstruction
     public Evidence(EvidenceId id, Long challengeId, Long participantUserId,
                    EvidenceType type, String content, String metadata, EvidenceStatus status,
                    Long reviewerUserId, String reviewComments, LocalDateTime reviewedAt,
-                   LocalDateTime submittedAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                   LocalDateTime submittedAt, LocalDateTime updatedAt, LocalDateTime deletedAt, boolean isDemo) {
         this.id = id;
         this.challengeId = challengeId;
         this.participantUserId = participantUserId;
@@ -58,7 +62,10 @@ public class Evidence {
         this.submittedAt = submittedAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
+        this.isDemo = isDemo;
     }
+
+    public boolean isDemo() { return isDemo; }
 
     // Factory method
     public static Evidence submit(Long challengeId, Long participantUserId,

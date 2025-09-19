@@ -27,9 +27,13 @@ public class Challenge {
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
+    // Flags demo/template
+    private final boolean isDemo;
+    private final boolean isTemplate;
+
     // Constructor for creation
     public Challenge(ChallengeId id, Long ownerUserId, String title, String description,
-                    String category, LocalDateTime createdAt) {
+                    String category, LocalDateTime createdAt, boolean isDemo, boolean isTemplate) {
         this.id = Objects.requireNonNull(id, "Challenge ID cannot be null");
         this.ownerUserId = Objects.requireNonNull(ownerUserId, "Owner user ID cannot be null");
         setTitle(title);
@@ -39,13 +43,16 @@ public class Challenge {
         this.category = category != null ? category : "General";
         this.createdAt = Objects.requireNonNull(createdAt, "Created at cannot be null");
         this.updatedAt = createdAt;
+    this.isDemo = isDemo;
+    this.isTemplate = isTemplate;
     }
 
     // Constructor for reconstruction
     public Challenge(ChallengeId id, Long ownerUserId, String title, String description,
                     ChallengeStatus status, Visibility visibility, String category,
                     String publicConsentVersion, LocalDateTime openedAt, LocalDateTime closedAt,
-                    LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                    LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt,
+                    boolean isDemo, boolean isTemplate) {
         this.id = id;
         this.ownerUserId = ownerUserId;
         this.title = title;
@@ -59,7 +66,12 @@ public class Challenge {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
+    this.isDemo = isDemo;
+    this.isTemplate = isTemplate;
     }
+
+    public boolean isDemo() { return isDemo; }
+    public boolean isTemplate() { return isTemplate; }
 
     // Factory method
     public static Challenge create(Long ownerUserId, String title, String description, String category) {

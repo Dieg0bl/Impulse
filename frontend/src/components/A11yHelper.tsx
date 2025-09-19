@@ -7,5 +7,5 @@ const A11yHelper: React.FC = () => {
     </div>
   );
 };
-
 export { A11yHelper };
+export default A11yHelper;

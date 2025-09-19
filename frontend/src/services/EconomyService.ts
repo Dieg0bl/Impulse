@@ -15,6 +15,8 @@ export interface CurrencyBalance {
   cred: number           // Reputación - no comprable
   slaCredits: number     // Créditos de servicio - consumibles
   lastUpdated: Date
+  // allow dynamic access by currency id
+  [key: string]: number | string | Date | undefined
 }
 
 // Monedas del sistema (sin azar, sin cash-out, sin cripto)
@@ -203,7 +205,7 @@ export class EconomyService {
     const totalCost = item.cost * quantity
     const userBalance = await this.getUserBalance(userId)
 
-    if (userBalance[item.currency] < totalCost) {
+        if (Number(userBalance[item.currency]) < totalCost) {
       return { success: false, error: 'Insufficient balance' }
     }
 
@@ -272,7 +274,7 @@ export class EconomyService {
   ): Promise<CurrencyTransaction> {
     // Implementación real de base de datos
     const balance = await this.getUserBalance(userId)
-    const newBalance = balance[currency] + amount
+        const newBalance = Number(balance[currency]) + amount
 
     const transaction: CurrencyTransaction = {
       id: crypto.randomUUID(),
@@ -283,7 +285,7 @@ export class EconomyService {
       reason,
       sourceId,
       createdAt: new Date(),
-      balanceBefore: balance[currency],
+          balanceBefore: Number(balance[currency]) as number,
       balanceAfter: newBalance
     }
 
@@ -301,7 +303,7 @@ export class EconomyService {
     sourceId?: string
   ): Promise<CurrencyTransaction> {
     const balance = await this.getUserBalance(userId)
-    const newBalance = balance[currency] - amount
+        const newBalance = Number(balance[currency]) - amount
 
     const transaction: CurrencyTransaction = {
       id: crypto.randomUUID(),
@@ -312,7 +314,7 @@ export class EconomyService {
       reason,
       sourceId,
       createdAt: new Date(),
-      balanceBefore: balance[currency],
+          balanceBefore: Number(balance[currency]) as number,
       balanceAfter: newBalance
     }
 

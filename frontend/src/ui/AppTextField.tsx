@@ -10,6 +10,7 @@ export interface AppTextFieldProps extends Omit<TextFieldProps, 'size' | 'varian
   validationMessage?: string
   showValidationIcon?: boolean
   characterLimit?: number
+  maxLength?: number
   passwordToggle?: boolean
   showOptionalLabel?: boolean
 }
@@ -21,6 +22,7 @@ export const AppTextField = forwardRef<HTMLInputElement, AppTextFieldProps>(
     validationMessage,
     showValidationIcon = true,
     characterLimit,
+  maxLength,
     passwordToggle = false,
     showOptionalLabel = false,
     label,
@@ -221,7 +223,7 @@ export const AppTextField = forwardRef<HTMLInputElement, AppTextFieldProps>(
           ...textFieldProps.InputProps,
         }}
         inputProps={{
-          maxLength: characterLimit,
+          maxLength: characterLimit ?? maxLength,
           'aria-invalid': validationState === 'error',
           'aria-required': required,
           ...textFieldProps.inputProps,

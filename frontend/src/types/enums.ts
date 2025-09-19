@@ -5,6 +5,9 @@ export enum UserRole {
   USER = "USER",
   COACH = "COACH",
   VALIDATOR = "VALIDATOR",
+  MODERATOR = "MODERATOR",
+  SUPPORT = "SUPPORT",
+  BILLING = "BILLING",
 }
 
 export enum UserStatus {

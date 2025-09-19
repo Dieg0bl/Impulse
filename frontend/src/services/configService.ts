@@ -74,7 +74,9 @@ interface AppConfig {
 // Default configuration for launch phase (Section 2 & 3 - Specification Compliant)
 const DEFAULT_CONFIG: AppConfig = {
   // All billing disabled during beta (Section 18)
-  BILLING_ON: false,
+  // Temporarily enable billing for local testing of the Webhooks admin UI.
+  // NOTE: revert this change before production or gate with env var.
+  BILLING_ON: true,
   COACH_MARKET_ON: false,
   ADS_ON: false,
   CMP_ON: false,

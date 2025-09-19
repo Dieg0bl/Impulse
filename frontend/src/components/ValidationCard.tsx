@@ -104,12 +104,12 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
       <AppCard
         style={{
           padding: "var(--space-4)",
-          background: "rgba(var(--glass-bg), 0.3)",
+          background: "rgb(var(--surface-2))",
           borderRadius: "var(--radius-lg)",
-          border: "1px solid var(--border-1)",
-          boxShadow: "var(--glass-shadow)"
+          border: "1px solid rgb(var(--surface-3))",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.04)"
         }}
-        className="flex items-center justify-between hover:border-gray-600 transition-colors"
+          className="flex items-center justify-between transition-colors"
       >
         <div className="flex items-center space-x-3 flex-1">
           <div className="flex items-center space-x-2">
@@ -171,8 +171,9 @@ const ValidationCard: React.FC<ValidationCardProps> = ({
       style={{
         padding: "var(--space-6)",
         borderRadius: "var(--radius-lg)",
-        boxShadow: "var(--glass-shadow)",
-        background: "rgba(var(--glass-bg), var(--glass-alpha))"
+        boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+        background: "rgb(var(--surface-2))",
+        border: "1px solid rgb(var(--surface-3))"
       }}
     >
       <div className="flex items-start justify-between mb-4">

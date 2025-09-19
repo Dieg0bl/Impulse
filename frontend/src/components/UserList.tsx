@@ -46,8 +46,9 @@ const UserList: React.FC<UserListProps> = ({ usuarios }) => {
             <AppCard
               style={{
                 borderRadius: "var(--radius-lg)",
-                boxShadow: "var(--glass-shadow)",
-                background: "rgba(var(--glass-bg), var(--glass-alpha))",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                background: "rgb(var(--surface-2))",
+                border: "1px solid rgb(var(--surface-3))",
                 padding: "var(--space-8)",
                 minHeight: 220
               }}
@@ -55,15 +56,15 @@ const UserList: React.FC<UserListProps> = ({ usuarios }) => {
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-primary-500 to-primary-600 rounded-full flex items-center justify-center">
-                    <User className="w-6 h-6 text-white" />
+                  <div style={{ width: 48, height: 48, background: 'linear-gradient(90deg, rgb(var(--color-primary)), rgb(var(--color-primary-dark)))', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <User style={{ width: 24, height: 24, color: 'rgb(var(--text-inverse))' }} />
                   </div>
                   <div>
                     <h3 className="heading-6 mb-1">
                       {user.firstName} {user.lastName}
                     </h3>
-                    <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-2)" }}>
-                      <AtSign className="w-4 h-4" />
+                    <div className="flex items-center gap-2 text-sm" style={{ color: 'rgb(var(--text-2))' }}>
+                      <AtSign style={{ width: 16, height: 16, color: 'rgb(var(--text-3))' }} />
                       <span>{user.username}</span>
                     </div>
                   </div>
@@ -79,12 +80,12 @@ const UserList: React.FC<UserListProps> = ({ usuarios }) => {
                 </div>
               </div>
               <div className="space-y-3">
-                <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-2)" }}>
-                  <Mail className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 text-sm" style={{ color: 'rgb(var(--text-2))' }}>
+                  <Mail style={{ width: 16, height: 16, color: 'rgb(var(--text-3))' }} />
                   <span className="truncate">{user.email}</span>
                 </div>
-                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                  <span className="text-xs" style={{ color: "var(--text-3)", textTransform: "uppercase", letterSpacing: 1 }}>
+                <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid rgb(var(--surface-3))' }}>
+                  <span className="text-xs" style={{ color: 'rgb(var(--text-3))', textTransform: 'uppercase', letterSpacing: 1 }}>
                     Estado
                   </span>
                   <Badge

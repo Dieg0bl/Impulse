@@ -31,6 +31,9 @@ import {
   ChallengeStatsDto,
   PlatformStatsDto,
   PageRequestDto,
+  ForgotPasswordRequestDto,
+  ResetPasswordRequestDto,
+  VerifyEmailRequestDto,
 } from "../types/dtos";
 import { EvidenceType, EvidenceStatus } from "../types/enums";
 
@@ -97,13 +100,27 @@ export const authApi = {
     return response.data.message || "Solicitud enviada";
   },
 
-  resetPassword: async (data: ResetPasswordRequestDto): Promise<string> => {
-    const response = await http.post<ApiResponseDto<any>>("/api/v1/auth/reset-password", data);
+  resetPassword: async (
+    data: ResetPasswordRequestDto,
+    options?: { headers?: Record<string, string> }
+  ): Promise<string> => {
+    const response = await http.post<ApiResponseDto<any>>(
+      "/api/v1/auth/reset-password",
+      data,
+      options ? { headers: options.headers } : undefined
+    );
     return response.data.message || "Contraseña actualizada";
   },
 
-  verifyEmail: async (data: VerifyEmailRequestDto): Promise<string> => {
-    const response = await http.post<ApiResponseDto<any>>("/api/v1/auth/verify-email", data);
+  verifyEmail: async (
+    data: VerifyEmailRequestDto,
+    options?: { headers?: Record<string, string> }
+  ): Promise<string> => {
+    const response = await http.post<ApiResponseDto<any>>(
+      "/api/v1/auth/verify-email",
+      data,
+      options ? { headers: options.headers } : undefined
+    );
     return response.data.message || "Email verificado";
   },
 };
@@ -462,6 +479,23 @@ export const reportApi = {
 export const statsApi = {
   getPlatformStats: async (): Promise<PlatformStatsDto> => {
     const response = await http.get<ApiResponseDto<PlatformStatsDto>>("/api/v1/stats/platform");
+    return response.data.data!;
+  },
+};
+
+// Webhook API (backend may expose endpoints like /api/v1/webhooks)
+export const webhookApi = {
+  listWebhooks: async (params?: PageRequestDto & { status?: string; q?: string }) => {
+    const response = await http.get<ApiResponseDto<PageResponseDto<any>>>('/api/v1/webhooks', { params });
+    return response.data.data!;
+  },
+
+  getWebhookById: async (id: string) => {
+    const response = await http.get<ApiResponseDto<any>>(`/api/v1/webhooks/${id}`);
+    return response.data.data!;
+  },
+  markWebhookProcessed: async (id: string) => {
+    const response = await http.post<ApiResponseDto<any>>(`/api/v1/webhooks/${id}/processed`);
     return response.data.data!;
   },
 };

@@ -1,8 +1,9 @@
 package com.impulse.features.challenge.application.dto;
 
+import java.time.LocalDateTime;
+
 import com.impulse.shared.enums.ChallengeStatus;
 import com.impulse.shared.enums.Visibility;
-import java.time.LocalDateTime;
 
 /**
  * Response DTO: ChallengeResponse
@@ -21,11 +22,14 @@ public class ChallengeResponse {
     private final LocalDateTime closedAt;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+    private final boolean isDemo;
+    private final boolean isTemplate;
 
     public ChallengeResponse(String id, Long ownerUserId, String title, String description,
                            ChallengeStatus status, Visibility visibility, String category,
                            String publicConsentVersion, LocalDateTime openedAt, LocalDateTime closedAt,
-                           LocalDateTime createdAt, LocalDateTime updatedAt) {
+                           LocalDateTime createdAt, LocalDateTime updatedAt,
+                           boolean isDemo, boolean isTemplate) {
         this.id = id;
         this.ownerUserId = ownerUserId;
         this.title = title;
@@ -38,6 +42,8 @@ public class ChallengeResponse {
         this.closedAt = closedAt;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.isDemo = isDemo;
+        this.isTemplate = isTemplate;
     }
 
     // Getters
@@ -53,4 +59,6 @@ public class ChallengeResponse {
     public LocalDateTime getClosedAt() { return closedAt; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public boolean isDemo() { return isDemo; }
+    public boolean isTemplate() { return isTemplate; }
 }

@@ -8,10 +8,3 @@ createRoot(document.getElementById("root")!).render(
     <App />
   </React.StrictMode>,
 );
-
-// registra SW básico
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/src/service-worker.ts").catch(() => {});
-  });
-}

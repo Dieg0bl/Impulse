@@ -20,4 +20,5 @@ class ErrorBoundary extends React.Component<Props, { hasError: boolean }> {
   }
 }
 
+export { ErrorBoundary };
 export default ErrorBoundary;

@@ -1,0 +1,11 @@
+-- V2__demo_flags.sql
+-- Añade flags para datos demo/oficial/bot/template
+ALTER TABLE users ADD COLUMN is_demo BOOLEAN DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN is_official BOOLEAN DEFAULT FALSE;
+ALTER TABLE users ADD COLUMN is_bot BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE challenges ADD COLUMN is_demo BOOLEAN DEFAULT FALSE;
+ALTER TABLE challenges ADD COLUMN is_template BOOLEAN DEFAULT FALSE;
+
+ALTER TABLE evidences ADD COLUMN is_demo BOOLEAN DEFAULT FALSE;
+ALTER TABLE validations ADD COLUMN is_demo BOOLEAN DEFAULT FALSE;

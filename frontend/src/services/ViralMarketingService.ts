@@ -1,7 +1,5 @@
 // Sistema de Marketing Viral y Growth - Invitations, social sharing, achievements públicos, PR automático
 import { ReferralService } from './ReferralService'
-import { GamificationService } from './GamificationService'
-import { EconomyService } from './EconomyService'
 
 // CAMPAÑAS DE GROWTH
 export interface GrowthCampaign {
@@ -714,10 +712,10 @@ export class ViralMarketingService {
     }
 
     // Calcular K-factor
-    if (metrics.conversions && campaign.metrics.impressions) {
-      campaign.metrics.k_factor = (metrics.conversions / campaign.metrics.impressions) *
-                                  (campaign.metrics.shares / metrics.conversions)
-    }
+      if (metrics.conversions && campaign.metrics.impressions) {
+        campaign.metrics.k_factor = (metrics.conversions / campaign.metrics.impressions) *
+                                    (campaign.metrics.shares / Math.max(1, metrics.conversions))
+      }
 
     await this.updateCampaign(campaign)
 
@@ -731,9 +729,14 @@ export class ViralMarketingService {
       await this.suggestContentImprovement(campaign.id)
     }
 
-    if (campaign.metrics.conversion_rate < 0.02) {
-      await this.adjustTargeting(campaign.id)
-    }
+      // Use conversions-derived rate check (conversions / impressions) to avoid referencing a possibly
+      // non-existent 'conversion_rate' property on CampaignMetrics.
+      const conversions = campaign.metrics.conversions ?? 0
+      const impressions = campaign.metrics.impressions ?? 1
+      const conversionRate = conversions / impressions
+      if (conversionRate < 0.02) {
+        await this.adjustTargeting(campaign.id)
+      }
   }
 
   static async getViralMetrics(timeframe: string): Promise<any> {
@@ -748,15 +751,15 @@ export class ViralMarketingService {
 
   // Métodos auxiliares mock
   private static generateCampaignId(): string {
-    return 'camp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+    return 'camp_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11)
   }
 
   private static generateAchievementId(): string {
-    return 'ach_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+    return 'ach_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11)
   }
 
   private static generatePRId(): string {
-    return 'pr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+    return 'pr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 11)
   }
 
   private static async saveCampaign(_campaign: GrowthCampaign): Promise<void> {

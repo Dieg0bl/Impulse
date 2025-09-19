@@ -4,7 +4,7 @@ import { cn } from '../../utils/cn';
 
 export interface ButtonProps {
   className?: string;
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'ghost' | 'outline';
+  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'ghost' | 'outline' | 'default';
   size?: 'sm' | 'md' | 'lg' | 'xl';
   loading?: boolean;
   icon?: React.ReactNode;
@@ -24,7 +24,8 @@ const buttonVariants = {
   warning: 'btn-warning',
   error: 'btn-error',
   ghost: 'btn-ghost',
-  outline: 'btn-outline'
+  outline: 'btn-outline',
+  default: 'btn-default'
 };
 
 const buttonSizes = {

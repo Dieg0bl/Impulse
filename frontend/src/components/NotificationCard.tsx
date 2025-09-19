@@ -16,19 +16,45 @@ import {
   X
 } from "lucide-react";
 
+interface LegacyNotificationAction {
+  label: string;
+  onClick: () => void;
+}
+
 interface NotificationCardProps {
-  notification: NotificationResponseDto;
+  // Preferred shape
+  notification?: NotificationResponseDto;
+  // Legacy shape used in some pages
+  type?: string;
+  title?: string;
+  message?: string;
+  action?: LegacyNotificationAction;
   onMarkAsRead?: () => void;
   onDismiss?: () => void;
   variant?: "compact" | "full";
 }
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
-  notification,
+  notification: notificationProp,
+  // legacy props
+  type: legacyType,
+  title: legacyTitle,
+  message: legacyMessage,
+  action: legacyAction,
   onMarkAsRead,
   onDismiss,
   variant = "compact"
 }) => {
+  const notification: NotificationResponseDto = notificationProp || (({
+    id: 0,
+    uuid: 'legacy',
+    userId: 0,
+    title: legacyTitle || '',
+    message: legacyMessage || '',
+    type: (legacyType as any) || NotificationType.SYSTEM_ALERT,
+    isRead: false,
+    createdAt: new Date().toISOString()
+  } as unknown) as NotificationResponseDto);
   const getTypeIcon = (type: NotificationType) => {
     const icons: Record<NotificationType, JSX.Element> = {
       [NotificationType.CHALLENGE_CREATED]: <Users className="w-5 h-5" />,
@@ -202,4 +228,5 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   );
 };
 
+export { NotificationCard };
 export default NotificationCard;

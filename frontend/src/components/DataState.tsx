@@ -74,4 +74,5 @@ const DataState: React.FC<DataStateProps> = ({
   return <>{children}</>;
 };
 
+export { DataState };
 export default DataState;

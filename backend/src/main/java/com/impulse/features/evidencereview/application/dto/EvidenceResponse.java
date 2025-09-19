@@ -1,8 +1,9 @@
 package com.impulse.features.evidencereview.application.dto;
 
+import java.time.LocalDateTime;
+
 import com.impulse.shared.enums.EvidenceStatus;
 import com.impulse.shared.enums.EvidenceType;
-import java.time.LocalDateTime;
 
 /**
  * Response DTO: EvidenceResponse
@@ -21,11 +22,13 @@ public class EvidenceResponse {
     private final LocalDateTime reviewedAt;
     private final LocalDateTime submittedAt;
     private final LocalDateTime updatedAt;
+    private final boolean isDemo;
 
     public EvidenceResponse(String id, Long challengeId, Long participantUserId,
                            EvidenceType type, String content, String metadata,
                            EvidenceStatus status, Long reviewerUserId, String reviewComments,
-                           LocalDateTime reviewedAt, LocalDateTime submittedAt, LocalDateTime updatedAt) {
+                           LocalDateTime reviewedAt, LocalDateTime submittedAt, LocalDateTime updatedAt,
+                           boolean isDemo) {
         this.id = id;
         this.challengeId = challengeId;
         this.participantUserId = participantUserId;
@@ -38,6 +41,7 @@ public class EvidenceResponse {
         this.reviewedAt = reviewedAt;
         this.submittedAt = submittedAt;
         this.updatedAt = updatedAt;
+        this.isDemo = isDemo;
     }
 
     // Getters
@@ -53,4 +57,5 @@ public class EvidenceResponse {
     public LocalDateTime getReviewedAt() { return reviewedAt; }
     public LocalDateTime getSubmittedAt() { return submittedAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public boolean isDemo() { return isDemo; }
 }

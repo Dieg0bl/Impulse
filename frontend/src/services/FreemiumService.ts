@@ -891,7 +891,8 @@ export class FreemiumService {
     }
   }
 
-  private static async getCurrentTier(_userId: string): Promise<string> {
+  // Public accessor for the current tier. Some services need to read the current tier.
+  static async getCurrentTier(_userId: string): Promise<string> {
     return 'free'
   }
 
